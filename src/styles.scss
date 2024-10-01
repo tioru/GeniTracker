@@ -1,1 +1,78 @@
 /* You can add global styles to this file, and also import other style files */
+$topbar-height: 20px;
+$height-after-topbar: calc(100vh - #{$topbar-height});
+
+html, body {
+  height: 100vh; /* Assure que le body et le html prennent toute la hauteur de la page */
+  margin: 0; /* Retire les marges par défaut */
+  padding: 0; /* Retire les padding par défaut */
+}
+
+app-topbar {
+  position: sticky;
+  top: 0px;
+  display: block;
+  height: $topbar-height;
+  width: 75vw;
+}
+
+app-root {
+  display: block;
+  height: 100vh;
+}
+
+/*Easy SCSS*/
+
+.flex {
+  display: flex;
+}
+
+.column {
+  flex-direction: column;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.row-reverse {
+  flex-direction: row-reverse;
+}
+
+.jcc {
+  justify-content: center;
+}
+
+.jcsb {
+  justify-content: space-between;
+}
+
+.jcsa {
+  justify-content: space-around;
+}
+
+.aic {
+  align-items: center;
+}
+
+.fh {
+  height: 100%;
+}
+
+// Boucle @for pour générer des classes de w-10 à w-100
+@for $i from 1 through 9 {
+    .h-#{$i * 10} {
+      height: #{$i * 10 + '%'};
+    }
+}  
+
+.fw {
+  width: 100%;
+}
+
+// Boucle @for pour générer des classes de w-10 à w-100
+@for $i from 1 through 9 {
+    .w-#{$i * 10} {
+      width: #{$i * 10 + '%'};
+    }
+}  
