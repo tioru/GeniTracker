@@ -1,19 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
-$topbar-height: 20px;
-$height-after-topbar: calc(100vh - #{$topbar-height});
 
 html, body {
   height: 100vh; /* Assure que le body et le html prennent toute la hauteur de la page */
   margin: 0; /* Retire les marges par défaut */
   padding: 0; /* Retire les padding par défaut */
-}
-
-app-topbar {
-  position: sticky;
-  top: 0px;
-  display: block;
-  height: $topbar-height;
-  width: 75vw;
 }
 
 app-root {
@@ -75,4 +65,4 @@ app-root {
     .w-#{$i * 10} {
       width: #{$i * 10 + '%'};
     }
-}  
+}

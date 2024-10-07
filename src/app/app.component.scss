@@ -1,5 +1,21 @@
+@use './../variables' as vars;
+
 main {
   background-image: url("./../../public/background.png");
   background-size: cover;
   height: 100%;
+}
+
+.root-div{
+  position: relative;
+}
+
+.topbar {
+  position: absolute;
+  top: 0px;
+  height: vars.$topbar-height;
+}
+
+app-topbar {
+  width: 75vw;
 }
