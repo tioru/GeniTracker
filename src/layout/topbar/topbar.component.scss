@@ -1,5 +1,13 @@
 .topbar-bg {
-    background-color: white;
-    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+    background: radial-gradient(circle, rgba(56,56,56,1) 25%, rgba(0,0,0,1) 115%);
+    border-bottom: solid white 2px;
 }
 
+.title {
+    color: white;
+    font-size: x-large;
+}
+
+.topbar-section {
+    color: white;
+}

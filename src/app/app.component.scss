@@ -1,7 +1,7 @@
 @use './../variables' as vars;
 
 main {
-  background-image: url("./../../public/background.png");
+  background-image: url("./../assets/img/Background.png");
   background-size: cover;
   height: 100%;
 }
@@ -17,5 +17,5 @@ main {
 }
 
 app-topbar {
-  width: 75vw;
+  width: 100%;
 }
