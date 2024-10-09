@@ -10,4 +10,31 @@
 
 .topbar-section {
     color: white;
+    &:hover{
+        cursor: pointer;
+    }
+}
+
+.topbar-section:hover > * {
+    position: relative;
+    z-index: 1;
+}
+
+.topbar-section:hover > div::before {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.6);
+    filter: blur(4px);
+    border-radius: 50%;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    animation: fadeIn 0.5s ease; /* Durée et effet de la transition */
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
