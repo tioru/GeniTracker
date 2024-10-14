@@ -3,17 +3,12 @@
 main {
   background-image: url("./../assets/img/Background.png");
   background-size: cover;
-  height: 100%;
-}
-
-.root-div{
-  position: relative;
+  height: vars.$height-after-topbar;
 }
 
 .topbar {
-  position: absolute;
-  top: 0px;
   height: vars.$topbar-height;
+  border-bottom: white solid 2px;
 }
 
 app-topbar {

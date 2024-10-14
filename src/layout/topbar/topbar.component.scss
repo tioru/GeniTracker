@@ -1,6 +1,5 @@
 .topbar-bg {
     background: radial-gradient(circle, rgba(56,56,56,1) 25%, rgba(0,0,0,1) 115%);
-    border-bottom: solid white 2px;
 }
 
 .title {
@@ -15,23 +14,29 @@
     }
 }
 
-.topbar-section:hover > * {
-    position: relative;
-    z-index: 1;
+.topbar_item {
+    border: 0px solid transparent;
+    background-color: transparent;
+    cursor: pointer;
 }
 
-.topbar-section:hover > div::before {
-    content: '';
-    position: absolute;
-    background: rgba(255, 255, 255, 0.6);
-    filter: blur(4px);
-    border-radius: 50%;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    animation: fadeIn 0.5s ease; /* Durée et effet de la transition */
+.topbar_item:hover {
+    .img-container::before {
+        position: fixed;
+        content: '';
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.6);
+        filter: blur(4px);
+        border-radius: 50%;
+        z-index: 0;
+        animation: fadeIn 0.5s ease;
+    }
+}
+
+.img-container img {
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes fadeIn {
