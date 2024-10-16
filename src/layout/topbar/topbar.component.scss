@@ -34,6 +34,21 @@
     }
 }
 
+.topbar_item.home_button:hover {
+    .img-container::before {
+        position: fixed;
+        content: '';
+        width: 50px;
+        height: 50px;
+        left: 11px;
+        background: rgba(255, 255, 255, 0.6);
+        filter: blur(4px);
+        border-radius: 50%;
+        z-index: 0;
+        animation: fadeIn 0.5s ease;
+    }
+}
+
 .img-container img {
     position: relative;
     z-index: 1;

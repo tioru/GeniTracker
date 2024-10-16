@@ -91,10 +91,19 @@ app-root {
   }
 }
 
-button {
-  border: 1px solid black;
-  border-radius: 6px;
-  background-color: black;
+app-notification-center {
+  position: absolute;
+  top: 0;
+  right: 0;
   color: white;
-  font-family: 'Genshin', sans-serif;
+}
+
+app-topbar {
+  button {
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: black;
+    color: white;
+    font-family: 'Genshin', sans-serif;
+  }
 }
