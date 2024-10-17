@@ -1,0 +1,148 @@
+@use './../../variables' as vars;
+
+.notification {
+    position: relative;
+    width: 25vw;
+    height: 12vh;
+    background-color: rgb(41, 41, 41);
+    z-index: 2;
+    border-radius: 10px;
+    animation: comingFromRight 0.7s ease;
+}
+
+@keyframes comingFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fade-out {
+    animation: fadingInRight 0.5s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes fadingInRight {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.direct_notification_listing {
+    height: calc(vars.$height-after-topbar - 10px);
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.bar {
+    &.error{
+        background-color: vars.$error-color;
+    }
+    &.warning{
+        background-color: vars.$warning-color;
+    }
+    &.info{
+        background-color: vars.$info-color;
+    }
+    &.ok{
+        background-color: vars.$ok-color;
+    }
+    height: 75%;
+    width: 4px;
+    margin-right: 10px;
+}
+
+.round_icon {
+    background-color: rgb(73, 73, 73);
+    margin-right: 10px;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+
+.icon {
+    &.error{
+        fill: vars.$error-color;
+    }
+    &.warning{
+        fill: vars.$warning-color;
+    }
+    &.info{
+        fill: vars.$info-color;
+    }
+    &.ok{
+        fill: vars.$ok-color;
+    }
+}
+
+.close_button {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 0px solid transparent;
+    background-color: rgb(75, 75, 75);
+    cursor: pointer;
+    &:hover{
+        background-color: rgb(109, 109, 109);
+        svg {
+            fill: white;
+        }
+    }
+}
+
+.bottom_progress_bar {
+    position: absolute;
+    width: 100%;
+    height: 5px;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    border-radius: 0 0 10px 10px;
+}
+
+.progress {
+    &.error{
+        background-color: vars.$error-color;
+    }
+    &.ok {
+        background-color: vars.$ok-color;
+    }
+    &.info{
+        background-color: vars.$info-color;
+    }
+    &.warning {
+        background-color: vars.$warning-color;
+    }
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-origin: right;
+    animation-name: progressBar;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes progressBar {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
+}
+
+.description_area{
+    width: 75%;
+}

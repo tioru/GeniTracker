@@ -1,2 +1,7 @@
 $topbar-height: 60px;
 $height-after-topbar: calc(100vh - #{$topbar-height});
+
+$info-color: rgb(0, 151, 221);
+$warning-color: rgb(219, 106, 0);
+$ok-color: rgb(61, 192, 0);
+$error-color: rgb(236, 0, 0);

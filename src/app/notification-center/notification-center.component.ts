@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { notificationModel, NotificationService } from '../../utilities/services/notification.service';
+import { notificationModel, NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
 import { Observable, of } from 'rxjs';
 import { CommonModule, NgFor } from '@angular/common';
 
@@ -16,6 +16,7 @@ export class NotificationCenterComponent implements OnInit {
   ) {}
 
   public notifications: Observable<Array<notificationModel>> = of([]);
+  public notificationSeverity = notificationSeverity
   
   ngOnInit(): void {
     this.notifications = this.notificationService.notifications$;

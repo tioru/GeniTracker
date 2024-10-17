@@ -1,3 +1,4 @@
+@use './variables' as vars;
 /* You can add global styles to this file, and also import other style files */
 
 @font-face {
@@ -55,18 +56,16 @@ app-root {
   height: 100%;
 }
 
-// Boucle @for pour générer des classes de w-10 à w-100
-@for $i from 1 through 9 {
-    .h#{$i * 10} {
-      height: #{$i * 10 + '%'};
-    }
-}  
-
 .fw {
   width: 100%;
 }
 
-// Boucle @for pour générer des classes de w-10 à w-100
+@for $i from 1 through 9 {
+    .h#{$i * 10} {
+      height: #{$i * 10 + '%'};
+    }
+}
+
 @for $i from 1 through 9 {
     .w#{$i * 10} {
       width: #{$i * 10 + '%'};
@@ -85,6 +84,18 @@ app-root {
   }
 }
 
+@for $i from 1 through 10 {
+  .mt#{$i * 10} {
+    margin-top: #{$i * 10 + 'px'};
+  }
+}
+
+@for $i from 1 through 10 {
+  .mb#{$i * 10} {
+    margin-bottom: #{$i * 10 + 'px'};
+  }
+}
+
 @for $i from 1 through 5 {
   .gap#{$i * 10} {
     gap: #{$i * 10 + 'px'};
@@ -93,8 +104,9 @@ app-root {
 
 app-notification-center {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 65px;
+  right: 5px;
+  height: calc(vars.$height-after-topbar - 25px);
   color: white;
 }
 
@@ -104,6 +116,7 @@ app-topbar {
     border-radius: 6px;
     background-color: black;
     color: white;
+    padding: 0;
     font-family: 'Genshin', sans-serif;
   }
 }

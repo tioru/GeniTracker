@@ -12,6 +12,8 @@ export interface notificationModel{
 const DEFAULT_NOTIFICATION_DELAY_VALUE = 3000 // In milliseconds
 const DEFAULT_NOTIFICATION_STICKY_VALUE = false
 
+const FADE_OUT_DELAY_ANIMATION = 500 // In milliseconds
+
 export enum notificationSeverity {
   ERROR,
   WARNING,
@@ -46,11 +48,22 @@ export class NotificationService {
     this.notificationsSubject.next(updatedNotifications);
 
     if (notification.delay && !notification.sticky) {
-      setTimeout(
-        () => {
+      setTimeout(() => {
+        this.triggerFadeOut(notification);
+  
+        setTimeout(() => {
           this.removeNotification(notification);
-        }, notification.delay);
+        }, FADE_OUT_DELAY_ANIMATION);
+      }, notification.delay);
     }
+  }
+
+  public closeNotification(notification: notificationModel): void {
+    this.triggerFadeOut(notification);
+
+    setTimeout(() => {
+      this.removeNotification(notification);
+    }, FADE_OUT_DELAY_ANIMATION);
   }
 
   public removeNotification(removedNotification : notificationModel) : void {
@@ -61,5 +74,13 @@ export class NotificationService {
     );
 
     this.notificationsSubject.next(updatedNotifications);
+  }
+
+  private triggerFadeOut(notification: notificationModel): void {
+    const index = this.notificationsSubject.value.findIndex(n => n === notification);
+    if (index !== -1) {
+      const notificationElement = document.getElementsByClassName('notification')[index];
+      notificationElement.classList.add('fade-out');
+    }
   }
 }
