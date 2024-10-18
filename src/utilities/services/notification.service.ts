@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 export interface notificationModel{
   title : string,
   severity : notificationSeverity,
-  detail : string,
+  detail? : string,
   delay? : number
   sticky? : boolean
 }

@@ -20,7 +20,7 @@ export class HomeComponent {
       title: 'TEST',
       severity : notificationSeverity.ERROR,
       detail : "detail de test" + this.counter,
-      sticky: false,
+      sticky: true,
       delay: 3000
     })
     this.counter += 1

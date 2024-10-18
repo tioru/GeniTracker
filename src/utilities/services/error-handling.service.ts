@@ -32,10 +32,8 @@ export class ErrorHandlingService {
         errorMessage = `Erreur : ${operation}`;
       }
       
-      // Display error message using MessageService
-      if ( error.status !== 0) this.notificationService.addNotification({ severity: notificationSeverity.INFO, sticky: true, detail: errorMessage, title: "TEST"});
+      if ( error.status !== 0) this.notificationService.addNotification({title: errorMessage, severity: notificationSeverity.ERROR, sticky: true});
 
-      // Log detailed error message to console
       console.error(errorMessage);
 
       return of(fallbackValue as T);
