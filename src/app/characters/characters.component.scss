@@ -52,3 +52,32 @@
         }
     }
 }
+
+.loading_chars {
+    color: white;
+}
+
+.spinner {
+    width: 100px;
+    height: 100px;
+    border: 8px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #a1a1a1;
+    border-radius: 50%;
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card {
+    padding: 20px;
+    background-color: rgb(55, 55, 55);
+    box-shadow: 0px 8px 250px rgba(0, 0, 0, 1.1);
+    border-radius: 50px;
+  
+    /* Border avec opacité et effet doux */
+    border: 2px solid rgba(255, 255, 255, 0.1); /* Bordure blanche translucide */
+  }
