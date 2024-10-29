@@ -18,10 +18,8 @@
     border: 0px solid transparent;
     background-color: transparent;
     cursor: pointer;
-}
-
-.topbar_item:hover {
     .img_container::before {
+        transition: all 0.5s;
         position: fixed;
         content: '';
         width: 40px;
@@ -30,34 +28,39 @@
         filter: blur(4px);
         border-radius: 50%;
         z-index: 0;
-        animation: fadeIn 0.5s ease;
+        opacity: 0;
     }
 }
 
-.topbar_item.home_button:hover {
+.topbar_item.home_button {
+    border: 0px solid transparent;
+    background-color: transparent;
+    cursor: pointer;
     .img_container::before {
+        transition: all 0.5s;
         position: fixed;
         content: '';
-        width: 45px;
-        height: 45px;
-        top: 7px;
-        left: 9px;
+        width: 43px;
+        height: 43px;
         background: rgba(255, 255, 255, 0.6);
         filter: blur(4px);
         border-radius: 50%;
         z-index: 0;
-        animation: fadeIn 0.5s ease;
+        opacity: 0;
+        top: 7px;
+        left: 10px;
+    }
+}
+
+.topbar_item:hover {
+    .img_container::before {
+        opacity: 1;
     }
 }
 
 .img_container img {
     position: relative;
     z-index: 1;
-}
-
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
 }
 
 .notification_bell {
