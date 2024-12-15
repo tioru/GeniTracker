@@ -1,15 +1,28 @@
-<div [ngClass]="{'fh': loadingCharacters}" class="flex column jcc aic">
-    <div *ngIf="!loadingCharacters" class="flex jcc gap20 mt50">
-        <div class="input-container">
-            <input class="search_bar" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch">
-            <button *ngIf="characterNameSearch" class="clear-icon" (click)="characterNameSearch = ''">
-                <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
-            </button>
+<div class="flex fh column jcc aic">
+    <div *ngIf="!loadingCharacters" class="flex jcc column gap30 fh fw aic">
+        <div class="flex gap20">
+            <div class="input_container mt20">
+                <input class="search_bar" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch">
+                <button *ngIf="characterNameSearch" class="clear_icon" (click)="characterNameSearch = ''">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                </button>
+            </div>
+            <div class="mt20">
+                <button [disabled]="true" class="search_button" (click)="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+                </button>
+            </div>
         </div>
-        <div class="flex aic jcc">
-            <button class="search_button" (click)="getCharacter()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
-            </button>
+        <div class="characters_display fw">
+            <div *ngFor="let character of characters">
+                <div [ngStyle]="isSearched(character.name) ? {} : {'display': 'none'}" [ngClass]="character.vision" class="flex column aic gap5">
+                    <div (click)="getCharacterInformations(character.name)" class="vision_icon"></div>
+                    <img (click)="getCharacterInformations(character.name)" class="character_icon" [src]=character.icon width="80" height="80">
+                    <span (click)="getCharacterInformations(character.name)" class="character_name">
+                        {{character.name}}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     <div *ngIf="loadingCharacters" class="flex aic jcc column gap50 card">
@@ -17,5 +30,8 @@
         <h2 class="loading_chars">
             Chargements des personnages
         </h2>
+    </div>
+    <div class="character_modal" *ngIf="characterInfoVisibility">
+
     </div>
 </div>

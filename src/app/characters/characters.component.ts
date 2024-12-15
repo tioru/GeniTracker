@@ -15,7 +15,8 @@ import { ProjectClass } from '../../utilities/classes/class';
 export class CharactersComponent implements OnInit{
   public characterNameSearch : string = ""
   public characters : Array<ProjectClass.CharacterListing> = []
-  public loadingCharacters = true
+  public loadingCharacters : boolean = true
+  public characterInfoVisibility : boolean = false
   
   constructor(
     public charactersService : API.Characters,
@@ -23,24 +24,34 @@ export class CharactersComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    this.charactersService.getCharactersNameAndIcon().subscribe((data) => {
+    this.charactersService.getCharactersLiteInformations().subscribe((data) => {
       this.characters = data
       this.loadingCharacters = false
+      console.log(this.characters)
     })
   }
 
-  public getCharacter() : void {
-    this.charactersService.getCharacter(this.characterNameSearch).subscribe(
-      (result) => {
-        if (result) {
-          this.notificationService.addNotification({
-            title: 'Récupération réussi',
-            severity : notificationSeverity.OK,
-            delay: 4000,
-            sticky: false
-          })
+  public getCharacterInformations(name : string) : void {
+    this.charactersService.getCharacterInformations(name).subscribe(
+      (charInformations) => {
+        if (charInformations) {
+          console.log(charInformations)
         }
       }
     )
+    this.charactersService.getCharacterArts(name).subscribe(
+      (characterArts) => {
+        if (characterArts) {
+          console.log(characterArts)
+        }
+      }
+    )
+  }
+
+  public isSearched(characterName : string) {
+    if (this.characterNameSearch != "") {
+      return characterName.includes(this.characterNameSearch)
+    }
+    return true
   }
 }

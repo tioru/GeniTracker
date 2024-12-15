@@ -2,11 +2,12 @@ import { SkillTalentsClass } from "./skillTalents"
 import { PassiveTalentsClass } from "./passiveTalents"
 import { ConstellationClass } from "./constellations"
 import { AscentionMaterialsClass } from "./ascensionMaterials"
+import { VisionTypeClass } from "./visionType"
 
 export class CharacterClass {
   "name" : string
   "title" : string
-  "vision" : string
+  "vision" : VisionTypeClass
   "weapon" : string
   "gender" : string
   "nation" : string
