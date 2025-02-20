@@ -1,6 +1,6 @@
 <div class="flex fh column jcc aic">
     <div *ngIf="!loadingCharacters" class="flex jcc column gap30 fh fw aic">
-        <div class="flex gap20">
+        <div class="input_button_container flex gap20">
             <div class="input_container mt20">
                 <input class="search_bar" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch">
                 <button *ngIf="characterNameSearch" class="clear_icon" (click)="characterNameSearch = ''">
@@ -13,16 +13,22 @@
                 </button>
             </div>
         </div>
-        <div class="characters_display fw">
-            <div *ngFor="let character of characters">
-                <div [ngStyle]="isSearched(character.name) ? {} : {'display': 'none'}" [ngClass]="character.vision" class="flex column aic gap5">
-                    <div (click)="getCharacterInformations(character.name)" class="vision_icon"></div>
+        <div class="fw characters_display">
+            @if (filteredCharacters.length) {
+                <div (click)="getCharacterInformations(character.name)" *ngFor="let character of filteredCharacters" [ngClass]="character.vision" class="flex aic character_wrapper">
                     <img (click)="getCharacterInformations(character.name)" class="character_icon" [src]=character.icon width="80" height="80">
-                    <span (click)="getCharacterInformations(character.name)" class="character_name">
-                        {{character.name}}
-                    </span>
+                    <div [ngClass]="character.vision"  class="flex column fh aic jcc fw character_lite_info_wrapper">
+                        <span (click)="getCharacterInformations(character.name)" class="character_name">
+                            {{character.name}}
+                        </span>
+                    </div>
+                    <div class="vision"></div>
                 </div>
-            </div>
+            } @else {
+                <div class="flex aic jcc">
+                    <h1 class="no_character_found">Aucun personnage trouvé</h1>
+                </div>
+            }
         </div>
     </div>
     <div *ngIf="loadingCharacters" class="flex aic jcc column gap50 card">
@@ -32,6 +38,6 @@
         </h2>
     </div>
     <div class="character_modal" *ngIf="characterInfoVisibility">
-
+        <span>Test</span>
     </div>
 </div>

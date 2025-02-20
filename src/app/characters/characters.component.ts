@@ -1,22 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { API } from '../../utilities/api/request';
 import { FormsModule } from '@angular/forms';
-import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
+import { NotificationService } from '../../utilities/services/notification.service';
 import { CommonModule } from '@angular/common';
 import { ProjectClass } from '../../utilities/classes/class';
+import { animations } from './animation';
 
 @Component({
   selector: 'app-characters',
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './characters.component.html',
-  styleUrl: './characters.component.scss'
+  styleUrl: './characters.component.scss',
+  animations: animations
 })
 export class CharactersComponent implements OnInit{
-  public characterNameSearch : string = ""
-  public characters : Array<ProjectClass.CharacterListing> = []
-  public loadingCharacters : boolean = true
-  public characterInfoVisibility : boolean = false
+  public characterNameSearch : string = "";
+  public loadingCharacters : boolean = true;
+  public characterInfoVisibility : boolean = false;
+  public characters : Array<ProjectClass.CharacterListing> = [];
+  public VisionTypeList = ProjectClass.VisionTypeList;
   
   constructor(
     public charactersService : API.Characters,
@@ -48,10 +51,9 @@ export class CharactersComponent implements OnInit{
     )
   }
 
-  public isSearched(characterName : string) {
-    if (this.characterNameSearch != "") {
-      return characterName.includes(this.characterNameSearch)
-    }
-    return true
+  get filteredCharacters(): Array<ProjectClass.CharacterListing> {
+    return this.characters.filter(character => 
+      character.name.toLowerCase().includes(this.characterNameSearch.toLowerCase())
+    );
   }
 }

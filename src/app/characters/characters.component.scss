@@ -5,6 +5,11 @@
     display: inline-block;
 }
 
+.input_button_container {
+    position: fixed;
+    top: 100px;
+}
+
 .search_bar {
     color: rgb(188, 188, 188);
     padding: 10px 43px 10px 15px;
@@ -15,6 +20,10 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     background-color: #272727;
+}
+
+.no_character_found {
+    color: white;
 }
 
 .clear_icon {
@@ -85,80 +94,26 @@
 
 .characters_display {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
     gap: 15px;
     overflow: overlay;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
     padding: 10px 0 15px 0;
-    
-    .Geo {
-        position: relative;
-        .vision_icon {
-            background-image: url(./../../assets/img/GeoElement.webp), radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(77,32,27,1) 67%);
-        }
-    }
-    .Cryo {
-        position: relative;
-        .vision_icon {
-            background-image: url(./../../assets/img/CryoElement.webp), radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(77,32,27,1) 67%);
-        }
-    }
-    .Pyro {
-        position: relative;
-        .vision_icon {
-            background-image: url(./../../assets/img/PyroElement.webp), radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(77,32,27,1) 67%);
-        }
-    }
-    .Dendro {
-        position: relative;
-        .vision_icon {
-            background-image: url(./../../assets/img/DendroElement.webp), radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(77,32,27,1) 67%);
-        }
-    }
-    .Anemo {
-        position: relative;
-        .vision_icon {
-            background-image: url(./../../assets/img/AnemoElement.webp), radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(77,32,27,1) 67%);
-        }
-    }
-    .Hydro {
-        position: relative;
-        .vision_icon {
-            background-image: url(./../../assets/img/HydroElement.webp), radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(77,32,27,1) 67%);
-        }
-    }
-    .Electro {
-        position: relative;
-        .vision_icon {
-            background-image: url(./../../assets/img/ElectroElement.webp), radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(77,32,27,1) 67%);
-        }
-    }
+    margin-top: 150px;
 }
 
 .character_name {
     color: white;
     text-transform: capitalize;
-    background-color: rgba(255, 255, 255, 0.5);
     padding: 2px 4px;
-    border-radius: 10px;
-}
-
-.character_icon {
-    background: rgba(77,32,27,1);
-    border-radius: 50%;
-    padding: 0px;
-    border: white 4px solid;
+    font-size: 17px;
 }
 
 .vision_icon {
-    border-radius: 25%;
     height: 35px;
     width: 35px;
-    position: absolute;
-    top: -5px; /* Ajustez selon vos besoins */
-    right: 50px; /* Ajustez selon vos besoins */
-    border: 2px solid white;
+    position: relative;
     background-position: center;
     background-size: cover;
 }
@@ -192,4 +147,124 @@
         background-color: rgba(0, 0, 0, 0.5);
         z-index: -1;
     }
+}
+
+.character_icon {
+    border-right: 2px gray solid;
+}
+
+.character_wrapper {
+    border: 2px gray solid;
+    border-radius: 15px;
+    width: 275px;
+    height: 80px;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    :hover {
+        cursor: pointer;
+    }
+    
+    &.Geo {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(255, 205, 0) 300%);
+        .vision { 
+            background-image: url(./../../assets/img/GeoElement.webp);
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            width: 50px;
+            position: relative;
+            top: -10px;
+            right: -95px;
+            filter: invert(30%);
+        }
+    }
+    &.Cryo {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 238, 255) 300%);
+        .vision {
+            background-image: url(./../../assets/img/CryoElement.webp);
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            width: 50px;
+            position: relative;
+            top: -10px;
+            right: -95px;
+            filter: invert(30%);
+        }
+    }
+    &.Pyro {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(182, 0, 0) 300%);
+        .vision {
+            background-image: url(./../../assets/img/PyroElement.webp);
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            width: 50px;
+            position: relative;
+            top: -10px;
+            right: -95px;
+            filter: invert(30%);
+        }
+    }
+    &.Dendro {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 182, 9) 300%);
+        .vision {
+            background-image: url(./../../assets/img/DendroElement.webp);
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            width: 50px;
+            position: relative;
+            top: -10px;
+            right: -95px;
+            filter: invert(30%);
+        }
+    }
+    &.Anemo {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 182, 167) 300%);
+        .vision {
+            background-image: url(./../../assets/img/AnemoElement.webp);
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            width: 50px;
+            position: relative;
+            top: -10px;
+            right: -95px;
+            filter: invert(30%);
+        }
+    }
+    &.Hydro {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 94, 182) 300%);
+        .vision {
+            background-image: url(./../../assets/img/HydroElement.webp);
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            width: 50px;
+            position: relative;
+            top: -10px;
+            right: -95px;
+            filter: invert(30%);
+        }
+    }
+    &.Electro {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(124, 0, 182) 300%);
+        .vision {
+            background-image: url(./../../assets/img/ElectroElement.webp);
+            background-position: center;
+            background-size: cover;
+            height: 100%;
+            width: 200px;
+            position: relative;
+            top: 0px;
+            right: -40px;
+            filter: invert(30%);
+        }
+    }
+}
+
+.character_lite_info_wrapper {
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
