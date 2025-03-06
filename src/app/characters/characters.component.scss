@@ -163,111 +163,38 @@
     :hover {
         cursor: pointer;
     }
-    
-    &.Geo {
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(255, 205, 0) 300%);
-        .vision { 
-            background-image: url(./../../assets/img/GeoElement.webp);
-            background-position: center;
-            background-size: 75%;
-            background-repeat: no-repeat;
-            height: 100%;
-            width: 75px;
-            position: absolute;
-            top: 0px;
-            right: -40px;
-            filter: invert(30%);
+
+
+    $elements: (
+        "Geo": (color: rgb(255, 205, 0), image: "GeoElement.webp"),
+        "Cryo": (color: rgb(0, 238, 255), image: "CryoElement.webp"),
+        "Pyro": (color: rgb(182, 0, 0), image: "PyroElement.webp"),
+        "Dendro": (color: rgb(0, 182, 9), image: "DendroElement.webp"),
+        "Anemo": (color: rgb(0, 182, 167), image: "AnemoElement.webp"),
+        "Hydro": (color: rgb(0, 94, 182), image: "HydroElement.webp"),
+        "Electro": (color: rgb(124, 0, 182), image: "ElectroElement.webp")
+    );
+
+    @each $element, $values in $elements {
+        &.#{$element} {
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, map-get($values, color) 300%);
+
+            .vision {
+                background-image: url('./../../assets/img/#{map-get($values, image)}');
+            }
         }
     }
-    &.Cryo {
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 238, 255) 300%);
-        .vision {
-            background-image: url(./../../assets/img/CryoElement.webp);
-            background-position: center;
-            background-size: 75%;
-            background-repeat: no-repeat;
-            height: 100%;
-            width: 75px;
-            position: absolute;
-            top: 0px;
-            right: -40px;
-            filter: invert(30%);
-        }
-    }
-    &.Pyro {
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(182, 0, 0) 300%);
-        .vision {
-            background-image: url(./../../assets/img/PyroElement.webp);
-            background-position: center;
-            background-size: 75%;
-            background-repeat: no-repeat;
-            height: 100%;
-            width: 75px;
-            position: absolute;
-            top: 0px;
-            right: -40px;
-            filter: invert(30%);
-        }
-    }
-    &.Dendro {
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 182, 9) 300%);
-        .vision {
-            background-image: url(./../../assets/img/DendroElement.webp);
-            background-position: center;
-            background-size: 75%;
-            background-repeat: no-repeat;
-            height: 100%;
-            width: 75px;
-            position: absolute;
-            top: 0px;
-            right: -40px;
-            filter: invert(30%);
-        }
-    }
-    &.Anemo {
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 182, 167) 300%);
-        .vision {
-            background-image: url(./../../assets/img/AnemoElement.webp);
-            background-position: center;
-            background-size: 75%;
-            background-repeat: no-repeat;
-            height: 100%;
-            width: 75px;
-            position: absolute;
-            top: 0px;
-            right: -40px;
-            filter: invert(30%);
-        }
-    }
-    &.Hydro {
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 94, 182) 300%);
-        .vision {
-            background-image: url(./../../assets/img/HydroElement.webp);
-            background-position: center;
-            background-size: 75%;
-            background-repeat: no-repeat;
-            height: 100%;
-            width: 75px;
-            position: absolute;
-            top: 0px;
-            right: -40px;
-            filter: invert(30%);
-        }
-    }
-    &.Electro {
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(124, 0, 182) 300%);
-        .vision {
-            background-image: url(./../../assets/img/ElectroElement.webp);
-            background-position: center;
-            background-size: 75%;
-            background-repeat: no-repeat;
-            height: 100%;
-            width: 75px;
-            position: absolute;
-            top: 0px;
-            right: -40px;
-            filter: invert(30%);
-        }
+
+    .vision {
+        background-position: center;
+        background-size: 75%;
+        background-repeat: no-repeat;
+        height: 100%;
+        width: 75px;
+        position: absolute;
+        top: 0;
+        right: -40px;
+        filter: invert(30%);
     }
 }
 
