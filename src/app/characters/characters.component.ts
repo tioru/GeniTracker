@@ -18,8 +18,9 @@ export class CharactersComponent implements OnInit{
   public characterNameSearch : string = "";
   public loadingCharacters : boolean = true;
   public characterInfoVisibility : boolean = false;
-  public characters : Array<ProjectClass.CharacterListing> = [];
+  public charactersCard : {hover : boolean, character : ProjectClass.CharacterListing}[] = [];
   public VisionTypeList = ProjectClass.VisionTypeList;
+  public dialogVisibility : boolean = false;
   
   constructor(
     public charactersService : API.Characters,
@@ -28,9 +29,10 @@ export class CharactersComponent implements OnInit{
 
   ngOnInit(): void {
     this.charactersService.getCharactersLiteInformations().subscribe((data) => {
-      this.characters = data
-      this.loadingCharacters = false
-      console.log(this.characters)
+      data.forEach((character) => {
+        this.charactersCard.push({hover: false, character: character})
+      })
+      this.loadingCharacters = false;
     })
   }
 
@@ -38,22 +40,22 @@ export class CharactersComponent implements OnInit{
     this.charactersService.getCharacterInformations(name).subscribe(
       (charInformations) => {
         if (charInformations) {
-          console.log(charInformations)
+          console.log(charInformations);
         }
       }
     )
     this.charactersService.getCharacterArts(name).subscribe(
       (characterArts) => {
         if (characterArts) {
-          console.log(characterArts)
+          console.log(characterArts);
         }
       }
     )
   }
 
-  get filteredCharacters(): Array<ProjectClass.CharacterListing> {
-    return this.characters.filter(character => 
-      character.name.toLowerCase().includes(this.characterNameSearch.toLowerCase())
+  get filteredCharactersCard(): {hover : boolean, character : ProjectClass.CharacterListing}[] {
+    return this.charactersCard.filter(characterCard =>
+      characterCard.character.name.toLowerCase().includes(this.characterNameSearch.toLowerCase())
     );
   }
 }

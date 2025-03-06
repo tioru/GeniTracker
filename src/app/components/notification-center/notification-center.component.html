@@ -1,5 +1,3 @@
-
-
 <div class="flex column gap10 direct_notification_listing">
     <container-element *ngFor="let notification of notifications | async" [ngSwitch]="notification.severity" class="flex column gap10">
         <div class="notification error flex" *ngSwitchCase="notificationSeverity.ERROR">

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { notificationModel, NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
+import { notificationModel, NotificationService, notificationSeverity } from '../../../utilities/services/notification.service';
 import { Observable, of } from 'rxjs';
 import { CommonModule, NgFor } from '@angular/common';
 
 @Component({
-  selector: 'app-notification-center',
+  selector: 'notification-center',
   standalone: true,
   imports: [CommonModule, NgFor],
   templateUrl: './notification-center.component.html',

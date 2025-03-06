@@ -1,5 +1,5 @@
 <div class="flex fh column jcc aic">
-    <div *ngIf="!loadingCharacters" class="flex jcc column gap30 fh fw aic">
+    <div *ngIf="!loadingCharacters" class="flex jcc column fh fw aic">
         <div class="input_button_container flex gap20">
             <div class="input_container mt20">
                 <input class="search_bar" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch">
@@ -14,15 +14,23 @@
             </div>
         </div>
         <div class="fw characters_display">
-            @if (filteredCharacters.length) {
-                <div (click)="getCharacterInformations(character.name)" *ngFor="let character of filteredCharacters" [ngClass]="character.vision" class="flex aic character_wrapper">
-                    <img (click)="getCharacterInformations(character.name)" class="character_icon" [src]=character.icon width="80" height="80">
-                    <div [ngClass]="character.vision"  class="flex column fh aic jcc fw character_lite_info_wrapper">
-                        <span (click)="getCharacterInformations(character.name)" class="character_name">
-                            {{character.name}}
-                        </span>
+            @if (filteredCharactersCard.length != 0) {
+                <div *ngFor="let characterCard of filteredCharactersCard" 
+                    (click)="getCharacterInformations(characterCard.character.name); dialogVisibility = true" 
+                    class="fw flex jcc">
+                    <div [@hover]="characterCard.hover" 
+                        (mouseenter)="characterCard.hover = true"
+                        (mouseleave)="characterCard.hover = false" 
+                        class="flex aic character_wrapper" 
+                        [ngClass]="characterCard.character.vision" >
+                        <img (click)="getCharacterInformations(characterCard.character.name)" class="character_icon" [src]=characterCard.character.icon width="80" height="80">
+                        <div [ngClass]="characterCard.character.vision" class="flex column fh aic jcc fw character_lite_info_wrapper">
+                            <span (click)="getCharacterInformations(characterCard.character.name)" class="character_name">
+                                {{characterCard.character.name}}
+                            </span>
+                            <div class="vision"></div>
+                        </div>
                     </div>
-                    <div class="vision"></div>
                 </div>
             } @else {
                 <div class="flex aic jcc">
@@ -40,4 +48,17 @@
     <div class="character_modal" *ngIf="characterInfoVisibility">
         <span>Test</span>
     </div>
+</div>
+<div *ngIf="dialogVisibility">
+    <dialog>
+        <ng-template #header>
+
+        </ng-template>
+        <ng-template #content>
+
+        </ng-template>
+        <ng-template #footer>
+
+        </ng-template>
+    </dialog>
 </div>

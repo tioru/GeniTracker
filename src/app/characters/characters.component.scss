@@ -6,7 +6,7 @@
 }
 
 .input_button_container {
-    position: fixed;
+    position: relative;
     top: 100px;
 }
 
@@ -96,11 +96,11 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
     gap: 15px;
-    overflow: overlay;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
-    padding: 10px 0 15px 0;
-    margin-top: 150px;
+    margin: 150px 10px 15px 10px;
+    padding: 10px 0;
+    overflow: auto;
 }
 
 .character_name {
@@ -156,7 +156,7 @@
 .character_wrapper {
     border: 2px gray solid;
     border-radius: 15px;
-    width: 275px;
+    width: 260px;
     height: 80px;
     overflow: hidden;
     backdrop-filter: blur(5px);
@@ -169,12 +169,13 @@
         .vision { 
             background-image: url(./../../assets/img/GeoElement.webp);
             background-position: center;
-            background-size: cover;
+            background-size: 75%;
+            background-repeat: no-repeat;
             height: 100%;
-            width: 50px;
-            position: relative;
-            top: -10px;
-            right: -95px;
+            width: 75px;
+            position: absolute;
+            top: 0px;
+            right: -40px;
             filter: invert(30%);
         }
     }
@@ -183,12 +184,13 @@
         .vision {
             background-image: url(./../../assets/img/CryoElement.webp);
             background-position: center;
-            background-size: cover;
+            background-size: 75%;
+            background-repeat: no-repeat;
             height: 100%;
-            width: 50px;
-            position: relative;
-            top: -10px;
-            right: -95px;
+            width: 75px;
+            position: absolute;
+            top: 0px;
+            right: -40px;
             filter: invert(30%);
         }
     }
@@ -197,12 +199,13 @@
         .vision {
             background-image: url(./../../assets/img/PyroElement.webp);
             background-position: center;
-            background-size: cover;
+            background-size: 75%;
+            background-repeat: no-repeat;
             height: 100%;
-            width: 50px;
-            position: relative;
-            top: -10px;
-            right: -95px;
+            width: 75px;
+            position: absolute;
+            top: 0px;
+            right: -40px;
             filter: invert(30%);
         }
     }
@@ -211,12 +214,13 @@
         .vision {
             background-image: url(./../../assets/img/DendroElement.webp);
             background-position: center;
-            background-size: cover;
+            background-size: 75%;
+            background-repeat: no-repeat;
             height: 100%;
-            width: 50px;
-            position: relative;
-            top: -10px;
-            right: -95px;
+            width: 75px;
+            position: absolute;
+            top: 0px;
+            right: -40px;
             filter: invert(30%);
         }
     }
@@ -225,12 +229,13 @@
         .vision {
             background-image: url(./../../assets/img/AnemoElement.webp);
             background-position: center;
-            background-size: cover;
+            background-size: 75%;
+            background-repeat: no-repeat;
             height: 100%;
-            width: 50px;
-            position: relative;
-            top: -10px;
-            right: -95px;
+            width: 75px;
+            position: absolute;
+            top: 0px;
+            right: -40px;
             filter: invert(30%);
         }
     }
@@ -239,12 +244,13 @@
         .vision {
             background-image: url(./../../assets/img/HydroElement.webp);
             background-position: center;
-            background-size: cover;
+            background-size: 75%;
+            background-repeat: no-repeat;
             height: 100%;
-            width: 50px;
-            position: relative;
-            top: -10px;
-            right: -95px;
+            width: 75px;
+            position: absolute;
+            top: 0px;
+            right: -40px;
             filter: invert(30%);
         }
     }
@@ -253,10 +259,11 @@
         .vision {
             background-image: url(./../../assets/img/ElectroElement.webp);
             background-position: center;
-            background-size: cover;
+            background-size: 75%;
+            background-repeat: no-repeat;
             height: 100%;
-            width: 200px;
-            position: relative;
+            width: 75px;
+            position: absolute;
             top: 0px;
             right: -40px;
             filter: invert(30%);
