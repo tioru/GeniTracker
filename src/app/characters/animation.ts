@@ -11,5 +11,27 @@ export const animations = [
     transition('true <=> false', [
       animate('200ms ease-out')
     ])
+  ]),
+  trigger('enter-leave', [
+    transition(':enter', [
+      style({
+        transform: 'scale(0.5)',
+        opacity: '0'
+      }),
+      animate('200ms ease-out', 
+        style({
+          transform: 'scale(1)',
+          opacity: '1'
+        })
+      )
+    ]),
+    transition(':leave', [
+      animate('200ms ease-out', 
+        style({
+          transform: 'scale(0.5)',
+          opacity: '0'
+        })
+      )
+    ])
   ])
 ];

@@ -9,6 +9,7 @@ main {
 .topbar {
   height: vars.$topbar-height;
   border-bottom: white solid 2px;
+  box-sizing: border-box;
 }
 
 app-topbar {

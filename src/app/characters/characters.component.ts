@@ -17,7 +17,6 @@ import { animations } from './animation';
 export class CharactersComponent implements OnInit{
   public characterNameSearch : string = "";
   public loadingCharacters : boolean = true;
-  public characterInfoVisibility : boolean = false;
   public charactersCard : {hover : boolean, character : ProjectClass.CharacterListing}[] = [];
   public VisionTypeList = ProjectClass.VisionTypeList;
   public dialogVisibility : boolean = false;

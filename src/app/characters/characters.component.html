@@ -1,21 +1,23 @@
-<div class="flex fh column jcc aic">
-    <div *ngIf="!loadingCharacters" class="flex jcc column fh fw aic">
-        <div class="input_button_container flex gap20">
-            <div class="input_container mt20">
-                <input class="search_bar" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch">
-                <button *ngIf="characterNameSearch" class="clear_icon" (click)="characterNameSearch = ''">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
-                </button>
-            </div>
-            <div class="mt20">
-                <button [disabled]="true" class="search_button" (click)="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
-                </button>
+<div class="flex fh column aic" [ngClass]="{'jcc': loadingCharacters}">
+    <div *ngIf="!loadingCharacters" class="flex column fh fw aic" [ngClass]="{'jcc': loadingCharacters}">
+        <div class="mt50 mb50 fw">
+            <div class="flex gap20 aic jcse">
+                <div>
+                </div>
+                <div style="position: relative;">
+                    <input class="search_bar" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch" aria-autocomplete="list">
+                    <button *ngIf="characterNameSearch" class="clear_icon" (click)="characterNameSearch = ''">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                    </button>
+                </div>
+                <div class="filter-container">
+                    <span>Test</span>
+                </div>
             </div>
         </div>
         <div class="fw characters_display">
             @if (filteredCharactersCard.length != 0) {
-                <div *ngFor="let characterCard of filteredCharactersCard" 
+                <div [@enter-leave] *ngFor="let characterCard of filteredCharactersCard" 
                     (click)="getCharacterInformations(characterCard.character.name); dialogVisibility = true" 
                     class="fw flex jcc">
                     <div [@hover]="characterCard.hover" 
@@ -45,11 +47,8 @@
             Chargements des personnages
         </h2>
     </div>
-    <div class="character_modal" *ngIf="characterInfoVisibility">
-        <span>Test</span>
-    </div>
 </div>
-<div *ngIf="dialogVisibility">
+<!--<div *ngIf="dialogVisibility">
     <dialog>
         <ng-template #header>
 
@@ -61,4 +60,4 @@
 
         </ng-template>
     </dialog>
-</div>
+</div>-->
