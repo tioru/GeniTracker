@@ -1,1 +1,2 @@
 Ajouter une page avec un calendrier pour savoir les quand sont les anniversaires des persos
+Faire un affichage différent pour l'affichage des personnages pour afficher la date, et tous les personnages sortis ce même jour (cas pour les premiers personnages)

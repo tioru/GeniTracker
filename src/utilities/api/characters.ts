@@ -57,11 +57,14 @@ export class CharactersClass{
           }
     
           const characterRequests = names.map(name => {
-            const visionRequest = this.http.get(`${environment.apiUrl}/characters/${name}`, {
+            const generalInformationRequest = this.http.get(`${environment.apiUrl}/characters/${name}`, {
               headers: this.getHttpHeaders(),
               observe: 'response'
             }).pipe(
-              map(response => (response.body as ProjectClass.Character).vision)
+              map(response => ({ 
+                vision: (response.body as any as ProjectClass.Character).vision,
+                release: (response.body as any as ProjectClass.Character).release
+              }))
             );
     
             const iconRequest = this.http.get(`${environment.apiUrl}/characters/${name}/icon-big`, {
@@ -72,9 +75,9 @@ export class CharactersClass{
               map(iconResponse => iconResponse.body ? URL.createObjectURL(iconResponse.body) : 'default-icon.png')
             );
     
-            return forkJoin([visionRequest, iconRequest]).pipe(
-              map(([vision, icon]) =>
-                new ProjectClass.CharacterListing({ name, vision, icon })
+            return forkJoin([generalInformationRequest, iconRequest]).pipe(
+              map(([generalData, icon]) =>
+                new ProjectClass.CharacterListing({ name, icon, vision: generalData.vision, release: generalData.release })
               )
             );
           });

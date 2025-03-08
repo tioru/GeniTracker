@@ -1,17 +1,33 @@
 <div class="flex fh column aic" [ngClass]="{'jcc': loadingCharacters}">
     <div *ngIf="!loadingCharacters" class="flex column fh fw aic" [ngClass]="{'jcc': loadingCharacters}">
         <div class="mt50 mb50 fw">
-            <div class="flex gap20 aic jcse">
-                <div>
+            <div class="flex gap20 aic">
+                <div style="flex : 1">
                 </div>
-                <div style="position: relative;">
-                    <input class="search_bar" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch" aria-autocomplete="list">
+                <div class="flex aic jcc" style="position: relative; flex : 1">
+                    <input class="search_bar fw" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch" aria-autocomplete="list">
                     <button *ngIf="characterNameSearch" class="clear_icon" (click)="characterNameSearch = ''">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                     </button>
                 </div>
-                <div class="filter-container">
-                    <span>Test</span>
+                <div style="flex: 1" class="flex aic jcc">
+                    <div class="filter-container flex row gap10 aic jcc" 
+                    (mouseenter)="chevronVisibility = true"
+                    (mouseleave)="chevronVisibility = false"
+                    >
+                        <button [@enter-leave] *ngIf="chevronVisibility" class="svg_button" (click)="previousFilter()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="rgb(188, 188, 188)" width="20px" viewBox="0 0 24 24"><path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg>
+                        </button>
+                        <div class="flex aic jcc gap10">
+                            <button (click)="updateFilterOrder()" class="svg_button">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="rgb(188, 188, 188)" width="25px" viewBox="0 0 24 24"><path d="M6,13H18V11H6M3,6V8H21V6M10,18H14V16H10V18Z" /></svg>
+                            </button>
+                            <span>{{filter}}</span>
+                        </div>
+                        <button [@enter-leave] *ngIf="chevronVisibility" class="svg_button" (click)="nextFilter()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="rgb(188, 188, 188)" width="20px" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -31,6 +47,7 @@
                                 {{characterCard.character.name}}
                             </span>
                             <div class="vision"></div>
+                            <span [@enter-leave] *ngIf="characterCard.hover" class="release_date">{{characterCard.character.release}}</span>
                         </div>
                     </div>
                 </div>
