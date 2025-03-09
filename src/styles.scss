@@ -128,3 +128,16 @@ app-topbar {
     font-family: 'Genshin', sans-serif;
   }
 }
+
+dialog-component {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

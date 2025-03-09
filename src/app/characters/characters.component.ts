@@ -5,6 +5,7 @@ import { NotificationService } from '../../utilities/services/notification.servi
 import { CommonModule } from '@angular/common';
 import { ProjectClass } from '../../utilities/classes/class';
 import { animations } from './animation';
+import { DialogComponent } from '../components/dialog/dialog.component';
 
 export enum characterFilter {
   ALPHABETIC = "Alphabétique",
@@ -20,7 +21,7 @@ export enum filterOrder {
 @Component({
   selector: 'app-characters',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, DialogComponent],
   templateUrl: './characters.component.html',
   styleUrl: './characters.component.scss',
   animations: animations
@@ -33,6 +34,9 @@ export class CharactersComponent implements OnInit{
   public dialogVisibility : boolean = false;
   public filter : characterFilter = characterFilter.ALPHABETIC;
   public filterOrder : filterOrder = filterOrder.UP;
+  public onOustideClick = () => {
+    this.dialogVisibility = false;
+  }
   public chevronVisibility : boolean = false;
   
   constructor(
@@ -116,5 +120,5 @@ export class CharactersComponent implements OnInit{
     } else {
       this.filterOrder = filterOrder.UP;
     }
-  } 
+  }
 }

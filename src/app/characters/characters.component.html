@@ -2,7 +2,10 @@
     <div *ngIf="!loadingCharacters" class="flex column fh fw aic" [ngClass]="{'jcc': loadingCharacters}">
         <div class="mt50 mb50 fw">
             <div class="flex gap20 aic">
-                <div style="flex : 1">
+                <div class="flex aic jcc" style="flex : 1">
+                    <button (click)="dialogVisibility = !dialogVisibility">
+                        Dialog {{dialogVisibility}}
+                    </button>
                 </div>
                 <div class="flex aic jcc" style="position: relative; flex : 1">
                     <input class="search_bar fw" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch" aria-autocomplete="list">
@@ -65,16 +68,5 @@
         </h2>
     </div>
 </div>
-<!--<div *ngIf="dialogVisibility">
-    <dialog>
-        <ng-template #header>
-
-        </ng-template>
-        <ng-template #content>
-
-        </ng-template>
-        <ng-template #footer>
-
-        </ng-template>
-    </dialog>
-</div>-->
+<dialog-component *ngIf="dialogVisibility" [height]="'150px'" [modal]="true" [onOutsideClick]="onOustideClick">
+</dialog-component>

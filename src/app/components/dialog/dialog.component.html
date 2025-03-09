@@ -1,11 +1,12 @@
-<div class="dialog-container">
-    <div class="header" Header>
+<div [style]="{'height': height, 'width': width}" class="dialog-container" (click)="$event.stopPropagation()">
+    <span>Test</span>
+    <div class="header">
         
     </div>
-    <div class="content" Content>
+    <div class="content">
         
     </div>
-    <div class="footer" Footer>
+    <div class="footer">
         
     </div>
 </div>
