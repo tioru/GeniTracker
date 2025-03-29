@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { API } from '../../utilities/api/request';
 import { FormsModule } from '@angular/forms';
-import { NotificationService } from '../../utilities/services/notification.service';
+import { NotificationService, notificationModel, notificationSeverity } from '../../utilities/services/notification.service';
 import { CommonModule } from '@angular/common';
 import { ProjectClass } from '../../utilities/classes/class';
 import { animations } from './animation';
-import { DialogComponent } from '../components/dialog/dialog.component';
+import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
+import { zip } from 'rxjs';
+import { CharacterMapper } from '../../utilities/mapper/character';
+import { CharacterArtsMapper } from '../../utilities/mapper/characterArts';
+import { CharacterListingMapper } from '../../utilities/mapper/characterListing';
 
 export enum characterFilter {
   ALPHABETIC = "Alphabétique",
@@ -29,51 +33,61 @@ export enum filterOrder {
 export class CharactersComponent implements OnInit{
   public characterNameSearch : string = "";
   public loadingCharacters : boolean = true;
-  public charactersCard : {hover : boolean, character : ProjectClass.CharacterListing}[] = [];
-  public VisionTypeList = ProjectClass.VisionTypeList;
+  public charactersCard : {hover : boolean, character : ProjectClass.Local.CharacterListing}[] = [];
+  public VisionTypeList = ProjectClass.Local.VisionTypeList;
   public dialogVisibility : boolean = false;
   public filter : characterFilter = characterFilter.ALPHABETIC;
   public filterOrder : filterOrder = filterOrder.UP;
-  public onOustideClick = () => {
-    this.dialogVisibility = false;
-  }
   public chevronVisibility : boolean = false;
+  public dialogStyle : typeof DialogStyle = DialogStyle;
+
+  public selectedChar : ProjectClass.Local.Character | null = null;
+  public selectedCharArts : ProjectClass.Local.CharacterArts | null = null;
   
   constructor(
     public charactersService : API.Characters,
-    public notificationService : NotificationService
+    public notificationService : NotificationService,
+    public characterMapper : CharacterMapper,
+    public characterArtsMapper : CharacterArtsMapper,
+    public characterListingMapper : CharacterListingMapper
   ) {}
 
   ngOnInit(): void {
     this.charactersService.getCharactersLiteInformations().subscribe((data) => {
       data.forEach((character) => {
-        this.charactersCard.push({hover: false, character: character})
+        this.charactersCard.push({hover: false, character: this.characterListingMapper.mapRemote(character)})
       })
       this.loadingCharacters = false;
     })
   }
 
-  public getCharacterInformations(name : string) : void {
-    this.charactersService.getCharacterInformations(name).subscribe(
-      (charInformations) => {
-        if (charInformations) {
-          console.log(charInformations);
-        }
+  public getGlobalCharacterInformations(name : string) : void {
+    zip(
+      this.charactersService.getCharacterInformations(name),
+      this.charactersService.getCharacterArts(name)
+    ).subscribe({
+      next: (response) => {
+        this.selectedChar = this.characterMapper.mapRemote(response[0]);
+        this.selectedCharArts = this.characterArtsMapper.mapRemote(response[1]);
+        this.dialogVisibility = true;
+        console.log("Char : ", this.selectedChar)
+        console.log("Art : ", this.selectedCharArts)
+      },
+      error: (error) => {
+        console.error(error)
+        const notification : notificationModel = {title: "Erreur", severity: notificationSeverity.ERROR}
+        this.notificationService.addNotification(notification)
       }
-    )
-    this.charactersService.getCharacterArts(name).subscribe(
-      (characterArts) => {
-        if (characterArts) {
-          console.log(characterArts);
-        }
-      }
-    )
+    })
   }
 
-  get filteredCharactersCard(): {hover : boolean, character : ProjectClass.CharacterListing}[] {
-    const nameFiltered = this.charactersCard.filter(characterCard =>
-      characterCard.character.name.toLowerCase().includes(this.characterNameSearch.toLowerCase())
-    );
+  get filteredCharactersCard(): {hover : boolean, character : ProjectClass.Local.CharacterListing}[] {
+    const nameFiltered = this.charactersCard.filter(characterCard => {
+      if (characterCard.character.name) {
+        return characterCard.character.name.toLowerCase().includes(this.characterNameSearch.toLowerCase())
+      }
+      return false;
+    });
     return this.customFilter(nameFiltered);
   }
 
@@ -89,25 +103,25 @@ export class CharactersComponent implements OnInit{
     this.filter = filters[currentIndex === 0 ? filters.length - 1 : currentIndex - 1];
   }
 
-  public customFilter(cards: {hover : boolean, character : ProjectClass.CharacterListing}[]): {hover : boolean, character : ProjectClass.CharacterListing}[] {
+  public customFilter(cards: {hover : boolean, character : ProjectClass.Local.CharacterListing}[]): {hover : boolean, character : ProjectClass.Local.CharacterListing}[] {
     switch(this.filter) {
       case characterFilter.ALPHABETIC:
         if(this.filterOrder == filterOrder.UP) {
-          return cards.sort((a, b) => a.character.name.localeCompare(b.character.name));
+          return cards.sort((a, b) => (a.character.name!).localeCompare(b.character.name!));
         } else {
-          return cards.sort((b, a) => a.character.name.localeCompare(b.character.name));
+          return cards.sort((b, a) => (a.character.name!).localeCompare(b.character.name!));
         }
       case characterFilter.TYPE:
         if(this.filterOrder == filterOrder.UP) {
-          return cards.sort((a, b) => a.character.vision.localeCompare(b.character.vision));
+          return cards.sort((a, b) => (a.character.vision!).localeCompare(b.character.vision!));
         } else {
-          return cards.sort((b, a) => a.character.vision.localeCompare(b.character.vision));
+          return cards.sort((b, a) => (a.character.vision!).localeCompare(b.character.vision!));
         }
       case characterFilter.RELEASE_DATE:
         if(this.filterOrder == filterOrder.UP) {
-          return cards.sort((a, b) => new Date(b.character.release).getTime() - new Date(a.character.release).getTime());
+          return cards.sort((a, b) => new Date(b.character.release!).getTime() - new Date(a.character.release!).getTime());
         } else {
-          return cards.sort((b, a) => new Date(b.character.release).getTime() - new Date(a.character.release).getTime());
+          return cards.sort((b, a) => new Date(b.character.release!).getTime() - new Date(a.character.release!).getTime());
         }
       default:
         return cards;

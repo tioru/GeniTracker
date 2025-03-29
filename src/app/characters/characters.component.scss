@@ -166,13 +166,13 @@
     }
 
     $elements: (
-        "Geo": (color: rgb(255, 205, 0), image: "GeoElement.webp"),
-        "Cryo": (color: rgb(0, 238, 255), image: "CryoElement.webp"),
-        "Pyro": (color: rgb(182, 0, 0), image: "PyroElement.webp"),
-        "Dendro": (color: rgb(0, 182, 9), image: "DendroElement.webp"),
-        "Anemo": (color: rgb(0, 182, 167), image: "AnemoElement.webp"),
-        "Hydro": (color: rgb(0, 94, 182), image: "HydroElement.webp"),
-        "Electro": (color: rgb(124, 0, 182), image: "ElectroElement.webp")
+        "GEO": (color: rgb(255, 205, 0), image: "GeoElement.webp"),
+        "CRYO": (color: rgb(0, 238, 255), image: "CryoElement.webp"),
+        "PYRO": (color: rgb(182, 0, 0), image: "PyroElement.webp"),
+        "DENDRO": (color: rgb(0, 182, 9), image: "DendroElement.webp"),
+        "ANEMO": (color: rgb(0, 182, 167), image: "AnemoElement.webp"),
+        "HYDRO": (color: rgb(0, 94, 182), image: "HydroElement.webp"),
+        "ELECTRO": (color: rgb(124, 0, 182), image: "ElectroElement.webp")
     );
 
     @each $element, $values in $elements {

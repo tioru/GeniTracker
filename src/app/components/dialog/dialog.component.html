@@ -1,12 +1,13 @@
-<div [style]="{'height': height, 'width': width}" class="dialog-container" (click)="$event.stopPropagation()">
-    <span>Test</span>
-    <div class="header">
-        
-    </div>
-    <div class="content">
-        
-    </div>
-    <div class="footer">
-        
+<div [@fadeDialog]="dialogVisibility" [class.backgroundMask]="backgroundMask" class="dialog-outside-container" (click)="onOustideDialogClick()">
+    <div [style]="{'height': height, 'width': width}" class="dialog-container flex column">
+        <div *ngIf="dialogStyle.HBF" class="header fw" [class]="style === dialogStyle.HBF ? 'top-element' : ''">
+            <ng-content select="[header]"></ng-content>
+        </div>
+        <div class="body fw flex aic jcc column" [class]="style === dialogStyle.BF ? 'top-element' : ''">
+            <ng-content select="[body]"></ng-content>
+        </div>
+        <div class="footer fw">
+            <ng-content select="[footer]"></ng-content>
+        </div>
     </div>
 </div>

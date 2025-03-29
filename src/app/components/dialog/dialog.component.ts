@@ -1,33 +1,58 @@
-import { Component, ElementRef, HostListener, Input, ViewChild, ViewContainerRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { animations, FADE_DURATION } from './animations';
+
+export enum DialogStyle {
+  HBF,
+  BF
+}
 
 @Component({
   selector: 'dialog-component',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './dialog.component.html',
-  styleUrl: './dialog.component.scss'
+  styleUrl: './dialog.component.scss',
+  animations: animations
 })
 export class DialogComponent {
+  private _dialogVisibility: boolean = false;
+
+  @Input()
+  get dialogVisibility(): boolean {
+    return this._dialogVisibility;
+  }
+
+  set dialogVisibility(value: boolean) {
+    if (value) {
+      setTimeout(()=> {
+        this._dialogVisibility = value;
+      }, 1)
+    }
+    if (!value){
+      this._dialogVisibility = value;
+      setTimeout(()=> {
+        this.onHide.emit()
+      }, FADE_DURATION)
+    }
+  }
+   
   @Input() headerVisibility : boolean = true;
   @Input() footerVisibility : boolean = true;
   @Input() closable : boolean = true;
   @Input() modal : boolean = true;
   @Input() height : string = "auto";
   @Input() width : string = "auto";
-  @Input() onOutsideClick! : () => void;
+  @Input() backgroundMask : boolean = true;
 
-  @ViewChild('header', { read: ViewContainerRef }) headerContainer!: ViewContainerRef;
-  @ViewChild('content', { read: ViewContainerRef }) contentContainer!: ViewContainerRef;
-  @ViewChild('footer', { read: ViewContainerRef }) footerContainer!: ViewContainerRef;
+  @Input() style : DialogStyle = DialogStyle.HBF
+  @Output() onHide: EventEmitter<void> = new EventEmitter<void>();
 
-  @HostListener('document:click', ['$event'])
-  public clickOut() {
-    this.onClickLeave();
-  }
+  public dialogStyle : typeof DialogStyle = DialogStyle
 
-  private onClickLeave() : void {
+  public onOustideDialogClick() : void {
     if (this.modal) {
-      this.onOutsideClick()
+      this.dialogVisibility = false;
     }
   }
 }

@@ -3,9 +3,6 @@
         <div class="mt50 mb50 fw">
             <div class="flex gap20 aic">
                 <div class="flex aic jcc" style="flex : 1">
-                    <button (click)="dialogVisibility = !dialogVisibility">
-                        Dialog {{dialogVisibility}}
-                    </button>
                 </div>
                 <div class="flex aic jcc" style="position: relative; flex : 1">
                     <input class="search_bar fw" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch" aria-autocomplete="list">
@@ -37,16 +34,16 @@
         <div class="fw characters_display">
             @if (filteredCharactersCard.length != 0) {
                 <div [@enter-leave] *ngFor="let characterCard of filteredCharactersCard" 
-                    (click)="getCharacterInformations(characterCard.character.name); dialogVisibility = true" 
+                    (click)="getGlobalCharacterInformations(characterCard.character.name!)" 
                     class="fw flex jcc">
                     <div [@hover]="characterCard.hover" 
                         (mouseenter)="characterCard.hover = true"
                         (mouseleave)="characterCard.hover = false" 
                         class="flex aic character_wrapper" 
-                        [ngClass]="characterCard.character.vision" >
-                        <img (click)="getCharacterInformations(characterCard.character.name)" class="character_icon" [src]=characterCard.character.icon width="80" height="80">
+                        [ngClass]="characterCard.character.vision">
+                        <img class="character_icon" [src]=characterCard.character.icon width="80" height="80">
                         <div [ngClass]="characterCard.character.vision" class="flex column fh aic jcc fw character_lite_info_wrapper">
-                            <span (click)="getCharacterInformations(characterCard.character.name)" class="character_name">
+                            <span class="character_name">
                                 {{characterCard.character.name}}
                             </span>
                             <div class="vision"></div>
@@ -68,5 +65,13 @@
         </h2>
     </div>
 </div>
-<dialog-component *ngIf="dialogVisibility" [height]="'150px'" [modal]="true" [onOutsideClick]="onOustideClick">
+
+<dialog-component *ngIf="dialogVisibility && selectedCharArts && selectedChar" [style]="dialogStyle.BF" [dialogVisibility]="dialogVisibility" [modal]="true" (onHide)="dialogVisibility = false">
+    <div body>
+        <img [src]="selectedCharArts.gachaSplash">
+    </div>
+    
+    <div footer>
+        <span>footer</span>
+    </div>
 </dialog-component>
