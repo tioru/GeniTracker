@@ -9,6 +9,8 @@ import { LPassiveTalentsClass } from "./local/characters/passiveTalents";
 import { LSkillTalentsClass } from "./local/characters/skillTalents";
 import { LUpgradeClass } from "./local/characters/upgrade";
 import { LVisionTypeClass, LVisionTypeListEnum } from "./local/characters/visionType";
+import { LWeaponClass } from "./local/weapons/weapon";
+import { LWeaponListingClass } from "./local/weapons/weaponsListing";
 import { RAscentionMaterialsClass } from "./remote/characters/ascensionMaterials";
 import { RAttributeScalingClass } from "./remote/characters/attributeScaling";
 
@@ -21,6 +23,8 @@ import { RPassiveTalentsClass } from "./remote/characters/passiveTalents";
 import { RSkillTalentsClass } from "./remote/characters/skillTalents";
 import { RUpgradeClass } from "./remote/characters/upgrade";
 import { RVisionTypeClass, RVisionTypeListEnum } from "./remote/characters/visionType";
+import { RWeaponClass } from "./remote/weapons/weapon";
+import { RWeaponListingClass } from "./remote/weapons/weaponsListing";
 
 export namespace ProjectClass {
     export namespace Local {
@@ -38,6 +42,8 @@ export namespace ProjectClass {
         export class PassiveTalents extends LPassiveTalentsClass{};
         export class Constellation extends LConstellationClass{};
         export class AscentionMaterials extends LAscentionMaterialsClass{};
+        export class WeaponListing extends LWeaponListingClass{};
+        export class Weapon extends LWeaponClass{};
     }
 
     export namespace Remote {
@@ -55,5 +61,7 @@ export namespace ProjectClass {
         export class PassiveTalents extends RPassiveTalentsClass{};
         export class Constellation extends RConstellationClass{};
         export class AscentionMaterials extends RAscentionMaterialsClass{};
+        export class WeaponListing extends RWeaponListingClass{};
+        export class Weapon extends RWeaponClass{};
     }
 }

@@ -47,7 +47,7 @@
                                 {{characterCard.character.name}}
                             </span>
                             <div class="vision"></div>
-                            <span [@enter-leave] *ngIf="characterCard.hover" class="release_date">{{characterCard.character.release}}</span>
+                            <span [@enter-leave] *ngIf="characterCard.hover" class="release_date">{{characterCard.character.releaseDate}}</span>
                         </div>
                     </div>
                 </div>
@@ -58,15 +58,23 @@
             }
         </div>
     </div>
-    <div *ngIf="loadingCharacters" class="flex aic jcc column gap50 card">
-        <div class="spinner"></div>
-        <h2 class="loading_chars">
-            Chargements des personnages
-        </h2>
-    </div>
 </div>
 
-<dialog-component *ngIf="dialogVisibility && selectedCharArts && selectedChar" [style]="dialogStyle.BF" [dialogVisibility]="dialogVisibility" [modal]="true" (onHide)="dialogVisibility = false">
+<dialog-component *ngIf="loadingCharactersDialogVisibility" [style]="dialogStyle.B" [dialogVisibility]="loadingCharacters" [modal]="false" (onHide)="loadingCharactersDialogVisibility = false">
+    <div body>
+        <div class="flex" style="width: 60vw; height: 60vh;">
+            <div class="flex aic jcc column gap50" style="flex: 1;">
+                <div class="spinner"></div>
+                <span class="loading_chars">Chargements des personnages...</span>
+            </div>
+            <div class="landscape" style="flex: 2;">
+                <img [src]='randomPicturePath'>
+            </div>
+        </div>
+    </div>
+</dialog-component>
+
+<dialog-component *ngIf="dialogVisibility && selectedCharArts && selectedChar" [style]="dialogStyle.BF" [dialogVisibility]="dialogVisibility" (onHide)="dialogVisibility = false">
     <div body>
         <img [src]="selectedCharArts.gachaSplash">
     </div>

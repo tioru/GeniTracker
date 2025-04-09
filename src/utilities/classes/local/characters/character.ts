@@ -13,7 +13,7 @@ export class LCharacterClass {
   nation : string | null = null;
   affiliation : string | null = null;
   rarity : number | null = null;
-  release : string | null = null;
+  releaseDate : string | null = null;
   constellation : string | null = null;
   birthday : string | null = null;
   description : string | null = null;

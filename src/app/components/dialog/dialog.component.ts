@@ -4,7 +4,8 @@ import { animations, FADE_DURATION } from './animations';
 
 export enum DialogStyle {
   HBF,
-  BF
+  BF,
+  B
 }
 
 @Component({
@@ -44,6 +45,7 @@ export class DialogComponent {
   @Input() height : string = "auto";
   @Input() width : string = "auto";
   @Input() backgroundMask : boolean = true;
+  @Input() resetFields : boolean = true;
 
   @Input() style : DialogStyle = DialogStyle.HBF
   @Output() onHide: EventEmitter<void> = new EventEmitter<void>();

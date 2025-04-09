@@ -14,6 +14,17 @@
     }
 }
 
+.topbar_item:hover {
+    .img_container::before {
+        opacity: 1;
+    }
+}
+
+.img_container img {
+    position: relative;
+    z-index: 1;
+}
+
 .topbar_item {
     border: 0px solid transparent;
     background-color: transparent;
@@ -30,58 +41,4 @@
         z-index: 0;
         opacity: 0;
     }
-}
-
-.topbar_item.home_button {
-    border: 0px solid transparent;
-    background-color: transparent;
-    cursor: pointer;
-    .img_container::before {
-        transition: all 0.5s;
-        position: fixed;
-        content: '';
-        width: 43px;
-        height: 43px;
-        background: rgba(255, 255, 255, 0.6);
-        filter: blur(4px);
-        border-radius: 50%;
-        z-index: 0;
-        opacity: 0;
-        top: 7px;
-        left: 10px;
-    }
-}
-
-.topbar_item:hover {
-    .img_container::before {
-        opacity: 1;
-    }
-}
-
-.img_container img {
-    position: relative;
-    z-index: 1;
-}
-
-.notification_bell {
-    width: 30px;
-    height: 30px;
-    &:hover{
-        .svg_container::before {
-            position: fixed;
-            content: '';
-            width: 30px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.6);
-            filter: blur(4px);
-            border-radius: 50%;
-            z-index: 0;
-            animation: fadeIn 0.5s ease;
-        }
-    }
-}
-
-.svg_container svg {
-    position: relative;
-    z-index: 1;
 }

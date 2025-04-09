@@ -15,7 +15,7 @@ export class CharacterListingMapper {
             name : rCharacterListing.name,
             icon : rCharacterListing.icon,
             vision : rCharacterListing.vision ? this.visionTypeMapper.mapRemote(rCharacterListing.vision) : null,
-            release : rCharacterListing.release,
+            releaseDate : rCharacterListing.release,
         })
     }
 }

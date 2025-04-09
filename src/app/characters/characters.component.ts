@@ -33,6 +33,7 @@ export enum filterOrder {
 export class CharactersComponent implements OnInit{
   public characterNameSearch : string = "";
   public loadingCharacters : boolean = true;
+  public loadingCharactersDialogVisibility : boolean = true;
   public charactersCard : {hover : boolean, character : ProjectClass.Local.CharacterListing}[] = [];
   public VisionTypeList = ProjectClass.Local.VisionTypeList;
   public dialogVisibility : boolean = false;
@@ -40,6 +41,7 @@ export class CharactersComponent implements OnInit{
   public filterOrder : filterOrder = filterOrder.UP;
   public chevronVisibility : boolean = false;
   public dialogStyle : typeof DialogStyle = DialogStyle;
+  public randomPicturePath: string | null = null;
 
   public selectedChar : ProjectClass.Local.Character | null = null;
   public selectedCharArts : ProjectClass.Local.CharacterArts | null = null;
@@ -53,8 +55,9 @@ export class CharactersComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    this.charactersService.getCharactersLiteInformations().subscribe((data) => {
-      data.forEach((character) => {
+    this.randomPicturePath = this.getRandomPicture();
+    this.charactersService.getCharactersLiteInformations().subscribe((characters : ProjectClass.Remote.CharacterListing[]) => {
+      characters.forEach((character : ProjectClass.Remote.CharacterListing) => {
         this.charactersCard.push({hover: false, character: this.characterListingMapper.mapRemote(character)})
       })
       this.loadingCharacters = false;
@@ -119,9 +122,9 @@ export class CharactersComponent implements OnInit{
         }
       case characterFilter.RELEASE_DATE:
         if(this.filterOrder == filterOrder.UP) {
-          return cards.sort((a, b) => new Date(b.character.release!).getTime() - new Date(a.character.release!).getTime());
+          return cards.sort((a, b) => new Date(b.character.releaseDate!).getTime() - new Date(a.character.releaseDate!).getTime());
         } else {
-          return cards.sort((b, a) => new Date(b.character.release!).getTime() - new Date(a.character.release!).getTime());
+          return cards.sort((b, a) => new Date(b.character.releaseDate!).getTime() - new Date(a.character.releaseDate!).getTime());
         }
       default:
         return cards;
@@ -134,5 +137,12 @@ export class CharactersComponent implements OnInit{
     } else {
       this.filterOrder = filterOrder.UP;
     }
+  }
+
+  public getRandomPicture() : string {
+    const min = 1;
+    const max = 6;
+    const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+    return `./../../assets/img/Landscape/${randomNumber}.jpg`
   }
 }

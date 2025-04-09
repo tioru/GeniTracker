@@ -34,7 +34,7 @@ export class CharacterMapper {
             nation : rCharacter.nation,
             affiliation : rCharacter.affiliation,
             rarity : rCharacter.rarity,
-            release : rCharacter.release,
+            releaseDate : rCharacter.release,
             constellation : rCharacter.constellation,
             birthday : rCharacter.birthday,
             description : rCharacter.description,
