@@ -250,3 +250,16 @@ button {
         border-bottom-right-radius: 10px;
     }
 }
+
+.characterSplash {
+    mask-image: linear-gradient(to right, #272727 80%, transparent 100%);
+    img {
+        object-fit: cover;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+}
+
+.disabled {
+    opacity: 0.5;
+}

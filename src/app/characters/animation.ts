@@ -33,5 +33,16 @@ export const animations = [
         })
       )
     ])
-  ])
+  ]),
+  trigger('click', [
+    state('false', style({
+      transform: 'scale(1)',
+    })),
+    state('true', style({
+      transform: 'scale(0.8)',
+    })),
+    transition('true <=> false', [
+      animate('100ms ease-in-out')
+    ])
+  ]),
 ];

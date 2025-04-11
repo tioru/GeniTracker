@@ -11,6 +11,9 @@
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+    box-shadow: 1px 0px 10px 1px #0e0e0e;
+    border: 1px solid #454545;
+    transition: height 400ms ease-in-out, width 400ms ease-in-out;
 }
 
 .header {

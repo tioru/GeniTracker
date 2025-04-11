@@ -3,7 +3,7 @@
         <div *ngIf="dialogStyle.HBF" class="header fw" [class]="style === dialogStyle.HBF ? 'top-element' : ''">
             <ng-content select="[header]"></ng-content>
         </div>
-        <div class="body fw flex aic jcc column" [class]="style === dialogStyle.BF ? 'top-element' : style === dialogStyle.B ? 'only-element' : ''">
+        <div class="body fh fw flex aic jcc column" [class]="style === dialogStyle.BF ? 'top-element' : style === dialogStyle.B ? 'only-element' : ''">
             <ng-content select="[body]"></ng-content>
         </div>
         <div *ngIf="style === dialogStyle.HBF || style === dialogStyle.BF" class="bottom-element fw">

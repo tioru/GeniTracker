@@ -33,8 +33,10 @@ export enum filterOrder {
 export class CharactersComponent implements OnInit{
   public characterNameSearch : string = "";
   public loadingCharacters : boolean = true;
+  public loadingCharacter : boolean = false;
+  public isInTransition : boolean = false;
   public loadingCharactersDialogVisibility : boolean = true;
-  public charactersCard : {hover : boolean, character : ProjectClass.Local.CharacterListing}[] = [];
+  public charactersCard : {hover : boolean, click: boolean, character : ProjectClass.Local.CharacterListing}[] = [];
   public VisionTypeList = ProjectClass.Local.VisionTypeList;
   public dialogVisibility : boolean = false;
   public filter : characterFilter = characterFilter.ALPHABETIC;
@@ -58,13 +60,15 @@ export class CharactersComponent implements OnInit{
     this.randomPicturePath = this.getRandomPicture();
     this.charactersService.getCharactersLiteInformations().subscribe((characters : ProjectClass.Remote.CharacterListing[]) => {
       characters.forEach((character : ProjectClass.Remote.CharacterListing) => {
-        this.charactersCard.push({hover: false, character: this.characterListingMapper.mapRemote(character)})
+        this.charactersCard.push({hover: false, click: false, character: this.characterListingMapper.mapRemote(character)})
       })
       this.loadingCharacters = false;
     })
   }
 
   public getGlobalCharacterInformations(name : string) : void {
+    this.dialogVisibility = true;
+    this.loadingCharacter = true;
     zip(
       this.charactersService.getCharacterInformations(name),
       this.charactersService.getCharacterArts(name)
@@ -72,7 +76,6 @@ export class CharactersComponent implements OnInit{
       next: (response) => {
         this.selectedChar = this.characterMapper.mapRemote(response[0]);
         this.selectedCharArts = this.characterArtsMapper.mapRemote(response[1]);
-        this.dialogVisibility = true;
         console.log("Char : ", this.selectedChar)
         console.log("Art : ", this.selectedCharArts)
       },
@@ -80,11 +83,18 @@ export class CharactersComponent implements OnInit{
         console.error(error)
         const notification : notificationModel = {title: "Erreur", severity: notificationSeverity.ERROR}
         this.notificationService.addNotification(notification)
+      },
+      complete : () => {
+        this.loadingCharacter = false;
+        this.isInTransition = true;
+        setTimeout(() => {
+          this.isInTransition = false;
+        }, 200);
       }
     })
   }
 
-  get filteredCharactersCard(): {hover : boolean, character : ProjectClass.Local.CharacterListing}[] {
+  get filteredCharactersCard(): {hover : boolean, click: boolean, character : ProjectClass.Local.CharacterListing}[] {
     const nameFiltered = this.charactersCard.filter(characterCard => {
       if (characterCard.character.name) {
         return characterCard.character.name.toLowerCase().includes(this.characterNameSearch.toLowerCase())
@@ -106,7 +116,7 @@ export class CharactersComponent implements OnInit{
     this.filter = filters[currentIndex === 0 ? filters.length - 1 : currentIndex - 1];
   }
 
-  public customFilter(cards: {hover : boolean, character : ProjectClass.Local.CharacterListing}[]): {hover : boolean, character : ProjectClass.Local.CharacterListing}[] {
+  public customFilter(cards: {hover : boolean, click: boolean, character : ProjectClass.Local.CharacterListing}[]): {hover : boolean, click: boolean, character : ProjectClass.Local.CharacterListing}[] {
     switch(this.filter) {
       case characterFilter.ALPHABETIC:
         if(this.filterOrder == filterOrder.UP) {
@@ -144,5 +154,12 @@ export class CharactersComponent implements OnInit{
     const max = 6;
     const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
     return `./../../assets/img/Landscape/${randomNumber}.jpg`
+  }
+
+  public toggleClickAnimation(click : boolean) : void {
+    click = true;
+    setTimeout(() => {
+      click = false;
+    }, 200)
   }
 }

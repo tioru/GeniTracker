@@ -33,14 +33,15 @@
         </div>
         <div class="fw characters_display">
             @if (filteredCharactersCard.length != 0) {
-                <div [@enter-leave] *ngFor="let characterCard of filteredCharactersCard" 
-                    (click)="getGlobalCharacterInformations(characterCard.character.name!)" 
+                <div [@enter-leave] [@click]="characterCard.click" *ngFor="let characterCard of filteredCharactersCard" 
+                    (click)="toggleClickAnimation(characterCard.click); getGlobalCharacterInformations(characterCard.character.name!)" 
                     class="fw flex jcc">
                     <div [@hover]="characterCard.hover" 
                         (mouseenter)="characterCard.hover = true"
                         (mouseleave)="characterCard.hover = false" 
                         class="flex aic character_wrapper" 
-                        [ngClass]="characterCard.character.vision">
+                        [ngClass]="characterCard.character.vision"
+                        >
                         <img class="character_icon" [src]=characterCard.character.icon width="80" height="80">
                         <div [ngClass]="characterCard.character.vision" class="flex column fh aic jcc fw character_lite_info_wrapper">
                             <span class="character_name">
@@ -74,12 +75,36 @@
     </div>
 </dialog-component>
 
-<dialog-component *ngIf="dialogVisibility && selectedCharArts && selectedChar" [style]="dialogStyle.BF" [dialogVisibility]="dialogVisibility" (onHide)="dialogVisibility = false">
-    <div body>
-        <img [src]="selectedCharArts.gachaSplash">
-    </div>
-    
-    <div footer>
-        <span>footer</span>
+<dialog-component *ngIf="dialogVisibility" [height]="loadingCharacter ? '60vh' : '80vh'" [width]="loadingCharacter ? '60vw' : '75vw'" [style]="dialogStyle.B" [dialogVisibility]="dialogVisibility" [modal]="loadingCharacter ? false : true" (onHide)="dialogVisibility = false">
+    <div body [class]="isInTransition ? 'flex aic jcc' : ''" class="fh fw">
+        @if(!loadingCharacter && !isInTransition) {
+            <div [@enter-leave] class="flex fh jcc fw" *ngIf="selectedChar && selectedCharArts">
+                <div class="fh characterSplash" style="flex: 1">
+                    @if(selectedCharArts.gachaCard) {
+                        <img height="100%" width="100%" [src]="selectedCharArts.gachaCard">
+                    }
+                    @else {
+                        <img height="100%" width="100%" [src]="'assets/img/NoCharacterCard.webp'">
+                    }
+                </div>
+                <div style="flex: 5" class="flex column mt10 mb10 ml20 mr10">
+                    <div class="flex fw jcsb">
+                        <h1 style="color: white; width: fit-content;">{{selectedChar.name}}</h1>
+                        <h1 style="color: white; width: fit-content;">{{selectedChar.rarity}}</h1>
+                    </div>
+                </div>
+            </div>
+        }
+        @if(loadingCharacter) {
+            <div [@enter-leave] class="flex" style="width: 60vw; height: 60vh;">
+                <div class="flex aic jcc column gap50" style="flex: 1;">
+                    <div class="spinner"></div>
+                    <span class="loading_chars">Chargements des informations...</span>
+                </div>
+                <div class="landscape" style="flex: 2;">
+                    <img [src]='randomPicturePath'>
+                </div>
+            </div>
+        }
     </div>
 </dialog-component>
