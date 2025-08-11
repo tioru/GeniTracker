@@ -1,7 +1,7 @@
 @use './../variables' as vars;
 
 main {
-  background-image: url("/GeniTracker/assets/img/Background.png");
+  background-image: var(--bg-image);
   background-size: cover;
   height: vars.$height-after-topbar;
 }
