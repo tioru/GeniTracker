@@ -153,7 +153,7 @@ export class CharactersComponent implements OnInit{
     const min = 1;
     const max = 6;
     const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-    return `./../../assets/img/Landscape/${randomNumber}.jpg`
+    return `assets/img/Landscape/${randomNumber}.jpg`
   }
 
   public toggleClickAnimation(click : boolean) : void {
