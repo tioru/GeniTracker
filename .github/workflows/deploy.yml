@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "geni-tracker": {
+      "architect": {
+        "build": {
+          "configurations": {
+            "production": {
+              "baseHref": "/GeniTracker/",
+              "deployUrl": "/GeniTracker/"
+            }
+          }
+        }
+      }
+    }
+  }
