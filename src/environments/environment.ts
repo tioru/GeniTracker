@@ -1,4 +1,5 @@
 export const environment = {
     apiUrl: "https://genshin.jmp.blue",
-    baseUrl: ""
+    baseUrl: "",
+    production: false,
 }
