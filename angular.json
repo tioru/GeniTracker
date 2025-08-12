@@ -40,7 +40,6 @@
           "configurations": {
             "production": {
               "baseHref": "/GeniTracker/",
-              "deployUrl": "/GeniTracker/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
