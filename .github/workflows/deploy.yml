@@ -32,7 +32,8 @@ jobs:
       
     - name: Configure Git
       run: |
-        git config --global user.name "TOMA"
+        git config --global user.email "thomas@test.com"
+        git config --global user.name "C moi toma"
         
     - name: Deploy with angular-cli-ghpages
       run: |
