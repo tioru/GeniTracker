@@ -1,7 +1,7 @@
 @use './../variables' as vars;
 
 main {
-  background-image: var(--bg-image);
+  background-image: url("assets/img/Background.png");
   background-size: cover;
   height: vars.$height-after-topbar;
 }
