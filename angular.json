@@ -31,11 +31,16 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "externalDependencies": [
+              "assets/img/Background.png",
+              "assets/img/Elements/*"
+            ]
           },
           "configurations": {
             "production": {
               "baseHref": "/GeniTracker/",
+              "deployUrl": "/GeniTracker/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

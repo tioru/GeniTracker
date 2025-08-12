@@ -182,7 +182,7 @@
             background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, map-get($values, color) 300%);
 
             .vision {
-                background-image: url('/assets/img/Elements/#{map-get($values, image)}');
+                background-image: url('assets/img/Elements/#{map-get($values, image)}');
             }
         }
     }
