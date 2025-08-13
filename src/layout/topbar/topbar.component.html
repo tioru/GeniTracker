@@ -1,5 +1,6 @@
 <div class="topbar-bg fh fw flex aic">
-    <div class="flex aic" style="flex: 1">
+    <div *ngIf="!isHome" class="flex aic" style="flex: 1"
+        [@enter-leave]>
         <button class="topbar_item" (click)="goTo('')">
             <div class="ml10 flex aic gap10">
                 <div class="img_container">
@@ -37,7 +38,7 @@
             </button>
         </div>
     </div>
-    <div style="flex: 1">
+    <div *ngIf="!isHome" style="flex: 1">
 
     </div>
 </div>

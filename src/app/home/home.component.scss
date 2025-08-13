@@ -14,8 +14,7 @@
 .fade-mask {
     mask: linear-gradient(90deg, 
         transparent 0%, 
-        black 60%, 
-        black 50%, 
-        transparent 90%
+        black 50%,
+        transparent 100%
     )
 }

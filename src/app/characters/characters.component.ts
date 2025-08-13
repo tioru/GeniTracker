@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NotificationService, notificationModel, notificationSeverity } from '../../utilities/services/notification.service';
 import { CommonModule } from '@angular/common';
 import { ProjectClass } from '../../utilities/classes/class';
-import { animations } from './animation';
+import { animations } from '../animation';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { zip } from 'rxjs';
 import { CharacterMapper } from '../../utilities/mapper/character';
