@@ -1,26 +1,57 @@
-<div class="fh fw flex aic jcc column gap10">
+<div class="background-particles"></div>
+<div class="main-container fh fw flex aic jcc column gap10">
+    <!-- Section version -->
     <div class="top fh fw flex aic jcc">
-        <div style="padding: 10px 0; overflow: hidden; width: 12%;" class="black_div flex aic jcc column">
-            <h2 style="text-align: center;">Version actuelle</h2>
-            <div class="flex aic jcc fade-mask" style="padding: 0 70px; gap: 75px;">
-                <h1>5.7</h1>
-                <h1>5.8</h1>
-                <h1>6.0</h1>
+        <div class="version-container black_div flex aic jcc column">
+            <h2 style="text-align: center; margin: 0 0 15px 0;">Version actuelle</h2>
+            <div class="flex aic jcc fade-mask" style="padding: 0 50px; gap: 30px;">
+                <!-- Container des versions visibles -->
+                <div class="versions-container fade-mask carousel flex aic jcc">
+                    <div 
+                        *ngFor="let version of visibleVersions;" 
+                        class="version-number interactive-element"
+                        [class.active]="version.active"
+                        [class.selected]="version.selected"
+                        (click)="selectVersion(version.number)">
+                        {{version.number}}
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">
+                {{ activeVersionTitle }}
             </div>
         </div>
     </div>
+
+    <!-- Section principale -->
     <div class="middle fw fh flex aic jcc">
-        <div class="black_div flex aic jcc column p20 gap30">
-            <div class="flex aic jcc gap20">
+        <div class="main-welcome black_div flex aic jcc column p20 gap20">
+            <div class="logo-container flex aic jcc gap20">
                 <img src="assets/img/Paimon.png" height="130px">
-                <h1>GeniTracker</h1>
+                <h1 class="welcome-title">GeniTracker</h1>
             </div>
-            <h2>Bienvenue voyageur</h2>
-        </div>
-    </div>
-    <div class="bottom fw fh flex aic jcc">
-        <div class="black_div">
-            <h1>Test bottom</h1>
+            <div>
+                <h2 class="welcome-subtitle">Bienvenue voyageur</h2>
+                <p style="color: var(--text-secondary); margin-top: 10px;">
+                    Suivez vos personnages, armes et événements Genshin Impact
+                </p>
+            </div>
+            
+            <!-- Statistiques rapides -->
+            <div class="stats-container">
+                <div class="stat-card interactive-element">
+                    <span class="stat-number">42</span>
+                    <div class="stat-label">Personnages</div>
+                </div>
+                <div class="stat-card interactive-element">
+                    <span class="stat-number">156</span>
+                    <div class="stat-label">Armes</div>
+                </div>
+                <div class="stat-card interactive-element">
+                    <span class="stat-number">7</span>
+                    <div class="stat-label">Événements actifs</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
