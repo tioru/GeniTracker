@@ -1,23 +1,21 @@
 <div class="background-particles"></div>
-<div class="main-container fh fw flex aic jcc column gap10">
+<div class="fh fw flex aic jcc column gap10">
     <!-- Section version -->
     <div class="top fh fw flex aic jcc">
         <div class="version-container black_div flex aic jcc column">
-            <h2 style="text-align: center; margin: 0 0 15px 0;">Version actuelle</h2>
-            <div class="flex aic jcc fade-mask" style="padding: 0 50px; gap: 30px;">
-                <!-- Container des versions visibles -->
-                <div class="versions-container fade-mask carousel flex aic jcc">
-                    <div 
-                        *ngFor="let version of visibleVersions;" 
+            <h2 style="text-align: center; margin: 0 0 55px 0;">Version actuelle</h2>
+            <div class="container flex aic jcc fade-mask" style="padding: 0 50px; gap: 30px;">
+                <div class="versions-container carousel flex aic jcc">
+                    <div style="user-select: none"
+                        *ngFor="let version of versions;" 
                         class="version-number interactive-element"
                         [class.active]="version.active"
-                        [class.selected]="version.selected"
-                        (click)="selectVersion(version.number)">
+                        [class.selected]="version.selected">
                         {{version.number}}
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">
+            <div style="margin-top: 35px; font-size: 0.9rem; color: var(--text-secondary);">
                 {{ activeVersionTitle }}
             </div>
         </div>
