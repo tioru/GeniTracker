@@ -1,7 +1,7 @@
 <div class="background-particles"></div>
-<div class="fh fw flex aic jcc column gap10">
+<div class="fh fw flex aic jcc column gap50" style="overflow-x: hidden;">
     <!-- Section version -->
-    <div class="top fh fw flex aic jcc">
+    <div class="top fw flex aic jcc" style="height: fit-content;">
         <div class="version-container black_div flex aic jcc column">
             <h2 style="text-align: center; margin: 0 0 55px 0;">Version actuelle</h2>
             <div class="container flex aic jcc fade-mask" style="padding: 0 50px; gap: 30px;">
@@ -22,8 +22,8 @@
     </div>
 
     <!-- Section principale -->
-    <div class="middle fw fh flex aic jcc">
-        <div class="main-welcome black_div flex aic jcc column p20 gap20">
+    <div class="fw fh flex aic jcc" style="overflow-y: hidden; max-height: fit-content;">
+        <div class="black_div flex aic jcc column p20 gap20" style="text-align: center;" [class.animate-in]="titleAnimating">
             <div class="logo-container flex aic jcc gap20">
                 <img src="assets/img/Paimon.png" height="130px">
                 <h1 class="welcome-title">GeniTracker</h1>
@@ -37,15 +37,15 @@
             
             <!-- Statistiques rapides -->
             <div class="stats-container">
-                <div class="stat-card interactive-element">
+                <div class="stat-card interactive-element" (click)="navigateTo('/characters')">
                     <span class="stat-number">42</span>
                     <div class="stat-label">Personnages</div>
                 </div>
-                <div class="stat-card interactive-element">
+                <div class="stat-card interactive-element" (click)="navigateTo('/weapons')">
                     <span class="stat-number">156</span>
                     <div class="stat-label">Armes</div>
                 </div>
-                <div class="stat-card interactive-element">
+                <div class="stat-card interactive-element" (click)="navigateTo('/events')">
                     <span class="stat-number">7</span>
                     <div class="stat-label">Événements actifs</div>
                 </div>

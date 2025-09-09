@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -26,10 +27,21 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   activeVersionTitle: string = '';
   titleAnimating: boolean = false;
 
-  ngOnInit(): void {
+  async ngOnInit() {
     // Initialiser la position du carrousel
     this.initializeCarousel();
     this.updateActiveVersionTitle();
+
+    await document.fonts.ready;
+
+    setTimeout(() => {
+      this.titleAnimating = true;
+    }, 200);
+  }
+
+  public navigateTo(route: string): void {
+    // Logique de navigation ici, par exemple en utilisant le Router d'Angular
+    this.router.navigateByUrl(route)
   }
 
   /**
@@ -56,7 +68,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private elementRef: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private router: Router
   ) {}
 
   ngOnDestroy(): void {
