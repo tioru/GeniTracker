@@ -3,7 +3,7 @@
     <!-- Section version -->
     <div class="top fw flex aic jcc" style="height: fit-content;">
         <div class="version-container black_div flex aic jcc column">
-            <h2 style="text-align: center; margin: 0 0 55px 0;">Version actuelle</h2>
+            <h2 style="text-align: center; margin: 0 0 55px 0; user-select: none;">Version actuelle</h2>
             <div class="container flex aic jcc fade-mask" style="padding: 0 50px; gap: 30px;">
                 <div class="versions-container carousel flex aic jcc">
                     <div style="user-select: none"
@@ -15,7 +15,8 @@
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 35px; font-size: 0.9rem; color: var(--text-secondary);">
+            <div class="bottom-carousel-bar"></div>
+            <div style="margin-top: 35px; font-size: 0.9rem; color: var(--text-secondary); user-select: none;">
                 {{ activeVersionTitle }}
             </div>
         </div>

@@ -80,7 +80,7 @@
 .version-container {
   padding: 20px 0;
   overflow: hidden;
-  width: 15%;
+  width: 25%;
   min-width: 200px;
   animation-delay: 0.2s;
 }
@@ -301,4 +301,11 @@
   gap: 10px;
   pointer-events: none;
   position: absolute;
+}
+
+.bottom-carousel-bar {
+  width: 5px;
+  height: 20px;
+  background: white;
+  pointer-events: none;
 }
