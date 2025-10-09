@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { animations } from '../animation';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  animations: animations
 })
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   
@@ -43,6 +45,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private itemWidth = 0;
   private itemSpacing = 0;
+
+  private leftBoundary = 0;
+  private rightBoundary = 0;
 
   constructor(
     private elementRef: ElementRef,
@@ -137,20 +142,23 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    window.addEventListener('resize', () => {
+      this.calculateDimensions();
+      this.checkBoundary();
+    });
 
     this.createBackgroundParticles();
 
     this.container = document.querySelector(".container");
-    this.innerContainer = document.querySelector(".versions-container");
+    this.innerContainer = document.querySelector(".innerContainer");
 
     this.calculateDimensions();
 
     this.initializePosition();
     
-    // Listener for mouse up event to stop dragging
     document.addEventListener("mouseup", () => {
       this.pressed = false;
-      //this.snapToNearest();
+      this.snapToNearest();
     });
 
     if (this.container && this.innerContainer) {
@@ -167,7 +175,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       this.container.addEventListener("mouseup", () => {
         this.container!.style.cursor = "grab";
         this.pressed = false;
-        //this.snapToNearest();
       });
 
       this.container.addEventListener("mousemove", (e: MouseEvent) => {
@@ -183,107 +190,91 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private checkBoundary() {
-    if (!this.container || !this.innerContainer) return;
+    if (!this.innerContainer) return;
 
-    var computedStyle = getComputedStyle(this.container);
     const currentLeft = parseInt(this.innerContainer.style.left) || 0;
-    const containerWidth = this.container.offsetWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
-    const containerCenter = containerWidth / 2;
-    const itemTotalWidth = this.itemWidth + this.itemSpacing;  
 
-    // Limite droite : premier élément centré (index 0)
-    const rightLimit = containerCenter + 6;
-
-    // Limite gauche : dernier élément centré (index max)
-    const lastIndex = this.versions.length - 1;
-
-    const leftLimit = containerCenter - (lastIndex * itemTotalWidth) - (this.itemWidth / 2);
-
-    // Appliquer les limites
-    if (currentLeft > rightLimit) {
-      this.innerContainer.style.left = `${rightLimit}px`;
+    if (currentLeft > this.leftBoundary) {
+      this.innerContainer.style.left = `${this.leftBoundary}px`;
     }
 
-    if (currentLeft < leftLimit) {
-      this.innerContainer.style.left = `${leftLimit}px`;
+    if (currentLeft < this.rightBoundary) {
+      this.innerContainer.style.left = `${this.rightBoundary}px`;
     }
   }
 
-private calculateDimensions(): void {
-  if (!this.innerContainer) return;
-  
-  // Sélecteur pour vos éléments de version - À ADAPTER selon votre HTML
-  const versionElements = this.innerContainer.querySelectorAll('.version-number'); // Changez le sélecteur !
+  private calculateDimensions(): void {
+    if (!this.innerContainer) return;
 
-  if (versionElements.length >= 2) {
+    const versionElements = this.innerContainer.querySelectorAll('.version-number');
+
     const firstElement = versionElements[0] as HTMLElement;
     const secondElement = versionElements[1] as HTMLElement;
-    
-    // Calculer la largeur d'un élément
+
     this.itemWidth = firstElement.offsetWidth;
-    
-    // Calculer l'espacement entre deux éléments
+
     const firstRect = firstElement.getBoundingClientRect();
     const secondRect = secondElement.getBoundingClientRect();
+
     this.itemSpacing = secondRect.left - firstRect.right;
-    
-    console.log(`Dimensions calculées: largeur=${this.itemWidth}px, espacement=${this.itemSpacing}px`);
-  } else {
-    console.warn('Pas assez d\'éléments trouvés pour calculer les dimensions');
+
+    this.leftBoundary = (this.container!.offsetWidth / 2) - (this.itemWidth / 2);
+    this.rightBoundary = this.leftBoundary - this.innerContainer.offsetWidth + this.itemWidth;    
   }
-}
 
-/**
- * Initialise la position du carrousel sur l'élément sélectionné
- */
-private initializePosition(): void {
-  if (!this.container || !this.innerContainer) return;
-  
-  const containerCenter = this.container.offsetWidth / 2;
-  const selectedIndex = this.versions.findIndex(v => v.selected || v.active);
-  const targetPosition = containerCenter - (selectedIndex * (this.itemWidth + this.itemSpacing)) - (this.itemWidth / 2);
-  
-  this.innerContainer.style.left = `${targetPosition}px`;
-}
+  private initializePosition(): void {
+    if (!this.innerContainer) return;
 
-/*private snapToNearest(): void {
-  if (!this.container || !this.innerContainer) return;
-  
-  const containerCenter = this.container.offsetWidth / 2;
-  const currentLeft = parseInt(this.innerContainer.style.left) || 0;
-  const itemTotalWidth = this.itemWidth + this.itemSpacing;
-  
-  // Calculer l'index le plus proche
-  const nearestIndex = Math.round((containerCenter - currentLeft - (this.itemWidth / 2)) / itemTotalWidth);
-  const clampedIndex = Math.max(0, Math.min(this.versions.length - 1, nearestIndex));
-  
-  // Position cible
-  const targetPosition = containerCenter - (clampedIndex * itemTotalWidth) - (this.itemWidth / 2);
-  
-  // Animation simple
-  this.animateToPosition(targetPosition);
-}
+    this.selectedIndex = this.versions.findIndex(v => v.selected);
 
-private animateToPosition(targetPosition: number): void {
-  if (!this.innerContainer) return;
-  
-  const startPosition = parseInt(this.innerContainer.style.left) || 0;
-  const distance = targetPosition - startPosition;
-  const duration = 300;
-  const startTime = performance.now();
-  
-  const animate = (currentTime: number) => {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = progress * (2 - progress); // Simple easing
+    if (this.selectedIndex === -1) this.selectedIndex = 0;
+
+    const targetPosition = this.leftBoundary - (this.itemWidth * this.selectedIndex) - (this.itemSpacing * this.selectedIndex);
+
+    this.innerContainer.style.left = `${targetPosition}px`;
+
+    this.updateActiveVersionTitle();
+  }
+
+  private updateActiveVersionTitle(): void {
+    this.selectedIndex = this.versions.findIndex(v => v.selected);
+
+    if (this.selectedIndex === -1) this.selectedIndex = 0;
+
+    this.activeVersionTitle = this.versions[this.selectedIndex].title;
+  }
+
+  private snapToNearest(): void {
+    if (!this.innerContainer) return;
+
+    const currentLeft = parseInt(this.innerContainer.style.left) || 0;
+
+    this.versions.forEach(v => v.selected = false);
     
-    this.innerContainer!.style.left = `${startPosition + (distance * eased)}px`;
-    
-    if (progress < 1) {
-      requestAnimationFrame(animate);
+    for (let i = 0; i < this.versions.length; i++) {
+      let firstElement = this.leftBoundary - (this.itemWidth * i) - (this.itemSpacing * i);
+      
+      let secondElement = this.leftBoundary - (this.itemWidth * (i + 1)) - (this.itemSpacing * (i + 1));
+
+      if (currentLeft < firstElement && currentLeft > secondElement) {
+        let offsetfirstElement = firstElement - currentLeft
+
+        let offsetsecondElement = secondElement - currentLeft
+
+        if(offsetfirstElement < offsetsecondElement * -1) {
+          this.innerContainer.style.left = `${firstElement}px`;
+          this.versions[i].selected = true;
+        } else {
+          this.innerContainer.style.left = `${secondElement}px`;
+          this.versions[i+1].selected = true;
+        }
+
+        this.updateActiveVersionTitle();
+        this.innerContainer!.style.transition = 'all 0.4s ease';
+        setTimeout(() => {
+          this.innerContainer!.style.transition = '';
+        }, 500);
+      }
     }
-  };
-  
-  requestAnimationFrame(animate);
-  }*/
+  }
 }

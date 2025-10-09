@@ -5,7 +5,7 @@
   --text-primary: rgb(221, 221, 221);
   --text-secondary: rgb(180, 180, 180);
   --accent-glow: rgb(255, 255, 255);
-  --version-active: #ffd700;
+  --version-selected: #ffd700;
   --transition-fast: 0.2s ease;
   --transition-smooth: 0.3s ease;
 }
@@ -66,7 +66,6 @@
   }
 }
 
-/* Masque de fondu amélioré */
 .fade-mask {
   mask: linear-gradient(90deg, 
     transparent 0%, 
@@ -76,12 +75,11 @@
   );
 }
 
-/* Version selector amélioré */
 .version-container {
-  padding: 20px 0;
   overflow: hidden;
   width: 25%;
-  min-width: 200px;
+  min-width: 350px;
+  min-height: 170px;
   animation-delay: 0.2s;
 }
 
@@ -93,14 +91,16 @@
   padding: 10px 15px;
   border-radius: 8px;
   position: relative;
+  width: 55px;
+  text-align: center;
 
-  &.active {
-    color: var(--version-active);
-    text-shadow: 0 0 10px var(--version-active);
+  &.selected {
+    color: var(--version-selected);
+    text-shadow: 0 0 10px var(--version-selected);
     transform: scale(1.2);
   }
 
-  &:not(.active) {
+  &:not(.selected) {
     opacity: 0.6;
 
     &:hover {
@@ -175,7 +175,7 @@
 .stat-number {
   font-size: 2rem;
   font-weight: bold;
-  color: var(--version-active);
+  color: var(--version-selected);
   display: block;
 }
 
@@ -237,12 +237,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .version-container {
-    width: 90%;
-    min-width: unset;
-  }
-  
+@media (max-width: 768px) {  
   .main-welcome {
     max-width: 90%;
     padding: 15px;
@@ -291,14 +286,12 @@
 
 .container {
   width: 100%;
-  height: 200px;
-  position: absolute;
-  overflow: hidden;
+  height: 59px;
 }
 
-.versions-container {
+.innerContainer {
   display: flex;
-  gap: 10px;
+  gap: 25px;
   pointer-events: none;
   position: absolute;
 }
