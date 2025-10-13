@@ -23,7 +23,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { number: '5.6', active: false, title : "Paralogisme", selected: false},
     { number: '5.7', active: false, title : "L'espace-temps qui est vôtre", selected: false},
     { number: '5.8', active: false, title : "Été de plomb à la station", selected: false},
-    { number: '6.0', active: true, title: "Ballet parmi marées enneigées et bosquets givrés", selected: true}
+    { number: 'Luna I', active: true, title: "Ballet parmi marées enneigées et bosquets givrés", selected: true},
+    { number: 'Luna II', active: false, title: "Élégie sous la lune évanescente", selected: false}
   ];
 
   // Index de la version actuellement sélectionnée
@@ -237,11 +238,24 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateActiveVersionTitle(): void {
+    const titleContainer = document.querySelectorAll(".active_version_title_container");
+
+    const titleElement = titleContainer[0] as HTMLElement;
+
+    if (!titleElement) return;
+
     this.selectedIndex = this.versions.findIndex(v => v.selected);
 
     if (this.selectedIndex === -1) this.selectedIndex = 0;
 
-    this.activeVersionTitle = this.versions[this.selectedIndex].title;
+    titleElement!.style.transform = 'translateY(20px)';
+    titleElement!.style.opacity = '0';
+
+    setTimeout(() => {
+      this.activeVersionTitle = this.versions[this.selectedIndex].title;
+      titleElement!.style.transform = 'translateY(0)';
+      titleElement!.style.opacity = '1';
+    }, 400);
   }
 
   private snapToNearest(): void {
@@ -264,12 +278,26 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         if(offsetfirstElement < offsetsecondElement * -1) {
           this.innerContainer.style.left = `${firstElement}px`;
           this.versions[i].selected = true;
-        } else {
+          if (this.activeVersionTitle !== this.versions[i].title) {
+            this.updateActiveVersionTitle();
+            this.innerContainer!.style.transition = 'all 0.4s ease';
+            setTimeout(() => {
+              this.innerContainer!.style.transition = '';
+            }, 500);
+          }
+        }
+        else {
           this.innerContainer.style.left = `${secondElement}px`;
           this.versions[i+1].selected = true;
+          if (this.activeVersionTitle !== this.versions[i+1].title) {
+            this.updateActiveVersionTitle();
+            this.innerContainer!.style.transition = 'all 0.4s ease';
+            setTimeout(() => {
+              this.innerContainer!.style.transition = '';
+            }, 500);
+          }
         }
-
-        this.updateActiveVersionTitle();
+      } else {
         this.innerContainer!.style.transition = 'all 0.4s ease';
         setTimeout(() => {
           this.innerContainer!.style.transition = '';
