@@ -1,18 +1,15 @@
 <div class="topbar-bg fh fw flex aic">
-    <div *ngIf="!isHome" class="flex aic" style="flex: 1"
-        [@enter-leave]>
-        <button class="topbar_item" (click)="goTo('')">
-            <div class="ml10 flex aic gap10">
-                <div class="img_container">
-                    <img src="assets/img/Paimon.png" height="44px">
+    <div class="fh flex jcc aic" style="flex: 1">
+        <div class="fh flex aic jscb gap10">
+            <button *ngIf="!isHome" class="topbar_item flex jcc aic" (click)="goTo('')" [@enter-leave]>
+                <div class="flex aic gap5">
+                    <div class="img_container">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" height="40px" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" /></svg>
+                    </div>
+                    <span>Accueil</span>
                 </div>
-                <span class="title">GeniTracker</span>
-            </div>
-        </button>
-    </div>
-    <div class="flex jcc aic" style="flex: 1">
-        <div class="flex aic jscb gap10">
-            <button class="topbar_item" (click)="goTo('/characters')">
+            </button>
+            <button class="topbar_item flex jcc aic" (click)="goTo('/characters')">
                 <div class="flex aic gap5">
                     <div class="img_container">
                         <img src="assets/img/Characters.png" height="40px">
@@ -20,7 +17,7 @@
                     <span>Personnages</span>
                 </div>
             </button>
-            <button class="topbar_item" (click)="goTo('/weapons')">
+            <button class="topbar_item flex jcc aic" (click)="goTo('/weapons')">
                 <div class="flex aic gap5">
                     <div class="img_container">
                         <img src="assets/img/Weapons.png" height="40px">
@@ -28,7 +25,7 @@
                     <span>Armes</span>
                 </div>
             </button>
-            <button class="topbar_item">
+            <button class="topbar_item flex jcc aic">
                 <div class="flex aic gap5">
                     <div class="img_container">
                         <img src="assets/img/Events.png" height="40px">
@@ -37,8 +34,5 @@
                 </div>
             </button>
         </div>
-    </div>
-    <div *ngIf="!isHome" style="flex: 1">
-
     </div>
 </div>

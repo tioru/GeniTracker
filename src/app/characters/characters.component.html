@@ -42,13 +42,12 @@
                         class="flex aic character_wrapper" 
                         [ngClass]="characterCard.character.vision"
                         >
-                        <img class="character_icon" [src]=characterCard.character.icon width="80" height="80">
+                        <img [src]=characterCard.character.icon width="80" height="80">
                         <div [ngClass]="characterCard.character.vision" class="flex column fh aic jcc fw character_lite_info_wrapper">
                             <span class="character_name">
                                 {{characterCard.character.name}}
                             </span>
                             <div class="vision"></div>
-                            <span [@enter-leave] *ngIf="characterCard.hover" class="release_date">{{characterCard.character.releaseDate}}</span>
                         </div>
                     </div>
                 </div>

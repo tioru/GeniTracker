@@ -1,3 +1,8 @@
+:host {
+    --border-color: #4a4a4a;
+    --transition-smooth: 0.3s ease;
+}
+
 .topbar-bg {
     background: radial-gradient(circle, rgba(56,56,56,1) 25%, rgba(0,0,0,1) 115%);
 }
@@ -26,19 +31,20 @@
 }
 
 .topbar_item {
-    border: 0px solid transparent;
-    background-color: transparent;
+    height: 65%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: all var(--transition-smooth);
+    transition-behavior: allow-discrete;
+    backdrop-filter: blur(5px);
     cursor: pointer;
-    .img_container::before {
-        transition: all 0.5s;
-        position: fixed;
-        content: '';
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.6);
-        filter: blur(4px);
-        border-radius: 50%;
-        z-index: 0;
-        opacity: 0;
-    }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
 }
