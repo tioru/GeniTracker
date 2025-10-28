@@ -24,8 +24,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { number: '5.6', active: false, title : "Paralogisme", selected: false},
     { number: '5.7', active: false, title : "L'espace-temps qui est vôtre", selected: false},
     { number: '5.8', active: false, title : "Été de plomb à la station", selected: false},
-    { number: 'Luna I', active: true, title: "Ballet parmi marées enneigées et bosquets givrés", selected: true},
-    { number: 'Luna II', active: false, title: "Élégie sous la lune évanescente", selected: false}
+    { number: 'Luna I', active: false, title: "Ballet parmi marées enneigées et bosquets givrés", selected: false},
+    { number: 'Luna II', active: true, title: "Élégie sous la lune évanescente", selected: true}
   ];
 
   // Index de la version actuellement sélectionnée
