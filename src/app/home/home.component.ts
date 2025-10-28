@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { animations } from '../animation';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',

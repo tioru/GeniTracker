@@ -1,8 +1,9 @@
 <div class="topbar-bg fh fw flex aic">
+    <div class="fh flex jcc aic" style="flex: 1"></div>
     <div class="fh flex jcc aic" style="flex: 1">
         <div class="fh flex aic jscb gap10">
             <button *ngIf="!isHome" class="topbar_item flex jcc aic" (click)="goTo('')" [@enter-leave]>
-                <div class="flex aic gap5">
+                <div class="flex aic gap10">
                     <div class="img_container">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="white" height="40px" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" /></svg>
                     </div>
@@ -31,6 +32,18 @@
                         <img src="assets/img/Events.png" height="40px">
                     </div>
                     <span>Événements</span>
+                </div>
+            </button>
+        </div>
+    </div>
+    <div class="fh flex jce aic" style="flex: 1; margin-right: 10px;">
+        <div class="fh flex aic jscb gap10">
+            <button class="topbar_item flex jcc aic" (click)="goTo('/admin')">
+                <div class="flex aic gap10">
+                    <div class="img_container">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" height="40px" viewBox="0 0 24 24"><path d="M21,16V4H3V16H21M21,2A2,2 0 0,1 23,4V16A2,2 0 0,1 21,18H14V20H16V22H8V20H10V18H3C1.89,18 1,17.1 1,16V4C1,2.89 1.89,2 3,2H21M5,6H14V11H5V6M15,6H19V8H15V6M19,9V14H15V9H19M5,12H9V14H5V12M10,12H14V14H10V12Z" /></svg>
+                    </div>
+                    <span>Admin</span>
                 </div>
             </button>
         </div>

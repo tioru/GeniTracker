@@ -10,9 +10,7 @@ import { NotificationCenterComponent } from './components/notification-center/no
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'GeniTracker';
-  
+export class AppComponent {  
   constructor() {
 
   }
