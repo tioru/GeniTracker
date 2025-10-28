@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { API } from '../../utilities/api/request';
 import { FormsModule } from '@angular/forms';
 import { NotificationService, notificationModel, notificationSeverity } from '../../utilities/services/notification.service';
@@ -10,6 +10,8 @@ import { zip } from 'rxjs';
 import { CharacterMapper } from '../../utilities/mapper/character';
 import { CharacterArtsMapper } from '../../utilities/mapper/characterArts';
 import { CharacterListingMapper } from '../../utilities/mapper/characterListing';
+import { AsyncPipe } from '@angular/common';
+import { Database, get, onValue, ref } from '@angular/fire/database';
 
 export enum characterFilter {
   ALPHABETIC = "Alphabétique",
@@ -25,7 +27,7 @@ export enum filterOrder {
 @Component({
   selector: 'app-characters',
   standalone: true,
-  imports: [FormsModule, CommonModule, DialogComponent],
+  imports: [FormsModule, CommonModule, DialogComponent, AsyncPipe],
   templateUrl: './characters.component.html',
   styleUrl: './characters.component.scss',
   animations: animations
@@ -64,6 +66,23 @@ export class CharactersComponent implements OnInit{
       })
       this.loadingCharacters = false;
     })
+    this.ecouterCaracters();
+  }
+  
+  caracters: string = '';
+
+  private database = inject(Database);
+
+
+  ecouterCaracters() {
+    const dbRef = ref(this.database, 'caracters');
+    
+    onValue(dbRef, (snapshot) => {
+      if (snapshot.exists()) {
+        this.caracters = snapshot.val();
+        console.log('Données mises à jour:', this.caracters);
+      }
+    });
   }
 
   public getGlobalCharacterInformations(name : string) : void {

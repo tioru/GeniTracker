@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TopbarComponent } from '../layout/topbar/topbar.component';
 import { NotificationCenterComponent } from './components/notification-center/notification-center.component';
@@ -12,4 +12,8 @@ import { NotificationCenterComponent } from './components/notification-center/no
 })
 export class AppComponent {
   title = 'GeniTracker';
+  
+  constructor() {
+
+  }
 }
