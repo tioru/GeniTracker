@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { animations } from '../animation';
+import { Database, onValue, ref } from '@angular/fire/database';
 
 @Component({
   selector: 'app-home',
@@ -50,6 +51,21 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   private leftBoundary = 0;
   private rightBoundary = 0;
 
+  private database = inject(Database);
+
+  private databaseValue: any;
+
+  versionListening() {
+      const dbRef = ref(this.database, 'version');
+      
+      onValue(dbRef, (snapshot) => {
+        if (snapshot.exists()) {
+          this.databaseValue = snapshot.val();
+          console.log('Données mises à jour:', this.databaseValue);
+        }
+      });
+    }
+
   constructor(
     private elementRef: ElementRef,
     private renderer: Renderer2,
@@ -61,6 +77,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       this.titleAnimating = true;
     }, 200);
+    this.versionListening();
   }
 
   public navigateTo(route: string): void {

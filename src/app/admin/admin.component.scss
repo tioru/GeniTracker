@@ -1,0 +1,22 @@
+:host {
+  --primary-bg: rgb(43, 43, 43);
+  --text-primary: rgb(221, 221, 221);
+  --text-secondary: rgb(180, 180, 180);
+  --accent-glow: rgb(255, 255, 255);
+}
+
+.black_div {
+  border: var(--border-color) 1px solid;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--primary-bg) 0%, rgba(43, 43, 43, 0.8) 100%);
+  color: var(--text-primary);
+  transition: all var(--transition-smooth);
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  width: 100%;
+  margin-top: 20px;
+}

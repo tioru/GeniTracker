@@ -10,8 +10,7 @@ import { zip } from 'rxjs';
 import { CharacterMapper } from '../../utilities/mapper/character';
 import { CharacterArtsMapper } from '../../utilities/mapper/characterArts';
 import { CharacterListingMapper } from '../../utilities/mapper/characterListing';
-import { AsyncPipe } from '@angular/common';
-import { Database, get, onValue, ref } from '@angular/fire/database';
+import { Database, onValue, ref } from '@angular/fire/database';
 
 export enum characterFilter {
   ALPHABETIC = "Alphabétique",
@@ -27,7 +26,7 @@ export enum filterOrder {
 @Component({
   selector: 'app-characters',
   standalone: true,
-  imports: [FormsModule, CommonModule, DialogComponent, AsyncPipe],
+  imports: [FormsModule, CommonModule, DialogComponent],
   templateUrl: './characters.component.html',
   styleUrl: './characters.component.scss',
   animations: animations
@@ -66,7 +65,7 @@ export class CharactersComponent implements OnInit{
       })
       this.loadingCharacters = false;
     })
-    this.ecouterCaracters();
+    this.caractersListening();
   }
   
   caracters: string = '';
@@ -74,7 +73,7 @@ export class CharactersComponent implements OnInit{
   private database = inject(Database);
 
 
-  ecouterCaracters() {
+  caractersListening() {
     const dbRef = ref(this.database, 'caracters');
     
     onValue(dbRef, (snapshot) => {

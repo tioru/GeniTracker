@@ -153,3 +153,22 @@ dialog-component {
   align-items: center;
   justify-content: center;
 }
+
+.button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #4a4a4a;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  backdrop-filter: blur(5px);
+  font-family: "Genshin", sans-serif;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+}

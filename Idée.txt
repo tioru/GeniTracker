@@ -1,3 +1,5 @@
 Ajouter une page avec un calendrier pour savoir les quand sont les anniversaires des persos
 Faire un affichage différent pour l'affichage des personnages pour afficher la date, et tous les personnages sortis ce même jour (cas pour les premiers personnages)
 Ajouter une page admin afin d'ajouter directement dans une db externe des éléments par rapport au évènements, a la version, ...
+
+Bug lors d'un clic simple dans le carousel
