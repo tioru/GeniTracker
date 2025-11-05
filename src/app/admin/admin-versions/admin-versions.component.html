@@ -1,5 +1,10 @@
 <div class="flex aic jcc">
-    <button class="button">
-        <span>Test</span>
-    </button>
+    @if (!versions.length) {
+        <div class="spinner"></div>
+    }
+    @else {
+        <button class="button">
+            <span>Test</span>
+        </button>
+    }
 </div>

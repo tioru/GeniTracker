@@ -65,21 +65,6 @@
     text-align: center;
 }
 
-.spinner {
-    width: 100px;
-    height: 100px;
-    border: 8px solid rgba(0, 0, 0, 0.1);
-    border-top-color: #a1a1a1;
-    border-radius: 50%;
-    animation: spin 1s ease infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .card {
     padding: 20px;
     background-color: rgb(55, 55, 55);
