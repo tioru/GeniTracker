@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AdminVersionsComponent } from "./admin-versions/admin-versions.component";
+import { animations } from '../animation';
 
 enum AdminPanels {
   DASHBOARD = 'Panel d\'aministration',
@@ -15,7 +16,8 @@ enum AdminPanels {
   standalone: true,
   imports: [CommonModule, AdminVersionsComponent],
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+  styleUrls: ['./admin.component.scss'],
+  animations: animations
 })
 export class AdminComponent implements OnInit {
   constructor() { }

@@ -17,6 +17,7 @@ export class VersionMapper {
             active : rVersion.current_version,
             title : rVersion.title,
             selected : rVersion.current_version,
+            img_url : rVersion.img_url
         })
     }
 
@@ -29,6 +30,7 @@ export class VersionMapper {
             current_version : lVersion.active,
             version : lVersion.version,
             title : lVersion.title,
+            img_url : lVersion.img_url
         })
     }
 }

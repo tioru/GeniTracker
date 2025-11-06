@@ -1,6 +1,6 @@
 <div [@fadeDialog]="dialogVisibility" [class.backgroundMask]="backgroundMask" class="dialog-outside-container" (click)="onOustideDialogClick()" *ngIf="resetFields">
     <div [style]="{'height': height, 'width': width}" class="dialog-container flex column" (click)="$event.stopPropagation()">
-        <div *ngIf="dialogStyle.HBF" class="header fw" [class]="style === dialogStyle.HBF ? 'top-element' : ''">
+        <div *ngIf="style === dialogStyle.HBF" class="header fw" [class]="style === dialogStyle.HBF ? 'top-element' : ''">
             <ng-content select="[header]"></ng-content>
         </div>
         <div class="body fh fw flex aic jcc column" [class]="style === dialogStyle.BF ? 'top-element' : style === dialogStyle.B ? 'only-element' : ''">

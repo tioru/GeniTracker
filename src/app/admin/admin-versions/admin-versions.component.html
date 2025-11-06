@@ -3,8 +3,46 @@
         <div class="spinner"></div>
     }
     @else {
-        <button class="button">
-            <span>Test</span>
-        </button>
+        <div *ngIf="versions" class="flex column gap20">
+            <div class="versions-display">
+                <div *ngFor="let version of versions" class="version-card" (click)="updateVersion(version)">
+                    <div class="fw">
+                        <img width="120%" [src]="version.img_url"/>
+                        <span class="version">{{version.version}}</span>
+                    </div>
+                    <div>
+                        <span>{{version.title}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="button" (click)="addVersionDialogVisibility = !addVersionDialogVisibility">
+                <span>Ajouter une version</span>
+            </button>
+        </div>
     }
 </div>
+
+<dialog-component *ngIf="addVersionDialogVisibility" [style]="dialogStyle.HBF" [dialogVisibility]="addVersionDialogVisibility" [modal]="true" (onHide)="addVersionDialogVisibility = false">
+    <div header>
+        <h1>Ajouter une version</h1>
+    </div>
+    <div body>
+        <div class="flex column aic jcc gap20" style="width: 45vw; height: 30vh;">
+            <label for="version">Version</label>
+            <input type="text" [(ngModel)]="newVersion.version">
+            <span for="title">Nom de la version</span>
+            <input type="text" [(ngModel)]="newVersion.title">
+            <input type="checkbox" [(ngModel)]="newVersion.active"><span>Version actuelle</span>
+        </div>
+    </div>
+    <div footer>
+        <button class="button m10" (click)="createVersion()">Créer la version</button>
+    </div>
+</dialog-component>
+
+<dialog-component *ngIf="updateVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="updateVersionDialogVisibility" [modal]="true" (onHide)="updateVersionDialogVisibility = false">
+    <div body>
+        <span>{{selectedVersion.version}}</span>
+    </div>
+</dialog-component>
