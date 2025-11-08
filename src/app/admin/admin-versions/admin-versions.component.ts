@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { Database, onValue, ref } from '@angular/fire/database';
+import { Database, onValue, ref, set } from '@angular/fire/database';
 import { ProjectClass } from '../../../utilities/classes/class';
 import { VersionMapper } from '../../../utilities/mapper/version';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogComponent, DialogStyle } from '../../components/dialog/dialog.component';
+import { NotificationService, notificationSeverity } from '../../../utilities/services/notification.service';
 
 @Component({
   selector: 'app-admin-versions',
@@ -36,19 +37,22 @@ export class AdminVersionsComponent {
     img_url: ''
   };
 
-  versionListening() {
-    const dbRef = ref(this.database, 'version');
-    
-    onValue(dbRef, (snapshot) => {
-      if (snapshot.exists()) {
-        this.versions = VersionMapper.mapRemoteArray(snapshot.val());
-        console.log('Données mises à jour:', this.versions);
-      }
-    });
-  }
-
+  private dbRef = ref(this.database, 'versions');
+  
   ngOnInit() {
     this.versionListening();
+  }
+
+  constructor(
+    public notificationService : NotificationService
+  ) {}
+
+  versionListening() {
+    onValue(this.dbRef, (snapshot) => {
+      if (snapshot.exists()) {
+        this.versions = VersionMapper.mapRemoteArray(snapshot.val());
+      }
+    });
   }
 
   updateVersion(version: ProjectClass.Local.Version) {
@@ -63,7 +67,31 @@ export class AdminVersionsComponent {
   }
 
   createVersion() {
-    console.log('Créer une nouvelle version:', this.newVersion);
-    // Logique pour créer une nouvelle version
+    const newVersionsArray = [...this.versions, this.newVersion];
+    set(this.dbRef, VersionMapper.mapLocalArray(newVersionsArray)).then(() => {
+      this.notificationService.addNotification({
+        title: 'Succès',
+        severity: notificationSeverity.OK,
+        detail: 'La version a été créée avec succès.',
+        sticky: false,
+        delay: 5000
+      });
+      this.addVersionDialogVisibility = false;
+      this.newVersion = {
+        version: '',
+        title: '',
+        active: false,
+        selected: false,
+        img_url: ''
+      };
+    }, (error) => {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: `Échec de la création de la version : ${error}`,
+        sticky: false,
+        delay: 5000
+      });
+    });
   }
 }

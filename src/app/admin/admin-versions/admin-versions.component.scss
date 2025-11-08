@@ -1,34 +1,49 @@
 .versions-display {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
+    max-height: 90%;
+    width: 850px;
 }
 
 .version-card {
-    border: 1px solid rgba(204, 204, 204, 0.103);
+    border: 1px solid rgba(204, 204, 204, 0.505);
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     overflow: hidden;
-    background-color: black;
+    background-color: rgb(66, 66, 66);
     transition: all 0.3s ease-in-out;
+    width: 250px;
     cursor: pointer;
 
     &:hover {
         background: rgba(255, 255, 255, 0.1);
         transform: translateY(-3px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+        .version {
+            opacity: 1;
+        }
+    }
+
+    .img-container {
+        position: relative;
+        text-align: center;
     }
 
     .version {
-        position: relative;
-        top: -40px;
-        left: -100px;
-        color: white;
-        font-weight: bold;
-        font-size: 1.7em;
-        width: fit-content;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        opacity: 0;
+        color: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease-in-out;
+        font-style: italic;
+        width: 100%;
+        transform: translate(-50%, -15%);
+        font-size: clamp(1rem, 10vw, 3rem);
     }
 }

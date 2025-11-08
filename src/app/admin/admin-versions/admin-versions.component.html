@@ -6,11 +6,13 @@
         <div *ngIf="versions" class="flex column gap20">
             <div class="versions-display">
                 <div *ngFor="let version of versions" class="version-card" (click)="updateVersion(version)">
-                    <div class="fw">
-                        <img width="120%" [src]="version.img_url"/>
-                        <span class="version">{{version.version}}</span>
+                    <div class="fw img-container">
+                        <img height="100%" width="100%" [src]="version.img_url"/>
+                        <div class="version fh">
+                            <span>{{version.version}}</span>
+                        </div>
                     </div>
-                    <div>
+                    <div class="flex fh column aic jcc">
                         <span>{{version.title}}</span>
                     </div>
                 </div>
@@ -34,6 +36,8 @@
             <span for="title">Nom de la version</span>
             <input type="text" [(ngModel)]="newVersion.title">
             <input type="checkbox" [(ngModel)]="newVersion.active"><span>Version actuelle</span>
+            <span>Image de la version</span>
+            <input type="text" [(ngModel)]="newVersion.img_url">
         </div>
     </div>
     <div footer>
@@ -42,7 +46,8 @@
 </dialog-component>
 
 <dialog-component *ngIf="updateVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="updateVersionDialogVisibility" [modal]="true" (onHide)="updateVersionDialogVisibility = false">
-    <div body>
+    <div body class="flex column">
+        <img [src]="selectedVersion.img_url" width="50%">
         <span>{{selectedVersion.version}}</span>
     </div>
 </dialog-component>
