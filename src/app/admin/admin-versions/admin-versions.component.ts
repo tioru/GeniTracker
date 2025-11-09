@@ -47,6 +47,10 @@ export class AdminVersionsComponent {
     public notificationService : NotificationService
   ) {}
 
+  get isNewVersionCompleted() : boolean {
+    return this.newVersion.version !== '' && this.newVersion.title !== '' && this.newVersion.img_url !== '';
+  }
+
   versionListening() {
     onValue(this.dbRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -77,21 +81,24 @@ export class AdminVersionsComponent {
         delay: 5000
       });
       this.addVersionDialogVisibility = false;
-      this.newVersion = {
-        version: '',
-        title: '',
-        active: false,
-        selected: false,
-        img_url: ''
-      };
+      this.resetNewVersion();
     }, (error) => {
       this.notificationService.addNotification({
         title: 'Erreur',
         severity: notificationSeverity.ERROR,
         detail: `Échec de la création de la version : ${error}`,
-        sticky: false,
-        delay: 5000
+        sticky: true,
       });
     });
+  }
+
+  resetNewVersion() {
+    this.newVersion = {
+      version: '',
+      title: '',
+      active: false,
+      selected: false,
+      img_url: ''
+    };
   }
 }

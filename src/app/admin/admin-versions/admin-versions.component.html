@@ -5,14 +5,14 @@
     @else {
         <div *ngIf="versions" class="flex column gap20">
             <div class="versions-display">
-                <div *ngFor="let version of versions" class="version-card" (click)="updateVersion(version)">
+                <div *ngFor="let version of versions" [class]="addVersionDialogVisibility ? 'on-version-creation' : ''" class="version-card" (click)="updateVersion(version)">
                     <div class="fw img-container">
                         <img height="100%" width="100%" [src]="version.img_url"/>
                         <div class="version fh">
                             <span>{{version.version}}</span>
                         </div>
                     </div>
-                    <div class="flex fh column aic jcc">
+                    <div class="flex fh column aic jcc p20">
                         <span>{{version.title}}</span>
                     </div>
                 </div>
@@ -25,23 +25,48 @@
     }
 </div>
 
-<dialog-component *ngIf="addVersionDialogVisibility" [style]="dialogStyle.HBF" [dialogVisibility]="addVersionDialogVisibility" [modal]="true" (onHide)="addVersionDialogVisibility = false">
-    <div header>
-        <h1>Ajouter une version</h1>
-    </div>
+<dialog-component *ngIf="addVersionDialogVisibility" [style]="dialogStyle.B" [dialogVisibility]="addVersionDialogVisibility" [modal]="true" (onHide)="addVersionDialogVisibility = false; resetNewVersion()" [draggable]="true">
     <div body>
-        <div class="flex column aic jcc gap20" style="width: 45vw; height: 30vh;">
-            <label for="version">Version</label>
-            <input type="text" [(ngModel)]="newVersion.version">
-            <span for="title">Nom de la version</span>
-            <input type="text" [(ngModel)]="newVersion.title">
-            <input type="checkbox" [(ngModel)]="newVersion.active"><span>Version actuelle</span>
-            <span>Image de la version</span>
-            <input type="text" [(ngModel)]="newVersion.img_url">
+        <h1>Nouvelle version</h1>
+        <div class="creation-form">
+            <div class="flex column gap10" style="position: relative;">
+                <span [class]="newVersion.version ? 'completed' : ''">Version</span>
+                <input class="input" type="text" [(ngModel)]="newVersion.version" style="border-radius: 10px;">
+                <button *ngIf="newVersion.version" class="clear_icon" (click)="newVersion.version = ''" style="transform: translateY(15%);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                </button>
+            </div>
+            <div class="flex column gap10" style="position: relative;">
+                <span [class]="newVersion.title ? 'completed' : ''">Nom de la version</span>
+                <input class="input" type="text" [(ngModel)]="newVersion.title" style="border-radius: 10px;">
+                <button *ngIf="newVersion.title" class="clear_icon" (click)="newVersion.title = ''" style="transform: translateY(15%);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                </button>
+            </div>
+            <div class="flex column gap10" style="position: relative;">
+                <span [class]="newVersion.img_url ? 'completed' : ''">Image de la version</span>
+                <div class="fw flex jcc">
+                    <div class="img-placeholder">
+                        @if (newVersion.img_url) {
+                            <img [src]="newVersion.img_url" width="100%" height="100%"/>
+                        }
+                        @else {
+                            <span>Aucune image sélectionnée</span>
+                        }
+                    </div>
+                </div>
+                <input class="input" type="text" [(ngModel)]="newVersion.img_url" style="border-radius: 10px;">
+                <button *ngIf="newVersion.img_url" class="clear_icon" (click)="newVersion.img_url = ''" style="transform: translateY(415%);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                </button>
+            </div>
+            <div>
+                <input class="checkbox" type="checkbox" [(ngModel)]="newVersion.active"><span>Version actuelle</span>
+            </div>
         </div>
-    </div>
-    <div footer>
-        <button class="button m10" (click)="createVersion()">Créer la version</button>
+        <div>
+            <button [class]="isNewVersionCompleted ? '' : 'disabled'" class="button m20" [disabled]="!isNewVersionCompleted" (click)="createVersion()">Créer la version</button>
+        </div>
     </div>
 </dialog-component>
 

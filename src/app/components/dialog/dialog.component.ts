@@ -46,15 +46,69 @@ export class DialogComponent {
   @Input() width : string = "auto";
   @Input() backgroundMask : boolean = true;
   @Input() resetFields : boolean = true;
+  @Input() draggable : boolean = false;
 
-  @Input() style : DialogStyle = DialogStyle.HBF
+  @Input() style : DialogStyle = DialogStyle.HBF;
   @Output() onHide: EventEmitter<void> = new EventEmitter<void>();
 
-  public dialogStyle : typeof DialogStyle = DialogStyle
+  public dialogContainer : HTMLElement | null = null;
 
-  public onOustideDialogClick() : void {
-    if (this.modal) {
+  public dialogStyle : typeof DialogStyle = DialogStyle;
+
+  public initialPosX = 0;
+  public initialPosY = 0;
+  public terminalPosX = 0;
+  public terminalPosY = 0;
+
+  private mouseDownOutside = false;
+
+  public onOutsideMouseUp() : void {
+    if (this.modal && this.mouseDownOutside) {
       this.dialogVisibility = false;
     }
+  }
+
+  public onOutsideMouseDown() : void {
+    this.mouseDownOutside = true;
+  }
+
+  public onDragStart(event: MouseEvent) : void {
+    event.preventDefault();
+
+    this.initialPosX = event.clientX;
+    this.initialPosY = event.clientY;
+
+    document.onmousemove = this.elementDrag.bind(this);
+    document.onmouseup = this.onDragEnd.bind(this);
+  }
+
+  public elementDrag(event: MouseEvent) : void {
+    event.preventDefault();
+    this.dialogContainer = document.getElementById("dialog-container");
+
+    this.terminalPosX = this.initialPosX - event.clientX;
+    this.terminalPosY = this.initialPosY - event.clientY;
+
+    this.initialPosX = event.clientX;
+    this.initialPosY = event.clientY;
+    if (this.dialogContainer && this.validDialogBound()) {
+      this.dialogContainer.style.top = (this.dialogContainer.offsetTop - this.terminalPosY) + "px";
+      this.dialogContainer.style.left = (this.dialogContainer.offsetLeft - this.terminalPosX) + "px";
+    }
+  }
+
+  public validDialogBound() : boolean {
+    if (!this.dialogContainer) return false;
+
+    if (this.dialogContainer.offsetTop - this.terminalPosY < 0) return false;
+    if (this.dialogContainer.offsetLeft - this.terminalPosX < 0) return false;
+    if (this.dialogContainer.offsetLeft + this.dialogContainer.offsetWidth - this.terminalPosX > window.innerWidth) return false;
+    if (this.dialogContainer.offsetTop + this.dialogContainer.offsetHeight - this.terminalPosY > window.innerHeight) return false;
+    return true;
+  }
+
+  public onDragEnd() : void {
+    document.onmouseup = null;
+    document.onmousemove = null;
   }
 }

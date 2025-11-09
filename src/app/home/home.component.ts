@@ -3,6 +3,8 @@ import { Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit, inj
 import { Router } from '@angular/router';
 import { animations } from '../animation';
 import { Database, onValue, ref } from '@angular/fire/database';
+import { ProjectClass } from '../../utilities/classes/class';
+import { VersionMapper } from '../../utilities/mapper/version';
 
 @Component({
   selector: 'app-home',
@@ -14,19 +16,7 @@ import { Database, onValue, ref } from '@angular/fire/database';
 })
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   
-  public versions = [
-    { number: '5.0', active: false, title : "Fleurs radieuses lors d'un périple sous le soleil brûlant", selected: false},
-    { number: '5.1', active: false, title : "L'arc-en-ciel voué à brûler", selected: false},
-    { number: '5.2', active: false, title : "Broderie d'esprit et de flamme", selected: false},
-    { number: '5.3', active: false, title : "Ode à la résurrection incandescente", selected: false},
-    { number: '5.4', active: false, title : "Clair de lune en rêve", selected: false},
-    { number: '5.5', active: false, title : "Jour du retour des flammes", selected: false},
-    { number: '5.6', active: false, title : "Paralogisme", selected: false},
-    { number: '5.7', active: false, title : "L'espace-temps qui est vôtre", selected: false},
-    { number: '5.8', active: false, title : "Été de plomb à la station", selected: false},
-    { number: 'Luna I', active: false, title: "Ballet parmi marées enneigées et bosquets givrés", selected: false},
-    { number: 'Luna II', active: true, title: "Élégie sous la lune évanescente", selected: true}
-  ];
+  public versions: ProjectClass.Local.Version[] = [];
 
   // Index de la version actuellement sélectionnée
   selectedIndex: number = 0;
@@ -53,25 +43,11 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private database = inject(Database);
 
-  private databaseValue: any;
-
-  versionListening() {
-      const dbRef = ref(this.database, 'version');
-      
-      onValue(dbRef, (snapshot) => {
-        if (snapshot.exists()) {
-          this.databaseValue = snapshot.val();
-          console.log('Données mises à jour:', this.databaseValue);
-        }
-      });
-    }
-
   constructor(
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private router: Router
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
     setTimeout(() => {
@@ -80,16 +56,88 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.versionListening();
   }
 
-  public navigateTo(route: string): void {
-    this.router.navigateByUrl(route)
+  async ngAfterViewInit() {
+    await this.versionInitializing();
+
+    window.addEventListener('resize', () => {
+      this.calculateDimensions();
+      this.checkBoundary();
+    });
+
+    this.createBackgroundParticles();
+
+    this.container = document.querySelector(".container");
+    this.innerContainer = document.querySelector(".innerContainer");
+
+    this.calculateDimensions();
+
+    this.initializePosition();
+    
+    document.addEventListener("mouseup", () => {
+      this.pressed = false;
+      this.snapToNearest();
+    });
+
+    if (this.container && this.innerContainer) {
+      this.container.addEventListener("mousedown", (e: MouseEvent) => {
+        this.pressed = true;
+        this.startX = e.offsetX - this.innerContainer!.offsetLeft;
+        this.container!.style.cursor = "grabbing";
+      });
+
+      this.container.addEventListener("mouseenter", () => {
+        this.container!.style.cursor = "grab";
+      });
+
+      this.container.addEventListener("mouseup", () => {
+        this.container!.style.cursor = "grab";
+        this.pressed = false;
+      });
+
+      this.container.addEventListener("mousemove", (e: MouseEvent) => {
+        if (!this.pressed) return;
+        e.preventDefault();
+
+        this.x = e.offsetX;
+        this.innerContainer!.style.left = `${this.x - this.startX}px`;
+
+        this.checkBoundary();
+      });
+    }
   }
 
   ngOnDestroy(): void {
-    // Nettoyer les animations
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
     }
     this.cleanupParticles();
+  }
+
+  public navigateTo(route: string): void {
+    this.router.navigateByUrl(route)
+  }
+
+  private versionListening() {
+    const dbRef = ref(this.database, 'versions');
+    
+    onValue(dbRef, (snapshot) => {
+      if (snapshot.exists()) {
+        this.versions = VersionMapper.mapRemoteArray(snapshot.val());
+      }
+    });
+  }
+
+  private async versionInitializing() : Promise<void> {
+    return new Promise((resolve) => {
+      const dbRef = ref(this.database, 'versions');
+      
+      onValue(dbRef, (snapshot) => {
+        if (snapshot.exists()) {
+          this.versions = VersionMapper.mapRemoteArray(snapshot.val());
+        }
+        resolve();
+      });
+    });
   }
 
   private createBackgroundParticles(): void {
@@ -160,54 +208,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.particles = [];
   }
 
-  ngAfterViewInit(): void {
-    window.addEventListener('resize', () => {
-      this.calculateDimensions();
-      this.checkBoundary();
-    });
-
-    this.createBackgroundParticles();
-
-    this.container = document.querySelector(".container");
-    this.innerContainer = document.querySelector(".innerContainer");
-
-    this.calculateDimensions();
-
-    this.initializePosition();
-    
-    document.addEventListener("mouseup", () => {
-      this.pressed = false;
-      this.snapToNearest();
-    });
-
-    if (this.container && this.innerContainer) {
-      this.container.addEventListener("mousedown", (e: MouseEvent) => {
-        this.pressed = true;
-        this.startX = e.offsetX - this.innerContainer!.offsetLeft;
-        this.container!.style.cursor = "grabbing";
-      });
-
-      this.container.addEventListener("mouseenter", () => {
-        this.container!.style.cursor = "grab";
-      });
-
-      this.container.addEventListener("mouseup", () => {
-        this.container!.style.cursor = "grab";
-        this.pressed = false;
-      });
-
-      this.container.addEventListener("mousemove", (e: MouseEvent) => {
-        if (!this.pressed) return;
-        e.preventDefault();
-
-        this.x = e.offsetX;
-        this.innerContainer!.style.left = `${this.x - this.startX}px`;
-
-        this.checkBoundary();
-      });
-    }
-  }
-
   private checkBoundary() {
     if (!this.innerContainer) return;
 
@@ -270,7 +270,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     titleElement!.style.opacity = '0';
 
     setTimeout(() => {
-      this.activeVersionTitle = this.versions[this.selectedIndex].title;
+      if (this.versions[this.selectedIndex].title !== null) {
+        this.activeVersionTitle = this.versions[this.selectedIndex].title ?? '';
+      }
       titleElement!.style.transform = 'translateY(0)';
       titleElement!.style.opacity = '1';
     }, 400);

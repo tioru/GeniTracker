@@ -5,7 +5,7 @@
                 <div class="flex aic jcc" style="flex : 1">
                 </div>
                 <div class="flex aic jcc" style="position: relative; flex : 1">
-                    <input class="search_bar fw" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch" aria-autocomplete="list">
+                    <input class="input fw" type="text" id="character_name" name="character_name" [(ngModel)]="characterNameSearch" aria-autocomplete="list">
                     <button *ngIf="characterNameSearch" class="clear_icon" (click)="characterNameSearch = ''">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                     </button>
