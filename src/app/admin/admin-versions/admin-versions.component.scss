@@ -65,7 +65,7 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 50px;
     max-height: 90%;
-    width: 850px;
+    width: 950px;
     margin: 0 25px;
 
     span{
@@ -155,4 +155,32 @@
     &.line {
         width: 60%;
     }
+}
+
+.date-input {
+    &::-webkit-calendar-picker-indicator {
+        display: none;
+        position: absolute;
+    }
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    margin: 10px;
+    color: rgb(221, 221, 221);
+    width: 110px;
+    font-size: 16px;
+    font-family: 'Genshin', sans-serif;
+    cursor: pointer;
+}
+
+.link {
+    position: absolute;
+    top: 50%;
+    right: 0%;
+    transform: translateY(50%);
+    border-radius: 10px;
+    padding: 10px;
 }

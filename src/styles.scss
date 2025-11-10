@@ -1,5 +1,4 @@
 @use './variables' as vars;
-/* You can add global styles to this file, and also import other style files */
 
 @font-face {
   font-family: Genshin;
@@ -62,6 +61,10 @@ app-root {
 
 .aic {
   align-items: center;
+}
+
+.tac {
+  text-align: center;
 }
 
 .fh {

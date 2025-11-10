@@ -25,6 +25,8 @@ export class AdminVersionsComponent {
 
   public openVersionDialogVisibility: boolean = false;
 
+  public selectedVersionIndex: number | null = null;
+
   public selectedVersion: ProjectClass.Local.Version | null = null;
 
   public dialogStyle : typeof DialogStyle = DialogStyle;
@@ -52,7 +54,7 @@ export class AdminVersionsComponent {
   ) {}
 
   get isNewVersionCompleted() : boolean {
-    return this.newVersion.version !== '' && this.newVersion.title !== '' && this.newVersion.imgUrl !== '';
+    return !!this.newVersion.version && !!this.newVersion.title && !!this.newVersion.imgUrl && !!this.newVersion.startDate;
   }
 
   get currentDate() : Date {
@@ -63,19 +65,39 @@ export class AdminVersionsComponent {
     onValue(this.dbRef, (snapshot) => {
       if (snapshot.exists()) {
         this.versions = VersionMapper.mapRemoteArray(snapshot.val());
-        console.log('Versions récupérées : ', this.versions);
       }
     });
   }
 
   openVersion(version: ProjectClass.Local.Version) {
     this.selectedVersion = version;
+    this.selectedVersionIndex = this.versions.indexOf(version);
     this.openVersionDialogVisibility = true;
   }
 
-  deleteVersion(version: ProjectClass.Local.Version) {
-    console.log(`Supprimer la version : ${version}`);
-    // Logique pour supprimer la version
+  deleteVersion(versionIndex: number) {
+    const newVersionsArray = [...this.versions];
+    newVersionsArray.splice(versionIndex, 1);
+    set(this.dbRef, VersionMapper.mapLocalArray(newVersionsArray)).then(() => {
+      this.notificationService.addNotification({
+        title: 'Succès',
+        severity: notificationSeverity.OK,
+        detail: 'La version a été supprimée avec succès.',
+        sticky: false,
+        delay: 5000
+      });
+      this.openVersionDialogVisibility = false;
+      this.selectedVersionIndex = null;
+      this.selectedVersion = null;
+      this.editModeEnabled = false;
+    }, (error) => {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: `Échec de la suppression de la version : ${error}`,
+        sticky: true,
+      });
+    });
   }
 
   createVersion() {
@@ -113,6 +135,43 @@ export class AdminVersionsComponent {
   }
 
   saveVersionUpdates() : void {
-    console.log('Sauvegarder les modifications de la version : ', this.selectedVersion);
+    const newVersionsArray = [...this.versions];
+    if (this.selectedVersionIndex !== null && this.selectedVersion) {
+      newVersionsArray[this.selectedVersionIndex] = this.selectedVersion;
+    }
+    set(this.dbRef, VersionMapper.mapLocalArray(newVersionsArray)).then(() => {
+      this.notificationService.addNotification({
+        title: 'Succès',
+        severity: notificationSeverity.OK,
+        detail: 'Mise à jour réalisée avec succès.',
+        sticky: false,
+        delay: 5000
+      });
+      this.openVersionDialogVisibility = false;
+      this.selectedVersionIndex = null;
+      this.selectedVersion = null;
+      this.editModeEnabled = false;
+    }, (error) => {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: `Échec lors de la mise à jour : ${error}`,
+        sticky: true,
+      });
+    });
+  }
+
+  openDatePicker(event: Event) {
+    const input = event.target as HTMLInputElement;
+    
+    try {
+      input.showPicker();
+    } catch (error) {
+      console.warn('showPicker() not supported or blocked', error);
+    }
+  }
+
+  openInNewTab(url: string) : void {
+    window.open(url, '_blank');
   }
 }

@@ -60,8 +60,37 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                 </button>
             </div>
-            <div>
-                <input class="checkbox" type="checkbox" [(ngModel)]="newVersion.active"><span>Version actuelle</span>
+            <div class="flex column jcsa">
+                <div class="flex aic jcc column">
+                    <span>Version actuelle</span>
+                    <input class="checkbox" type="checkbox" [(ngModel)]="newVersion.active">
+                </div>
+                <div>
+                    <div class="flex aic jcsb">
+                        <span [class]="newVersion.startDate ? 'completed' : ''" style="text-align: center; flex: 1;">Date de sortie</span>
+                        <span [class]="newVersion.endDate ? 'completed' : ''"style="text-align: center; flex: 1;">Date de fin de support</span>
+                    </div>
+                    <div class="date-container">
+                        <div class="fw flex aic jcc">
+                            <input type="date" class="input date date-input" [(ngModel)]="newVersion.startDate" (click)="openDatePicker($event)"/>
+                        </div>
+                        <span></span>
+                        <div class="fw flex aic jcc">
+                            <input type="date" class="input date date-input" [(ngModel)]="newVersion.endDate" (click)="openDatePicker($event)"/>
+                        </div>
+                    </div>
+                    <div class="fw line-container">
+                        <div class="fw flex aic jcc">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="white" width="55px" viewBox="0 0 24 24"><path d="M4,9C5.31,9 6.42,9.83 6.83,11H22V13H6.83C6.42,14.17 5.31,15 4,15A3,3 0 0,1 1,12A3,3 0 0,1 4,9Z" /></svg>
+                        </div>
+                    <div>
+                        <svg class="middle-date-element line" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" fill="white" width="50px" height="55px" viewBox="0 0 24 24"><path d="M2,11H22V13H2V11Z" /></svg>
+                    </div>
+                    <div class="fw flex aic jcc">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" width="55px" viewBox="0 0 24 24"><path d="M20,9C18.69,9 17.58,9.83 17.17,11H2V13H17.17C17.58,14.17 18.69,15 20,15A3,3 0 0,0 23,12A3,3 0 0,0 20,9Z" /></svg>
+                    </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div>
@@ -70,10 +99,15 @@
     </div>
 </dialog-component>
 
-<dialog-component *ngIf="openVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="openVersionDialogVisibility" [modal]="true" (onHide)="openVersionDialogVisibility = false">
+<dialog-component *ngIf="openVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="openVersionDialogVisibility" [modal]="true" (onHide)="openVersionDialogVisibility = false; editModeEnabled = false; selectedVersion = null; selectedVersionIndex = null" [draggable]="true">
     <div body class="flex column aic jcc">
         <div class="fade">
             <img [src]="selectedVersion.imgUrl" style="width: 40vw;">
+        </div>
+        <div class="link">
+            <button class="button" (click)="openInNewTab(selectedVersion.imgUrl!)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="rgb(188,188,188)" width="25px" viewBox="0 0 24 24"><path d="M16.36,14C16.44,13.34 16.5,12.68 16.5,12C16.5,11.32 16.44,10.66 16.36,10H19.74C19.9,10.64 20,11.31 20,12C20,12.69 19.9,13.36 19.74,14M14.59,19.56C15.19,18.45 15.65,17.25 15.97,16H18.92C17.96,17.65 16.43,18.93 14.59,19.56M14.34,14H9.66C9.56,13.34 9.5,12.68 9.5,12C9.5,11.32 9.56,10.65 9.66,10H14.34C14.43,10.65 14.5,11.32 14.5,12C14.5,12.68 14.43,13.34 14.34,14M12,19.96C11.17,18.76 10.5,17.43 10.09,16H13.91C13.5,17.43 12.83,18.76 12,19.96M8,8H5.08C6.03,6.34 7.57,5.06 9.4,4.44C8.8,5.55 8.35,6.75 8,8M5.08,16H8C8.35,17.25 8.8,18.45 9.4,19.56C7.57,18.93 6.03,17.65 5.08,16M4.26,14C4.1,13.36 4,12.69 4,12C4,11.31 4.1,10.64 4.26,10H7.64C7.56,10.66 7.5,11.32 7.5,12C7.5,12.68 7.56,13.34 7.64,14M12,4.03C12.83,5.23 13.5,6.57 13.91,8H10.09C10.5,6.57 11.17,5.23 12,4.03M18.92,8H15.97C15.65,6.75 15.19,5.55 14.59,4.44C16.43,5.07 17.96,6.34 18.92,8M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>
+            </button>
         </div>
         <div class="flex jcsb fw aic">
             <h2 style="margin-left: 15px;">{{selectedVersion.title}}</h2>
@@ -82,18 +116,26 @@
         <div class="fw">
             <div class="fw date-container">
                 <div class="fw flex aic jcc">
+                    @if(editModeEnabled){
+                        <input type="date" class="input date date-input" [(ngModel)]="selectedVersion.startDate" (click)="openDatePicker($event)"/>
+                    }@else {
                     <span class="date p10 m10">
-                        {{selectedVersion.startDate}}
+                        {{selectedVersion.startDate | date: 'dd/MM/yyyy'}}
                     </span>
+                    }
                 </div>
-                    <span *ngIf="!selectedVersion.active"></span>
-                    <span *ngIf="selectedVersion.active" class="date p10 m10">
-                        Aujourd'hui
-                    </span>
+                <span *ngIf="!selectedVersion.active"></span>
+                <span *ngIf="selectedVersion.active" class="date p10 m10">
+                    Aujourd'hui
+                </span>
                 <div class="fw flex aic jcc">
-                    <span class="date p10 m10">
-                        {{selectedVersion.endDate ?? "?"}}
-                    </span>
+                    @if(editModeEnabled){
+                        <input type="date" class="input date date-input" [(ngModel)]="selectedVersion.endDate" (click)="openDatePicker($event)"/>
+                    }@else {
+                        <span class="date p10 m10">
+                            {{(selectedVersion.endDate | date: 'dd/MM/yyyy') ?? "?"}}
+                        </span>
+                    }
                 </div>
             </div>
             <div class="fw line-container">
@@ -120,7 +162,7 @@
                     <span>Modifier</span>
                 }
             </button>
-            <button class="m10 button fw trash flex aic jcc gap10">
+            <button class="m10 button fw trash flex aic jcc gap10" (click)="deleteVersion(selectedVersionIndex!)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" /></svg>
                 <span>Supprimer</span>
             </button>
