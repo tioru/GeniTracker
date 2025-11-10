@@ -6,6 +6,7 @@
     width: 1150px;
     overflow-y: scroll;
     scrollbar-width: thin;
+    scrollbar-color: grey transparent;
     padding: 5px 0;
 }
 
@@ -46,12 +47,16 @@
         top: 50%;
         left: 50%;
         opacity: 0;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgb(255, 255, 255);
         transition: all 0.3s ease-in-out;
         font-style: italic;
         width: 100%;
         transform: translate(-50%, -15%);
         font-size: clamp(1rem, 10vw, 3rem);
+    }
+    
+    .active {
+        color: #ffd700;
     }
 }
 
@@ -96,4 +101,58 @@
     color: #888;
     font-size: 18px;
     overflow: hidden;
+}
+
+.fade {
+    mask-image: linear-gradient( to bottom, #272727 65%,transparent 98%);
+}
+
+.button{
+    &.update {
+        &:hover {
+            background: rgba(0, 123, 255, 0.8);
+            border: 1px solid #0056b3;
+        }
+    }
+    &.trash {
+        &:hover {
+            background: rgba(220, 53, 69, 0.8);
+            border: 1px solid #b02a37;
+        }
+    }
+    &.confirm {
+        &:hover {
+            background: rgba(40, 167, 69, 0.8);
+            border: 1px solid #2d995b;
+        }
+    }
+}
+
+.date {
+    border-radius: 25px;
+    border: 2px solid rgb(219, 219, 219);
+    background: #3d3d3d;
+}
+
+.date-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+}
+
+.line-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+}
+
+.middle-date-element {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    &.line {
+        width: 60%;
+    }
 }

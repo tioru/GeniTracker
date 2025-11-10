@@ -23,18 +23,22 @@ export class AdminVersionsComponent {
 
   public addVersionDialogVisibility: boolean = false;
 
-  public updateVersionDialogVisibility: boolean = false;
+  public openVersionDialogVisibility: boolean = false;
 
   public selectedVersion: ProjectClass.Local.Version | null = null;
 
   public dialogStyle : typeof DialogStyle = DialogStyle;
+
+  public editModeEnabled : boolean = false;
 
   public newVersion: ProjectClass.Local.Version = {
     version: '',
     title: '',
     active: false,
     selected: false,
-    img_url: ''
+    imgUrl: '',
+    startDate: null,
+    endDate: null
   };
 
   private dbRef = ref(this.database, 'versions');
@@ -48,21 +52,25 @@ export class AdminVersionsComponent {
   ) {}
 
   get isNewVersionCompleted() : boolean {
-    return this.newVersion.version !== '' && this.newVersion.title !== '' && this.newVersion.img_url !== '';
+    return this.newVersion.version !== '' && this.newVersion.title !== '' && this.newVersion.imgUrl !== '';
+  }
+
+  get currentDate() : Date {
+    return new Date();
   }
 
   versionListening() {
     onValue(this.dbRef, (snapshot) => {
       if (snapshot.exists()) {
         this.versions = VersionMapper.mapRemoteArray(snapshot.val());
+        console.log('Versions récupérées : ', this.versions);
       }
     });
   }
 
-  updateVersion(version: ProjectClass.Local.Version) {
-    console.log(`Modifier la version: ${version}`);
+  openVersion(version: ProjectClass.Local.Version) {
     this.selectedVersion = version;
-    this.updateVersionDialogVisibility = true;
+    this.openVersionDialogVisibility = true;
   }
 
   deleteVersion(version: ProjectClass.Local.Version) {
@@ -98,7 +106,13 @@ export class AdminVersionsComponent {
       title: '',
       active: false,
       selected: false,
-      img_url: ''
+      imgUrl: '',
+      startDate: null,
+      endDate: null
     };
+  }
+
+  saveVersionUpdates() : void {
+    console.log('Sauvegarder les modifications de la version : ', this.selectedVersion);
   }
 }

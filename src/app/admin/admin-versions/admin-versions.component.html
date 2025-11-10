@@ -5,15 +5,15 @@
     @else {
         <div *ngIf="versions" class="flex column gap20">
             <div class="versions-display">
-                <div *ngFor="let version of versions" [class]="addVersionDialogVisibility ? 'on-version-creation' : ''" class="version-card" (click)="updateVersion(version)">
+                <div *ngFor="let version of versions" [ngClass]="{'on-version-creation': addVersionDialogVisibility}"  class="version-card" (click)="openVersion(version)">
                     <div class="fw img-container">
-                        <img height="100%" width="100%" [src]="version.img_url"/>
+                        <img height="100%" width="100%" [src]="version.imgUrl"/>
                         <div class="version fh">
                             <span>{{version.version}}</span>
                         </div>
                     </div>
                     <div class="flex fh column aic jcc p20">
-                        <span>{{version.title}}</span>
+                        <span [ngClass]="{'active': version.active}">{{version.title}}</span>
                     </div>
                 </div>
             </div>
@@ -44,19 +44,19 @@
                 </button>
             </div>
             <div class="flex column gap10" style="position: relative;">
-                <span [class]="newVersion.img_url ? 'completed' : ''">Image de la version</span>
+                <span [class]="newVersion.imgUrl ? 'completed' : ''">Image de la version</span>
                 <div class="fw flex jcc">
                     <div class="img-placeholder">
-                        @if (newVersion.img_url) {
-                            <img [src]="newVersion.img_url" width="100%" height="100%"/>
+                        @if (newVersion.imgUrl) {
+                            <img [src]="newVersion.imgUrl" width="100%" height="100%"/>
                         }
                         @else {
                             <span>Aucune image sélectionnée</span>
                         }
                     </div>
                 </div>
-                <input class="input" type="text" [(ngModel)]="newVersion.img_url" style="border-radius: 10px;">
-                <button *ngIf="newVersion.img_url" class="clear_icon" (click)="newVersion.img_url = ''" style="transform: translateY(415%);">
+                <input class="input" type="text" [(ngModel)]="newVersion.imgUrl" style="border-radius: 10px;">
+                <button *ngIf="newVersion.imgUrl" class="clear_icon" (click)="newVersion.imgUrl = ''" style="transform: translateY(415%);">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                 </button>
             </div>
@@ -70,9 +70,60 @@
     </div>
 </dialog-component>
 
-<dialog-component *ngIf="updateVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="updateVersionDialogVisibility" [modal]="true" (onHide)="updateVersionDialogVisibility = false">
-    <div body class="flex column">
-        <img [src]="selectedVersion.img_url" width="50%">
-        <span>{{selectedVersion.version}}</span>
+<dialog-component *ngIf="openVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="openVersionDialogVisibility" [modal]="true" (onHide)="openVersionDialogVisibility = false">
+    <div body class="flex column aic jcc">
+        <div class="fade">
+            <img [src]="selectedVersion.imgUrl" style="width: 40vw;">
+        </div>
+        <div class="flex jcsb fw aic">
+            <h2 style="margin-left: 15px;">{{selectedVersion.title}}</h2>
+            <h2 style="margin-right: 15px;">{{selectedVersion.version}}</h2>
+        </div>
+        <div class="fw">
+            <div class="fw date-container">
+                <div class="fw flex aic jcc">
+                    <span class="date p10 m10">
+                        {{selectedVersion.startDate}}
+                    </span>
+                </div>
+                    <span *ngIf="!selectedVersion.active"></span>
+                    <span *ngIf="selectedVersion.active" class="date p10 m10">
+                        Aujourd'hui
+                    </span>
+                <div class="fw flex aic jcc">
+                    <span class="date p10 m10">
+                        {{selectedVersion.endDate ?? "?"}}
+                    </span>
+                </div>
+            </div>
+            <div class="fw line-container">
+                <div class="fw flex aic jcc">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" width="55px" viewBox="0 0 24 24"><path d="M4,9C5.31,9 6.42,9.83 6.83,11H22V13H6.83C6.42,14.17 5.31,15 4,15A3,3 0 0,1 1,12A3,3 0 0,1 4,9Z" /></svg>
+                </div>
+                <div>
+                    <svg class="middle-date-element" style="z-index: 2;" *ngIf="selectedVersion.active" xmlns="http://www.w3.org/2000/svg" fill="white" width="55px" viewBox="0 0 24 24"><path d="M2,11H9.17C9.58,9.83 10.69,9 12,9C13.31,9 14.42,9.83 14.83,11H22V13H14.83C14.42,14.17 13.31,15 12,15C10.69,15 9.58,14.17 9.17,13H2V11Z" /></svg>
+                    <svg class="middle-date-element line" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" fill="white" width="50px" height="55px" viewBox="0 0 24 24"><path d="M2,11H22V13H2V11Z" /></svg>
+                </div>
+                <div class="fw flex aic jcc">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" width="55px" viewBox="0 0 24 24"><path d="M20,9C18.69,9 17.58,9.83 17.17,11H2V13H17.17C17.58,14.17 18.69,15 20,15A3,3 0 0,0 23,12A3,3 0 0,0 20,9Z" /></svg>
+                </div>
+            </div>
+        </div>
+        <div class="fw flex gap10 aic m10">
+            <button [class]="editModeEnabled ? 'confirm' : 'update'" class="m10 button fw flex aic jcc gap10" (click)="editModeEnabled ? saveVersionUpdates() : editModeEnabled = true">
+                @if(editModeEnabled){
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" width="25px" viewBox="0 0 24 24"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z" /></svg>
+                    <span>Enregistrer</span>
+                }
+                @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                    <span>Modifier</span>
+                }
+            </button>
+            <button class="m10 button fw trash flex aic jcc gap10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" /></svg>
+                <span>Supprimer</span>
+            </button>
+        </div>
     </div>
 </dialog-component>
