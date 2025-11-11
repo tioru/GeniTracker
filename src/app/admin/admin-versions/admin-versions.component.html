@@ -5,19 +5,26 @@
     @else {
         <div *ngIf="versions" class="flex column gap20">
             <div class="versions-display">
-                <div *ngFor="let version of versions" [ngClass]="{'on-version-creation': addVersionDialogVisibility}"  class="version-card" (click)="openVersion(version)">
-                    <div class="fw img-container">
-                        <img height="100%" width="100%" [src]="version.imgUrl"/>
-                        <div class="version fh">
-                            <span>{{version.version}}</span>
-                        </div>
+                <div class="m10" *ngFor="let majorVersion of majorVersions | keyvalue">
+                    <div class="major-version-title">
+                        <h2>Version {{majorVersion.key}}</h2>
                     </div>
-                    <div class="flex fh column aic jcc p20">
-                        <span [ngClass]="{'active': version.active}">{{version.title}}</span>
+                    <div class="versions-grid">
+                        <div *ngFor="let version of majorVersion.value" [ngClass]="{'on-version-creation': addVersionDialogVisibility}"  class="version-card" (click)="openVersion(version)">
+                        <div class="fw img-container">
+                            <img [class.loading]="!version.imgLoaded" height="100%" width="100%" (load)="version.imgLoaded = true" [src]="version.imgUrl"/>
+                            <div *ngIf="!version.imgLoaded" class="spinner"></div>
+                            <div class="version fh">
+                                <span>{{version.version}}</span>
+                            </div>
+                        </div>
+                        <div class="flex fh column aic jcc p20">
+                            <span [ngClass]="{'active': version.active}">{{version.title}}</span>
+                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
             <button class="button" (click)="addVersionDialogVisibility = !addVersionDialogVisibility">
                 <span>Ajouter une version</span>
             </button>
@@ -100,7 +107,7 @@
 </dialog-component>
 
 <dialog-component *ngIf="openVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="openVersionDialogVisibility" [modal]="true" (onHide)="openVersionDialogVisibility = false; editModeEnabled = false; selectedVersion = null; selectedVersionIndex = null" [draggable]="true">
-    <div body class="flex column aic jcc">
+    <div body class="flex column aic jcc" style="position: relative;">
         <div class="fade">
             <img [src]="selectedVersion.imgUrl" style="width: 40vw;">
         </div>
@@ -132,9 +139,15 @@
                     @if(editModeEnabled){
                         <input type="date" class="input date date-input" [(ngModel)]="selectedVersion.endDate" (click)="openDatePicker($event)"/>
                     }@else {
-                        <span class="date p10 m10">
-                            {{(selectedVersion.endDate | date: 'dd/MM/yyyy') ?? "?"}}
-                        </span>
+                        @if(isADate(selectedVersion.endDate)) {
+                            <span class="date p10 m10">
+                                {{selectedVersion.endDate | date: 'dd/MM/yyyy'}}
+                            </span>
+                        }@else {
+                            <span class="date p10 m10">
+                                ?
+                            </span>
+                        }
                     }
                 </div>
             </div>

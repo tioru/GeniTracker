@@ -6,6 +6,7 @@ export class LVersionClass {
   imgUrl : string | null = null;
   startDate : Date | null = null;
   endDate : Date | null = null;
+  imgLoaded : boolean = false;
 
   constructor(init?:Partial<LVersionClass>) {
     Object.assign(this, init);

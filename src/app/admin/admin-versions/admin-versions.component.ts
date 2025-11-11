@@ -15,9 +15,9 @@ import { NotificationService, notificationSeverity } from '../../../utilities/se
   styleUrl: './admin-versions.component.scss'
 })
 export class AdminVersionsComponent {
-  public retrievingVersions: boolean = true;
-
   private database = inject(Database);
+  
+  private dbRef = ref(this.database, 'versions');
 
   public versions: ProjectClass.Local.Version[] = [];
 
@@ -40,13 +40,22 @@ export class AdminVersionsComponent {
     selected: false,
     imgUrl: '',
     startDate: null,
-    endDate: null
+    endDate: null,
+    imgLoaded: false
   };
 
-  private dbRef = ref(this.database, 'versions');
-  
+  public majorVersions : { [key: string]: ProjectClass.Local.Version[] } = {};
+
+  public majorVersionRegex : RegExp = /^([^.\s]+)/;
+
   ngOnInit() {
-    this.versionListening();
+    this.versionListening()
+  }
+
+  async ngAfterViewInit() : Promise<void> {
+    await this.versionInitializing().then(() => {
+      this.sortVersion();
+    });
   }
 
   constructor(
@@ -61,21 +70,35 @@ export class AdminVersionsComponent {
     return new Date();
   }
 
-  versionListening() {
+  public versionListening() : void {
     onValue(this.dbRef, (snapshot) => {
       if (snapshot.exists()) {
         this.versions = VersionMapper.mapRemoteArray(snapshot.val());
+        console.log(this.versions)
       }
     });
   }
 
-  openVersion(version: ProjectClass.Local.Version) {
+  private async versionInitializing() : Promise<void> {
+    return new Promise((resolve) => {
+      const dbRef = ref(this.database, 'versions');
+      
+      onValue(dbRef, (snapshot) => {
+        if (snapshot.exists()) {
+          this.versions = VersionMapper.mapRemoteArray(snapshot.val());
+        }
+        resolve();
+      });
+    });
+  }
+
+  public openVersion(version: ProjectClass.Local.Version) : void {
     this.selectedVersion = version;
     this.selectedVersionIndex = this.versions.indexOf(version);
     this.openVersionDialogVisibility = true;
   }
 
-  deleteVersion(versionIndex: number) {
+  public deleteVersion(versionIndex: number) : void {
     const newVersionsArray = [...this.versions];
     newVersionsArray.splice(versionIndex, 1);
     set(this.dbRef, VersionMapper.mapLocalArray(newVersionsArray)).then(() => {
@@ -100,7 +123,7 @@ export class AdminVersionsComponent {
     });
   }
 
-  createVersion() {
+  public createVersion() : void {
     const newVersionsArray = [...this.versions, this.newVersion];
     set(this.dbRef, VersionMapper.mapLocalArray(newVersionsArray)).then(() => {
       this.notificationService.addNotification({
@@ -122,7 +145,7 @@ export class AdminVersionsComponent {
     });
   }
 
-  resetNewVersion() {
+  public resetNewVersion() : void {
     this.newVersion = {
       version: '',
       title: '',
@@ -130,11 +153,12 @@ export class AdminVersionsComponent {
       selected: false,
       imgUrl: '',
       startDate: null,
-      endDate: null
+      endDate: null,
+      imgLoaded: false
     };
   }
 
-  saveVersionUpdates() : void {
+  public saveVersionUpdates() : void {
     const newVersionsArray = [...this.versions];
     if (this.selectedVersionIndex !== null && this.selectedVersion) {
       newVersionsArray[this.selectedVersionIndex] = this.selectedVersion;
@@ -161,7 +185,7 @@ export class AdminVersionsComponent {
     });
   }
 
-  openDatePicker(event: Event) {
+  public openDatePicker(event: Event) : void {
     const input = event.target as HTMLInputElement;
     
     try {
@@ -171,7 +195,28 @@ export class AdminVersionsComponent {
     }
   }
 
-  openInNewTab(url: string) : void {
+  public openInNewTab(url: string) : void {
     window.open(url, '_blank');
+  }
+
+  public sortVersion() : void {
+    this.versions.map(v => {
+      if (v.version)  {
+        const result = v.version.match(this.majorVersionRegex)
+        if (result){
+          this.majorVersions[result[0]] = [...this.majorVersions[result[0]] || [], v];
+        }
+      }
+    })
+  }
+
+  public isADate(date : Date | null) : boolean {
+    try {
+      if (date === null) return false;
+      date.getTime();
+      return true
+    } catch {
+      return false;
+    }
   }
 }

@@ -27,7 +27,7 @@ export class AdminComponent implements OnInit {
 
   public adminPanels = AdminPanels;
 
-  selectedAdminPanel: AdminPanels = AdminPanels.DASHBOARD;
+  selectedAdminPanel: AdminPanels = AdminPanels.VERSIONS;
 
   selectAdminPanel(panel: AdminPanels) {
     this.selectedAdminPanel = panel;
