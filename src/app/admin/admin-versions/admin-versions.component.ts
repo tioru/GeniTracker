@@ -6,13 +6,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogComponent, DialogStyle } from '../../components/dialog/dialog.component';
 import { NotificationService, notificationSeverity } from '../../../utilities/services/notification.service';
+import { animations } from '../../animation';
 
 @Component({
   selector: 'app-admin-versions',
   standalone: true,
   imports: [CommonModule, FormsModule, DialogComponent],
   templateUrl: './admin-versions.component.html',
-  styleUrl: './admin-versions.component.scss'
+  styleUrls: ['./admin-versions.component.scss'],
+  animations: animations
 })
 export class AdminVersionsComponent {
   private database = inject(Database);
@@ -211,12 +213,15 @@ export class AdminVersionsComponent {
   }
 
   public isADate(date : Date | null) : boolean {
-    try {
-      if (date === null) return false;
-      date.getTime();
-      return true
-    } catch {
-      return false;
+    if (date!!) {
+      try {
+        const dateFormat = new Date(date);
+        dateFormat.getTime();
+        return true
+      } catch {
+        return false;
+      }
     }
+    return false
   }
 }
