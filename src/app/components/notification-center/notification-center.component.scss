@@ -11,17 +11,6 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes comingFromRight {
-    0% {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
 .fade-out {
     animation: fadingInRight 0.5s ease forwards;
     pointer-events: none;

@@ -45,4 +45,22 @@ export const animations = [
       animate('100ms ease-in-out')
     ])
   ]),
+  trigger('slideAnimation', [
+    transition(':enter', [
+      style({ 
+        opacity: 0, 
+        transform: 'translateX(100%)' 
+      }),
+      animate('700ms ease', style({ 
+        opacity: 1, 
+        transform: 'translateX(0)' 
+      }))
+    ]),
+    transition(':leave', [
+      animate('500ms ease', style({ 
+        opacity: 0, 
+        transform: 'translateX(100%)' 
+      }))
+    ])
+  ])
 ];
