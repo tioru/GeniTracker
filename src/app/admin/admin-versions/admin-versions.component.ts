@@ -50,6 +50,8 @@ export class AdminVersionsComponent {
 
   public majorVersionRegex : RegExp = /^([^.\s]+)/;
 
+  public updtdImgSrc : string = "";
+
   ngOnInit() {
     this.versionListening()
   }
@@ -76,6 +78,7 @@ export class AdminVersionsComponent {
     onValue(this.dbRef, (snapshot) => {
       if (snapshot.exists()) {
         this.versions = VersionMapper.mapRemoteArray(snapshot.val());
+        this.sortVersion();
         console.log(this.versions)
       }
     });
@@ -95,9 +98,12 @@ export class AdminVersionsComponent {
   }
 
   public openVersion(version: ProjectClass.Local.Version) : void {
-    this.selectedVersion = version;
-    this.selectedVersionIndex = this.versions.indexOf(version);
+    this.selectedVersion = {...version};
+    this.selectedVersionIndex = this.versions.findIndex(v => v.version === version.version);
     this.openVersionDialogVisibility = true;
+    if(this.selectedVersion.imgUrl) {
+      this.updtdImgSrc = this.selectedVersion.imgUrl;
+    }
   }
 
   public deleteVersion(versionIndex: number) : void {
@@ -164,6 +170,7 @@ export class AdminVersionsComponent {
     const newVersionsArray = [...this.versions];
     if (this.selectedVersionIndex !== null && this.selectedVersion) {
       newVersionsArray[this.selectedVersionIndex] = this.selectedVersion;
+      newVersionsArray[this.selectedVersionIndex].imgUrl = this.updtdImgSrc;
     }
     set(this.dbRef, VersionMapper.mapLocalArray(newVersionsArray)).then(() => {
       this.notificationService.addNotification({
@@ -177,6 +184,7 @@ export class AdminVersionsComponent {
       this.selectedVersionIndex = null;
       this.selectedVersion = null;
       this.editModeEnabled = false;
+      this.updtdImgSrc = "";
     }, (error) => {
       this.notificationService.addNotification({
         title: 'Erreur',
@@ -202,6 +210,8 @@ export class AdminVersionsComponent {
   }
 
   public sortVersion() : void {
+    this.majorVersions = {}
+
     this.versions.map(v => {
       if (v.version)  {
         const result = v.version.match(this.majorVersionRegex)
