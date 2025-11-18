@@ -52,6 +52,10 @@ export class AdminVersionsComponent {
 
   public updtdImgSrc : string = "";
 
+  public versionCreated : boolean = false;
+  
+  public versionEdited : boolean = false;
+
   ngOnInit() {
     this.versionListening()
   }
@@ -117,10 +121,7 @@ export class AdminVersionsComponent {
         sticky: false,
         delay: 5000
       });
-      this.openVersionDialogVisibility = false;
-      this.selectedVersionIndex = null;
-      this.selectedVersion = null;
-      this.editModeEnabled = false;
+      this.versionEdited = true;
     }, (error) => {
       this.notificationService.addNotification({
         title: 'Erreur',
@@ -141,7 +142,7 @@ export class AdminVersionsComponent {
         sticky: false,
         delay: 5000
       });
-      this.addVersionDialogVisibility = false;
+      this.versionCreated = true;
       this.resetNewVersion();
     }, (error) => {
       this.notificationService.addNotification({
@@ -180,11 +181,7 @@ export class AdminVersionsComponent {
         sticky: false,
         delay: 5000
       });
-      this.openVersionDialogVisibility = false;
-      this.selectedVersionIndex = null;
-      this.selectedVersion = null;
-      this.editModeEnabled = false;
-      this.updtdImgSrc = "";
+      this.versionEdited = true;
     }, (error) => {
       this.notificationService.addNotification({
         title: 'Erreur',
@@ -233,5 +230,13 @@ export class AdminVersionsComponent {
       }
     }
     return false
+  }
+
+  public closePopup() : void {
+    const popover = document.getElementById("confirmPopup");
+    
+    if (popover) {
+      popover.hidePopover()
+    }
   }
 }

@@ -32,7 +32,7 @@
     }
 </div>
 
-<dialog-component *ngIf="addVersionDialogVisibility" [style]="dialogStyle.B" [dialogVisibility]="addVersionDialogVisibility" [modal]="true" (onHide)="addVersionDialogVisibility = false; resetNewVersion()" [draggable]="true">
+<dialog-component *ngIf="addVersionDialogVisibility" [style]="dialogStyle.B" [dialogVisibility]="addVersionDialogVisibility && !versionCreated" [modal]="true" (onHide)="addVersionDialogVisibility = false; resetNewVersion(); versionCreated = false" [draggable]="true">
     <div body>
         <h1>Nouvelle version</h1>
         <div class="creation-form">
@@ -106,7 +106,7 @@
     </div>
 </dialog-component>
 
-<dialog-component *ngIf="openVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="openVersionDialogVisibility" [modal]="true" (onHide)="openVersionDialogVisibility = false; editModeEnabled = false; selectedVersion = null; selectedVersionIndex = null" [draggable]="true">
+<dialog-component *ngIf="openVersionDialogVisibility && selectedVersion" [style]="dialogStyle.B" [dialogVisibility]="openVersionDialogVisibility && !versionEdited" [modal]="true" (onHide)="openVersionDialogVisibility = false; editModeEnabled = false; selectedVersion = null; selectedVersionIndex = null; versionEdited = false; this.updtdImgSrc = ''" [draggable]="true">
     <div body class="flex column aic jcc" style="position: relative;">
         <div [@enter-leave] *ngIf="editModeEnabled" class="button flex aic jcc gap10 edition-mode">
             <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
@@ -189,7 +189,7 @@
             </div>
         </div>
         <div class="fw flex gap10 aic m10">
-            <button class="m10 button fw trash flex aic jcc gap10" popovertarget="confirmPopup">
+            <button class="confirmButton m10 button fw trash flex aic jcc gap10" popovertarget="confirmPopup">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" /></svg>
                 <span>Supprimer</span>
             </button>
@@ -210,12 +210,18 @@
     </div>
 </dialog-component>
 
-<div [@enter-leave] id="confirmPopup" popover>
-    Voulez-vous vraiment supprimer la version ?
-    <button class="button" (click)="deleteVersion(selectedVersionIndex!)">
-        Confirmer
-    </button>
-    <button class="button">
-        Annuler
-    </button>
+<div [@enter-leave] id="confirmPopup" class="confirm-Popup" popover>
+    <div class="flex aic jcc column gap20">
+        <span>
+            Voulez-vous vraiment supprimer la version ?
+        </span>
+        <div class="flex aic gap10">
+            <button class="button" (click)="closePopup()">
+                Annuler
+            </button>
+            <button class="button delete" (click)="deleteVersion(selectedVersionIndex!); closePopup()">
+                Confirmer
+            </button>
+        </div>
+    </div>
 </div>
