@@ -28,9 +28,7 @@ export class NotificationService {
   private notificationsSubject: BehaviorSubject<Array<notificationModel>> = new BehaviorSubject<Array<notificationModel>>([]);
   public notifications$: Observable<Array<notificationModel>> = this.notificationsSubject.asObservable();
   
-  constructor(
-  
-  ) {}
+  constructor() {}
 
   public addNotification(notification : notificationModel) : void {
     const currentNotifications = this.notificationsSubject.value;

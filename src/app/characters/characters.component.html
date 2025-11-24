@@ -74,7 +74,7 @@
     </div>
 </dialog-component>
 
-<dialog-component *ngIf="dialogVisibility" [height]="loadingCharacter ? '60vh' : '80vh'" [width]="loadingCharacter ? '60vw' : '75vw'" [style]="dialogStyle.B" [dialogVisibility]="dialogVisibility" [modal]="loadingCharacter ? false : true" (onHide)="dialogVisibility = false">
+<dialog-component *ngIf="dialogVisibility" [height]="loadingCharacter ? '60vh' : '80vh'" [width]="loadingCharacter ? '60vw' : '75vw'" [style]="dialogStyle.B" [dialogVisibility]="dialogVisibility" [modal]="!loadingCharacter" (onHide)="dialogVisibility = false">
     <div body [class]="isInTransition ? 'flex aic jcc' : ''" class="fh fw">
         @if(!loadingCharacter && !isInTransition) {
             <div [@enter-leave] class="flex fh jcc fw" *ngIf="selectedChar && selectedCharArts">

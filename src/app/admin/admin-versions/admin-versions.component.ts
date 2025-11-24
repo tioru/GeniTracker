@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogComponent, DialogStyle } from '../../components/dialog/dialog.component';
 import { NotificationService, notificationSeverity } from '../../../utilities/services/notification.service';
 import { animations } from '../../animation';
+import { FirebaseErrorService } from '../../../utilities/services/firebase-error.service';
 
 @Component({
   selector: 'app-admin-versions',
@@ -67,7 +68,8 @@ export class AdminVersionsComponent {
   }
 
   constructor(
-    public notificationService : NotificationService
+    public notificationService : NotificationService,
+    public firebaseErrorService: FirebaseErrorService
   ) {}
 
   get isNewVersionCompleted() : boolean {
@@ -126,7 +128,7 @@ export class AdminVersionsComponent {
       this.notificationService.addNotification({
         title: 'Erreur',
         severity: notificationSeverity.ERROR,
-        detail: `Échec de la suppression de la version : ${error}`,
+        detail: `Échec de la suppression de la version : ${this.firebaseErrorService.handleFirebaseError(error)}`,
         sticky: true,
       });
     });
@@ -148,7 +150,7 @@ export class AdminVersionsComponent {
       this.notificationService.addNotification({
         title: 'Erreur',
         severity: notificationSeverity.ERROR,
-        detail: `Échec de la création de la version : ${error}`,
+        detail: `Échec de la création de la version : ${this.firebaseErrorService.handleFirebaseError(error)}`,
         sticky: true,
       });
     });
@@ -186,7 +188,7 @@ export class AdminVersionsComponent {
       this.notificationService.addNotification({
         title: 'Erreur',
         severity: notificationSeverity.ERROR,
-        detail: `Échec lors de la mise à jour : ${error}`,
+        detail: `Échec lors de la mise à jour : ${this.firebaseErrorService.handleFirebaseError(error)}`,
         sticky: true,
       });
     });

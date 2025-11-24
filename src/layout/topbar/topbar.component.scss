@@ -48,3 +48,67 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
 }
+
+.openButton {
+    anchor-name: --list-button;
+}
+
+#openList {
+    color: white;
+    width: max-content;
+    border: 1px solid #454545;
+    box-shadow: 1px 0px 10px 1px #0e0e0e;
+    border-radius: 10px;
+    background-color: #272727;
+    position: absolute;
+    position-anchor: --list-button;
+    top: anchor(bottom);
+    left: anchor(left);
+    margin: 10px;
+    padding: 10px;
+    position-try: --below-right, --up-right, --below-left, --up-left;
+}
+
+@position-try --below-right {
+    inset: unset;
+    top: anchor(bottom);
+    left: anchor(left);
+}
+
+@position-try --below-left {
+    inset: unset;
+    top: anchor(bottom);
+    right: anchor(right);
+}
+
+@position-try --up-left {
+    inset: unset;
+    bottom: anchor(top);
+    right: anchor(right);
+}
+
+@position-try --up-right {
+    inset: unset;
+    bottom: anchor(top);
+    left: anchor(left);
+}
+
+.open-List {
+  transition: opacity 0.2s, translate 0.2s, overlay 0.2s allow-discrete,
+  display 0.2s allow-discrete;
+  opacity: 0;
+  translate: 0 1em;
+  &:popover-open {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@starting-style {
+  .open-List {
+    &:popover-open {
+      opacity: 0;
+      translate: 0 1em;
+    }
+  }
+}

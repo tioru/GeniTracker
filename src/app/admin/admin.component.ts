@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AdminVersionsComponent } from "./admin-versions/admin-versions.component";
 import { animations } from '../animation';
+import { FormsModule } from '@angular/forms';
 
 enum AdminPanels {
   DASHBOARD = 'Panel d\'aministration',
@@ -19,17 +20,16 @@ enum AdminPanels {
   styleUrls: ['./admin.component.scss'],
   animations: animations
 })
-export class AdminComponent implements OnInit {
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class AdminComponent {
+  
   public adminPanels = AdminPanels;
 
-  selectedAdminPanel: AdminPanels = AdminPanels.DASHBOARD;
+  public selectedAdminPanel: AdminPanels = AdminPanels.DASHBOARD;
 
-  selectAdminPanel(panel: AdminPanels) {
+  constructor(
+  ) {}
+  
+  public selectAdminPanel(panel: AdminPanels) {
     this.selectedAdminPanel = panel;
   }
 }
