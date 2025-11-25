@@ -20,17 +20,17 @@ export class AuthService {
     });
   }
 
-  public async connexion(email: string, password: string) : Promise<void> {
+  public async connexion(email: string, password: string) : Promise<UserCredential | null> {
     try {
-      await signInWithEmailAndPassword(this.auth, email, password).then((userCredential) => {
-        this.notificationService.addNotification({
-          title: 'Connecté',
-          severity: notificationSeverity.OK,
-          detail: `Bienvenue ${userCredential.user.email}`,
-          sticky: false,
-          delay: 5000
-        });
+      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      this.notificationService.addNotification({
+        title: 'Connecté',
+        severity: notificationSeverity.OK,
+        detail: `Bienvenue ${userCredential.user.email}`,
+        sticky: false,
+        delay: 5000
       });
+      return userCredential;
     } catch (error) {
       this.notificationService.addNotification({
         title: 'Erreur',
@@ -38,6 +38,7 @@ export class AuthService {
         detail: this.firebaseErrorService.handleFirebaseError(error),
         sticky: true
       });
+      return null;
     }
   }
 
@@ -54,17 +55,17 @@ export class AuthService {
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
-  public async register(email: string, password: string) : Promise<void> {
+  public async register(email: string, password: string) : Promise<UserCredential | null> {
     try {
-      await createUserWithEmailAndPassword(this.auth, email, password).then((userCredential) => {
-        this.notificationService.addNotification({
-          title: 'Connecté',
-          severity: notificationSeverity.OK,
-          detail: `Bienvenue ${userCredential.user.email}`,
-          sticky: false,
-          delay: 5000
-        });
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password)
+      this.notificationService.addNotification({
+        title: 'Connecté',
+        severity: notificationSeverity.OK,
+        detail: `Bienvenue ${userCredential.user.email}`,
+        sticky: false,
+        delay: 5000
       });
+      return userCredential;
     } catch (error) {
       this.notificationService.addNotification({
         title: 'Erreur',
@@ -72,6 +73,7 @@ export class AuthService {
         detail: this.firebaseErrorService.handleFirebaseError(error),
         sticky: true
       });
+      return null;
     }
   }
 

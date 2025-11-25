@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../dialog/dialog.component';
-import { NotificationService, notificationSeverity } from '../../../utilities/services/notification.service';
+import { NotificationService } from '../../../utilities/services/notification.service';
 import { AuthService } from '../../../utilities/services/auth.service';
 import { User } from '@angular/fire/auth';
 import { Observable, of } from 'rxjs';
@@ -48,22 +48,24 @@ export class AuthFormComponent implements OnInit {
   ) {}
 
   public register() {
-    this.authService.register(this.email, this.password).then(() => {
-      this.formVisibility = false;
-      this.onConnexionCallBack();
+    this.authService.register(this.email, this.password).then((result) => {
+      if (result) {
+        this.onConnexionCallBack();
 
-      this.email = "";
-      this.password="";
+        this.email = "";
+        this.password="";
+      }
     })
   }
 
   public connexion() {
-    this.authService.connexion(this.email, this.password).then(() => {
-      this.formVisibility = false;
-      this.onConnexionCallBack();
+    this.authService.connexion(this.email, this.password).then((result) => {
+      if (result) {
+        this.onConnexionCallBack();
 
-      this.email = "";
-      this.password="";
+        this.email = "";
+        this.password="";
+      }
     })
   }
 }

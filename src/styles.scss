@@ -215,6 +215,7 @@ dialog-component {
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   background-color: #272727;
+  anchor-name: --input-field;
 }
 
 .clear_icon {
@@ -227,14 +228,15 @@ dialog-component {
     }
   }
   position: absolute;
+  position-anchor: --input-field;
+  top: anchor(center);
   right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
   font-size: 18px;
   background-color: transparent;
   border: none;
   line-height: 0;
   cursor: pointer;
+  translate: 0 -50%;
 }
 
 .checkbox {
