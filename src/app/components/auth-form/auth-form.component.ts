@@ -10,6 +10,12 @@ import { FirebaseErrorService } from '../../../utilities/services/firebase-error
 
 enum DialogTab {
   CONNEXION,
+  REGISTER,
+  FORGET_PASSWORD
+}
+
+enum PasswordField {
+  CONNEXION,
   REGISTER
 }
 
@@ -28,10 +34,18 @@ export class AuthFormComponent implements OnInit {
   public password : string = "";
   
   public dialogTab = DialogTab;
+
+  public passwordField = PasswordField;
     
   public selectedDialogTab : DialogTab = DialogTab.CONNEXION;
   
   public currentUser: Observable<User | null> = of(null);
+
+  public showRegisterPassword : boolean = false;
+
+  public showConnexionPassword : boolean = false;
+
+  public loading : boolean = false;
 
   @Input() formVisibility : boolean = false;
 
@@ -48,7 +62,9 @@ export class AuthFormComponent implements OnInit {
   ) {}
 
   public register() {
+    this.loading = true;
     this.authService.register(this.email, this.password).then((result) => {
+      this.loading = false;
       if (result) {
         this.onConnexionCallBack();
 
@@ -59,7 +75,9 @@ export class AuthFormComponent implements OnInit {
   }
 
   public connexion() {
+    this.loading = true;
     this.authService.connexion(this.email, this.password).then((result) => {
+      this.loading = false;
       if (result) {
         this.onConnexionCallBack();
 
@@ -67,5 +85,40 @@ export class AuthFormComponent implements OnInit {
         this.password="";
       }
     })
+  }
+
+  public togglePasswordVisibility(passwordField : PasswordField) : void {
+    let passwordInput : HTMLInputElement;
+
+    if (passwordField === PasswordField.CONNEXION) {
+      passwordInput = document.querySelector('#connexionPasswordField') as HTMLInputElement;
+    } else {
+      passwordInput = document.querySelector('#registerPasswordField') as HTMLInputElement;
+    }
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      if (passwordField === PasswordField.CONNEXION) {
+        this.showConnexionPassword = true;
+      } else {
+        this.showRegisterPassword = true;
+      }
+    } else {
+      passwordInput.type = 'password';
+      if (passwordField === PasswordField.CONNEXION) {
+        this.showConnexionPassword = false;
+      } else {
+        this.showRegisterPassword = false;
+      }
+    }
+  }
+
+  public toggleMode() : void {
+    this.selectedDialogTab == this.dialogTab.REGISTER ? this.selectedDialogTab = this.dialogTab.CONNEXION : this.selectedDialogTab = this.dialogTab.REGISTER
+  
+    this.email = "";
+    this.password = "";
+    this.showConnexionPassword = false;
+    this.showRegisterPassword = false;
   }
 }

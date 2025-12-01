@@ -1,54 +1,121 @@
-<dialog-component *ngIf="formVisibility" [style]="dialogStyle.B" [dialogVisibility]="formVisibility" [modal]="true" (onHide)="onConnexionCallBack()">
-    <div body class="flex aic jcc column" style="margin: 0 0 25px 0">
-        @if(selectedDialogTab == dialogTab.CONNEXION) {
-            <div class="flex aic jcc column gap20" style="margin: 25px;">
-                <h1 style="color: white; margin: 0;">Connexion</h1>
-                <div class="flex aic jcc column gap30">
-                    <div class="flex column gap10" style="position: relative;">
-                        <span style="color: white;">Email</span>
-                        <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;">
-                        <button *ngIf="email" class="clear_icon" (click)="email = ''">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
-                        </button>
-                    </div>
-                    <div class="flex column gap10" style="position: relative;">
-                        <span style="color: white;">Mot de passe</span>
-                        <input class="input" type="text" [(ngModel)]="password" style="border-radius: 10px;">
+<dialog-component *ngIf="formVisibility" [style]="dialogStyle.B" [dialogVisibility]="formVisibility" [modal]="true" (onHide)="onConnexionCallBack(); selectedDialogTab = dialogTab.CONNEXION">
+    <div body class="flex aic column gap10 wrapper" [ngClass]="{'connexion': selectedDialogTab === dialogTab.CONNEXION, 'register': selectedDialogTab === dialogTab.REGISTER, 'forgetPassword': selectedDialogTab === dialogTab.FORGET_PASSWORD}" style="margin: 0 0 25px 0;">
+        <div class="flex aic jcc column gap20 form" style="margin: 25px;" [ngStyle]="{'transform': selectedDialogTab !== dialogTab.FORGET_PASSWORD ? 'translateX(-100%)' : 'translateX(0)'}">
+            <div class="back-button">
+                <button class="button" (click)="selectedDialogTab = dialogTab.CONNEXION; email = ''; password = ''" style="padding: 10px; line-height: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" /></svg>
+                </button>
+            </div>
+            <h1 style="color: white; margin: 0;">Réinitialiser le mot de passe</h1>
+            <div class="flex aic jcc column gap30" style="width: 315px;">
+                <div class="flex fw column gap10" style="position: relative;">
+                    <span style="color: white;">Email</span>
+                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;">
+                    <button *ngIf="email" class="clear_icon" (click)="email = ''">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="flex aic jcc column gap20 form" style="margin: 25px;" [ngStyle]="{'transform': selectedDialogTab === dialogTab.CONNEXION ? 'translateX(0)' : selectedDialogTab !== dialogTab.REGISTER ? 'translateX(100%)' : 'translateX(-100%)'}">
+            <h1 style="color: white; margin: 0;">Connexion</h1>
+            <div class="flex aic jcc column gap30" style="width: 315px;">
+                <div class="flex fw column gap10" style="position: relative;">
+                    <span style="color: white;">Email</span>
+                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;">
+                    <button *ngIf="email" class="clear_icon" (click)="email = ''">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                    </button>
+                </div>
+                <div class="flex fw column gap10" style="position: relative;">
+                    <span style="color: white;">Mot de passe</span>
+                    <div class="flex ais passwordDiv">
+                        <input id="connexionPasswordField" class="input" type="password" [(ngModel)]="password" style="border-radius: 10px 0px 0px 10px; flex: 1; width: 210px; z-index: 2;">
                         <button *ngIf="password" class="clear_icon" (click)="password = ''">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="grey" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                        </button>
+                        <button class="visibilityButton" (click)="togglePasswordVisibility(passwordField.CONNEXION)" style="flex: 1; border-radius: 0px 10px 10px 0px;">
+                            @if(showConnexionPassword) {                                    
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="grey" viewBox="0 0 24 24"><path d="M11.83,9L15,12.16C15,12.11 15,12.05 15,12A3,3 0 0,0 12,9C11.94,9 11.89,9 11.83,9M7.53,9.8L9.08,11.35C9.03,11.56 9,11.77 9,12A3,3 0 0,0 12,15C12.22,15 12.44,14.97 12.65,14.92L14.2,16.47C13.53,16.8 12.79,17 12,17A5,5 0 0,1 7,12C7,11.21 7.2,10.47 7.53,9.8M2,4.27L4.28,6.55L4.73,7C3.08,8.3 1.78,10 1,12C2.73,16.39 7,19.5 12,19.5C13.55,19.5 15.03,19.2 16.38,18.66L16.81,19.08L19.73,22L21,20.73L3.27,3M12,7A5,5 0 0,1 17,12C17,12.64 16.87,13.26 16.64,13.82L19.57,16.75C21.07,15.5 22.27,13.86 23,12C21.27,7.61 17,4.5 12,4.5C10.6,4.5 9.26,4.75 8,5.2L10.17,7.35C10.74,7.13 11.35,7 12,7Z" /></svg>
+                            }@else {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="grey" viewBox="0 0 24 24"><path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" /></svg>
+                            }
                         </button>
                     </div>
                 </div>
+            </div>
+            <div class="flex fw jcsa">
+                <button class="button" style="line-height: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg>
+                </button>
                 <button class="button" (click)="connexion()">
-                    Connexion
+                    @if (loading) {
+                        <div class="spinner" style="width: 18px; height: 18px; border: 4px solid rgba(0, 0, 0, 0.1); border-top-color: #a1a1a1;"></div>
+                    } @else {
+                        <span>Connexion</span>
+                    }
                 </button>
             </div>
-        } @else if (selectedDialogTab == dialogTab.REGISTER) {
-            <div class="flex aic jcc column gap20" style="margin: 25px;">
-                <h1 style="color: white; margin: 0;">Inscription</h1>
-                <div class="flex aic jcc column gap30">
-                    <div class="flex column gap10" style="position: relative;">
-                        <span style="color: white;">Email</span>
-                        <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;">
-                        <button *ngIf="email" class="clear_icon" (click)="email = ''">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
-                        </button>
-                    </div>
-                    <div class="flex column gap10" style="position: relative;">
-                        <span style="color: white;">Mot de passe</span>
-                        <input class="input" type="text" [(ngModel)]="password" style="border-radius: 10px;">
+            <div class="whiteBar"></div>
+            <div class="flex column gap10" style="margin: 10px;">
+                <span style="color: white; text-align: center;">Pas encore de compte ?</span>
+                <button class="button" (click)="selectedDialogTab = dialogTab.REGISTER; email = ''; password = ''">
+                    S'inscrire
+                </button>
+            </div>
+            <div class="whiteBar"></div>
+            <div class="flex column gap10" style="margin: 10px;">
+                <span style="color: white; text-align: center;">Mot de passe oublié ?</span>
+                <button class="button" (click)="selectedDialogTab = dialogTab.FORGET_PASSWORD; email = ''; password = ''">
+                    Réinitialiser le mot de passe
+                </button>
+            </div>
+        </div>
+        <div class="flex aic jcc column gap20 form" style="margin: 25px;" [ngStyle]="{'transform': selectedDialogTab !== dialogTab.REGISTER ? 'translateX(100%)' : 'translateX(0)'}">
+            <div class="back-button">
+                <button class="button" (click)="selectedDialogTab = dialogTab.CONNEXION; email = ''; password = ''" style="padding: 10px; line-height: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="30px" fill="white" viewBox="0 0 24 24"><path d="M20,9V15H12V19.84L4.16,12L12,4.16V9H20Z" /></svg>
+                </button>
+            </div>
+            <h1 style="color: white; margin: 0;">Inscription</h1>
+            <div class="flex aic jcc column gap30" style="width: 315px;">
+                <div class="flex fw column gap10" style="position: relative;">
+                    <span style="color: white;">Email</span>
+                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;">
+                    <button *ngIf="email" class="clear_icon" (click)="email = ''">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                    </button>
+                </div>
+                <div class="flex fw column gap10" style="position: relative;">
+                    <span style="color: white;">Mot de passe</span>
+                    <div class="flex ais passwordDiv">
+                        <input id="registerPasswordField" class="input" type="text" [(ngModel)]="password" style="border-radius: 10px 0px 0px 10px; flex: 1; width: 210px; z-index: 2;">
                         <button *ngIf="password" class="clear_icon" (click)="password = ''">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                         </button>
+                        <button class="visibilityButton" (click)="togglePasswordVisibility(passwordField.REGISTER)" style="flex: 1; border-radius: 0px 10px 10px 0px;">
+                            @if(showRegisterPassword) {                                    
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="grey" viewBox="0 0 24 24"><path d="M11.83,9L15,12.16C15,12.11 15,12.05 15,12A3,3 0 0,0 12,9C11.94,9 11.89,9 11.83,9M7.53,9.8L9.08,11.35C9.03,11.56 9,11.77 9,12A3,3 0 0,0 12,15C12.22,15 12.44,14.97 12.65,14.92L14.2,16.47C13.53,16.8 12.79,17 12,17A5,5 0 0,1 7,12C7,11.21 7.2,10.47 7.53,9.8M2,4.27L4.28,6.55L4.73,7C3.08,8.3 1.78,10 1,12C2.73,16.39 7,19.5 12,19.5C13.55,19.5 15.03,19.2 16.38,18.66L16.81,19.08L19.73,22L21,20.73L3.27,3M12,7A5,5 0 0,1 17,12C17,12.64 16.87,13.26 16.64,13.82L19.57,16.75C21.07,15.5 22.27,13.86 23,12C21.27,7.61 17,4.5 12,4.5C10.6,4.5 9.26,4.75 8,5.2L10.17,7.35C10.74,7.13 11.35,7 12,7Z" /></svg>
+                            }@else {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="grey" viewBox="0 0 24 24"><path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" /></svg>
+                            }
+                        </button>
                     </div>
                 </div>
-                <button class="button" (click)="register()">
-                    Inscription
+            </div>
+            <button class="button" (click)="register()">
+                @if (loading) {
+                    <div class="spinner" style="width: 18px; height: 18px; border: 5px solid rgba(0, 0, 0, 0.1); border-top-color: #a1a1a1;"></div>
+                } @else {
+                    <span>Inscription</span>
+                }
+            </button>
+            <div class="whiteBar"></div>
+            <div class="flex aic jcc">
+                <button class="button" style="line-height: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg>
                 </button>
             </div>
-        }
-        <button class="button" (click)="selectedDialogTab == dialogTab.REGISTER ? selectedDialogTab = dialogTab.CONNEXION : selectedDialogTab = dialogTab.REGISTER">
-            Changer de mode
-        </button>
+        </div>
     </div>
 </dialog-component>

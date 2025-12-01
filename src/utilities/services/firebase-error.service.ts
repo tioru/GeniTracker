@@ -14,6 +14,7 @@ export class FirebaseErrorService {
     'auth/email-already-in-use': 'Cette adresse email est déjà utilisée.',
     'auth/missing-password': 'Veuillez saisir un mot de passe.',
     'auth/weak-password': 'Le mot de passe doit contenir au moins 6 caractères.',
+    'auth/invalid-credential': 'Email/mot de passe incorrect.',
     
     'PERMISSION_DENIED': 'Permissions insuffisantes.',
     
