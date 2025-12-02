@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit, inject, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { animations } from '../animation';
 import { Database, onValue, ref } from '@angular/fire/database';
@@ -18,12 +18,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   
   public versions: ProjectClass.Local.Version[] = [];
 
-  // Index de la version actuellement sélectionnée
-  selectedIndex: number = 0;
+  private selectedIndex: number = 0;
 
-  // Propriétés pour l'animation du titre
-  activeVersionTitle: string = '';
-  titleAnimating: boolean = false;
+  public activeVersionTitle: string = '';
+  public titleAnimating: boolean = false;
 
   private container: HTMLElement | null = null;
   private innerContainer: HTMLElement | null = null;
@@ -40,6 +38,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private leftBoundary = 0;
   private rightBoundary = 0;
+
+  public loadingVersions : boolean = true;
 
   private database = inject(Database);
 
@@ -66,44 +66,45 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.createBackgroundParticles();
 
-    this.container = document.querySelector(".container");
-    this.innerContainer = document.querySelector(".innerContainer");
+    setTimeout(() => {
+      this.container = document.querySelector(".container");
+      this.innerContainer = document.querySelector(".innerContainer");
 
-    this.calculateDimensions();
+      if (this.container && this.innerContainer) {
+        this.calculateDimensions();
+        this.initializePosition();
 
-    this.initializePosition();
+        this.container.addEventListener("mousedown", (e: MouseEvent) => {
+          this.pressed = true;
+          this.startX = e.offsetX - this.innerContainer!.offsetLeft;
+          this.container!.style.cursor = "grabbing";
+        });
+
+        this.container.addEventListener("mouseenter", () => {
+          this.container!.style.cursor = "grab";
+        });
+
+        this.container.addEventListener("mouseup", () => {
+          this.container!.style.cursor = "grab";
+          this.pressed = false;
+        });
+
+        this.container.addEventListener("mousemove", (e: MouseEvent) => {
+          if (!this.pressed) return;
+          e.preventDefault();
+
+          this.x = e.offsetX;
+          this.innerContainer!.style.left = `${this.x - this.startX}px`;
+
+          this.checkBoundary();
+        });
+      }
+    }, 1);
     
     document.addEventListener("mouseup", () => {
       this.pressed = false;
       this.snapToNearest();
     });
-
-    if (this.container && this.innerContainer) {
-      this.container.addEventListener("mousedown", (e: MouseEvent) => {
-        this.pressed = true;
-        this.startX = e.offsetX - this.innerContainer!.offsetLeft;
-        this.container!.style.cursor = "grabbing";
-      });
-
-      this.container.addEventListener("mouseenter", () => {
-        this.container!.style.cursor = "grab";
-      });
-
-      this.container.addEventListener("mouseup", () => {
-        this.container!.style.cursor = "grab";
-        this.pressed = false;
-      });
-
-      this.container.addEventListener("mousemove", (e: MouseEvent) => {
-        if (!this.pressed) return;
-        e.preventDefault();
-
-        this.x = e.offsetX;
-        this.innerContainer!.style.left = `${this.x - this.startX}px`;
-
-        this.checkBoundary();
-      });
-    }
   }
 
   ngOnDestroy(): void {
@@ -130,11 +131,14 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   private async versionInitializing() : Promise<void> {
     return new Promise((resolve) => {
       const dbRef = ref(this.database, 'versions');
-      
+
       onValue(dbRef, (snapshot) => {
         if (snapshot.exists()) {
           this.versions = VersionMapper.mapRemoteArray(snapshot.val());
         }
+
+        this.loadingVersions = false;
+
         resolve();
       });
     });

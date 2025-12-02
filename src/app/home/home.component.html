@@ -3,16 +3,20 @@
     <div class="fw flex aic jcc" style="height: fit-content;">
         <div class="version-container black_div flex aic column">
             <h2 style="text-align: center; user-select: none;">Version actuelle</h2>
-            <div class="container flex aic jcc fade-mask">
-                <div class="innerContainer carousel flex aic jcc">
-                    <div style="user-select: none"
-                        *ngFor="let version of versions;" 
-                        class="version-number interactive-element"
-                        [class.selected]="version.selected">
-                        {{version.version}}
+            @if(loadingVersions) {
+                <div class="spinner"></div>
+            } @else {
+                <div class="container flex aic jcc fade-mask">
+                    <div class="innerContainer carousel flex aic jcc">
+                        <div style="user-select: none"
+                            *ngFor="let version of versions;" 
+                            class="version-number interactive-element"
+                            [class.selected]="version.selected">
+                            {{version.version}}
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
             <div class="active_version_title_container" style="margin: 25px 0; font-size: 0.9rem; color: var(--text-secondary); user-select: none;">
                 <span>
                     {{ activeVersionTitle }}
