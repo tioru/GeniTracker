@@ -9,13 +9,13 @@ import { CommonModule } from '@angular/common';
 import { FirebaseErrorService } from '../../../utilities/services/firebase-error.service';
 
 enum DialogTab {
-  CONNEXION,
+  LOGIN,
   REGISTER,
   FORGET_PASSWORD
 }
 
 enum PasswordField {
-  CONNEXION,
+  LOGIN,
   REGISTER
 }
 
@@ -37,19 +37,21 @@ export class AuthFormComponent implements OnInit {
 
   public passwordField = PasswordField;
     
-  public selectedDialogTab : DialogTab = DialogTab.CONNEXION;
+  public selectedDialogTab : DialogTab = DialogTab.LOGIN;
   
   public currentUser: Observable<User | null> = of(null);
 
   public showRegisterPassword : boolean = false;
 
-  public showConnexionPassword : boolean = false;
+  public showLoginPassword : boolean = false;
 
   public loading : boolean = false;
 
+  public googleLoading : boolean = false;
+
   @Input() formVisibility : boolean = false;
 
-  @Input() onConnexionCallBack : () => void = () => {}
+  @Input() onLoginCallBack : () => void = () => {}
       
   ngOnInit(): void { 
     this.currentUser = this.authService.currentUser$;
@@ -66,7 +68,7 @@ export class AuthFormComponent implements OnInit {
     this.authService.register(this.email, this.password).then((result) => {
       this.loading = false;
       if (result) {
-        this.onConnexionCallBack();
+        this.onLoginCallBack();
 
         this.email = "";
         this.password="";
@@ -74,12 +76,12 @@ export class AuthFormComponent implements OnInit {
     })
   }
 
-  public connexion() {
+  public login() {
     this.loading = true;
-    this.authService.connexion(this.email, this.password).then((result) => {
+    this.authService.login(this.email, this.password).then((result) => {
       this.loading = false;
       if (result) {
-        this.onConnexionCallBack();
+        this.onLoginCallBack();
 
         this.email = "";
         this.password="";
@@ -90,7 +92,7 @@ export class AuthFormComponent implements OnInit {
   public togglePasswordVisibility(passwordField : PasswordField) : void {
     let passwordInput : HTMLInputElement;
 
-    if (passwordField === PasswordField.CONNEXION) {
+    if (passwordField === PasswordField.LOGIN) {
       passwordInput = document.querySelector('#connexionPasswordField') as HTMLInputElement;
     } else {
       passwordInput = document.querySelector('#registerPasswordField') as HTMLInputElement;
@@ -98,15 +100,15 @@ export class AuthFormComponent implements OnInit {
 
     if (passwordInput.type === 'password') {
       passwordInput.type = 'text';
-      if (passwordField === PasswordField.CONNEXION) {
-        this.showConnexionPassword = true;
+      if (passwordField === PasswordField.LOGIN) {
+        this.showLoginPassword = true;
       } else {
         this.showRegisterPassword = true;
       }
     } else {
       passwordInput.type = 'password';
-      if (passwordField === PasswordField.CONNEXION) {
-        this.showConnexionPassword = false;
+      if (passwordField === PasswordField.LOGIN) {
+        this.showLoginPassword = false;
       } else {
         this.showRegisterPassword = false;
       }
@@ -114,11 +116,28 @@ export class AuthFormComponent implements OnInit {
   }
 
   public toggleMode() : void {
-    this.selectedDialogTab == this.dialogTab.REGISTER ? this.selectedDialogTab = this.dialogTab.CONNEXION : this.selectedDialogTab = this.dialogTab.REGISTER
+    this.selectedDialogTab == this.dialogTab.REGISTER ? this.selectedDialogTab = this.dialogTab.LOGIN : this.selectedDialogTab = this.dialogTab.REGISTER
   
     this.email = "";
     this.password = "";
-    this.showConnexionPassword = false;
+    this.showLoginPassword = false;
     this.showRegisterPassword = false;
+  }
+
+  public loginWithGoogle() : void {
+    this.googleLoading = true;
+    this.authService.loginWithGoogle().then((result) => {
+      this.googleLoading = false;
+      if (result) {
+        this.onLoginCallBack();
+
+        this.email = "";
+        this.password="";
+      }
+    })
+  }
+
+  public sendPasswordResetEmail() : void {
+    this.authService.sendPasswordResetEmail(this.email)
   }
 }

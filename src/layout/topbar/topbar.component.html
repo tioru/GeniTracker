@@ -39,6 +39,13 @@
     <div class="fh flex jce aic" style="flex: 1; margin-right: 10px;">
         <div class="fh flex aic jscb gap10">
             @if(currentUser | async) {
+                <button class="topbar_item flex jcc aic" (click)="chatVisibility = !chatVisibility">
+                    <div class="flex aic gap10">
+                        <div class="img_container flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="white" height="30px" viewBox="0 0 24 24"><path d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6M14,14H6V12H14M18,8H6V6H18" /></svg>
+                        </div>
+                    </div>
+                </button>
                 <button class="topbar_item openButton flex jcc aic" popovertarget="openList">
                     <div class="flex aic gap10">
                         <div class="img_container">
@@ -68,4 +75,6 @@
     </div>
 </div>
 
-<app-auth-form [formVisibility]="formVisibility" [onConnexionCallBack]="formVisibilityCallBack.bind(this)"></app-auth-form>
+<app-auth-form [formVisibility]="formVisibility" [onLoginCallBack]="formVisibilityCallBack.bind(this)"></app-auth-form>
+
+<app-chat [chatVisibility]="chatVisibility" [onConnexionCallBack]="chatVisibilityCallBack.bind(this)"></app-chat>

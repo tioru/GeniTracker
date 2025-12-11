@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, onAuthStateChanged, UserCredential, createUserWithEmailAndPassword, User } from '@angular/fire/auth';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { Auth, signInWithEmailAndPassword, onAuthStateChanged, UserCredential, createUserWithEmailAndPassword, User, signInWithPopup, sendPasswordResetEmail } from '@angular/fire/auth';
+import { BehaviorSubject } from 'rxjs';
 import { NotificationService, notificationSeverity } from './notification.service';
 import { FirebaseErrorService } from './firebase-error.service';
-
-const MISSING_PASSWORD_ERROR = "Veuillez entrer un mot de passe.";
-const WEAK_PASSWORD_ERROR = "";
+import { GoogleAuthProvider } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +18,7 @@ export class AuthService {
     });
   }
 
-  public async connexion(email: string, password: string) : Promise<UserCredential | null> {
+  public async login(email: string, password: string) : Promise<UserCredential | null> {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
       this.notificationService.addNotification({
@@ -79,5 +77,50 @@ export class AuthService {
 
   async deconnexion() {
     await this.auth.signOut();
+  }
+
+  public async loginWithGoogle() : Promise<User | null> {
+    try {
+      const googleProvider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(this.auth, googleProvider);
+      
+      this.notificationService.addNotification({
+        title: 'Connecté',
+        severity: notificationSeverity.OK,
+        detail: `Bienvenue ${userCredential.user.displayName}`,
+        sticky: false,
+        delay: 5000
+      });
+      
+      return userCredential.user;
+    } catch (error: any) {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
+    }
+    return null;
+  }
+
+  public async sendPasswordResetEmail(email : string) : Promise<void> {
+    try {
+      sendPasswordResetEmail(this.auth, email).then(() => {
+      this.notificationService.addNotification({
+        title: 'Connecté',
+        severity: notificationSeverity.OK,
+        detail: `Email de reset de mot de passe envoyé`,
+        sticky: false,
+        delay: 5000
+      });
+    })} catch (error: any) {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
+    }
   }
 }

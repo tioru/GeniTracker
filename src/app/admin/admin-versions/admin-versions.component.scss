@@ -63,11 +63,20 @@
         .version {
             opacity: 1;
         }
+
+        .img-container {
+            img {
+                opacity: 0.4;
+            }
+        }
     }
 
     .img-container {
         position: relative;
         text-align: center;
+        img {
+            transition: all 0.3s ease-in-out;
+        }
     }
         
     .spinner {
@@ -324,4 +333,11 @@
       translate: 0 1em;
     }
   }
+}
+
+.overflowHandler {
+    width: 19vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }

@@ -6,11 +6,12 @@ import { AuthService } from '../../utilities/services/auth.service';
 import { Observable, of } from 'rxjs';
 import { User } from 'firebase/auth';
 import { AuthFormComponent } from "../../app/components/auth-form/auth-form.component";
+import { ChatComponent } from "../../app/chat/chat.component";
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, AuthFormComponent],
+  imports: [CommonModule, AuthFormComponent, ChatComponent],
   templateUrl: './topbar.component.html',
   animations: animations,
   styleUrl: './topbar.component.scss'
@@ -20,6 +21,8 @@ export class TopbarComponent {
   public currentUser: Observable<User | null> = of(null);
 
   public formVisibility : boolean = false;
+
+  public chatVisibility : boolean = false;
 
   constructor(
     public router: Router,
@@ -40,6 +43,10 @@ export class TopbarComponent {
 
   public formVisibilityCallBack() : void {
     this.formVisibility = false;
+  }
+
+  public chatVisibilityCallBack() : void {
+    this.chatVisibility = false;
   }
 
   public closeList() : void {

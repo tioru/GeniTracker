@@ -14,7 +14,7 @@
                         <div class="fw img-container">
                             <img [class.loading]="!version.imgLoaded" height="100%" width="100%" (load)="version.imgLoaded = true" [src]="version.imgUrl"/>
                             <div *ngIf="!version.imgLoaded" class="spinner"></div>
-                            <div class="version fh">
+                            <div class="version">
                                 <span>{{version.version}}</span>
                             </div>
                         </div>
@@ -113,21 +113,21 @@
             <span>Mode édition</span>
         </div>
         <div class="fade">
-            <img [src]="selectedVersion.imgUrl" style="width: 40vw;">
+            <img [src]="selectedVersion.imgUrl" style="width: 40vw; max-height: 50vh; object-fit: contain;">
         </div>
         <div class="flex jcsb fw aic">
             <div>
                 @if(editModeEnabled){
                     <input style="margin-left: 15px;" type="text" class="title-edit" [(ngModel)]="selectedVersion.title"/>
                 }@else {
-                    <h2 style="margin-left: 15px;">{{selectedVersion.title}}</h2>
+                    <h2 class="overflowHandler" style="margin-left: 15px; text-align: start;">{{selectedVersion.title}}</h2>
                 }
             </div>
             <div>
                 @if(editModeEnabled){
                     <input style="margin-right: 15px; text-align: right;" type="text" class="version-edit" [(ngModel)]="selectedVersion.version"/>
                 }@else {
-                    <h2 style="margin-right: 15px;">{{selectedVersion.version}}</h2>
+                    <h2 class="overflowHandler" style="margin-right: 15px; text-align: end;">{{selectedVersion.version}}</h2>
                 }
             </div>
         </div>

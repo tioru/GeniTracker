@@ -1,0 +1,6 @@
+<dialog-component *ngIf="chatVisibility" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onConnexionCallBack()">
+    <div body class="flex aic column gap10">
+        <span style="color: white;">Ca arrive fort</span>
+        <div class="spinner"></div>
+    </div>
+</dialog-component>
