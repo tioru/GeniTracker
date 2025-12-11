@@ -3,5 +3,8 @@ Faire un affichage différent pour l'affichage des personnages pour afficher la 
 Ajouter une page admin afin d'ajouter directement dans une db externe des éléments par rapport au évènements, a la version, ...
 Ajouter une bibliothèque qui va lister les vidéos avec les OST de chaque région.
 Ajouter une carte du jeu.
+Faire un quiz.
+Faire un chat.
+(Faire un cliker)
 
 Bug lors d'un clic simple dans le carousel
