@@ -1,12 +1,7 @@
 <dialog-component *ngIf="formVisibility" [style]="dialogStyle.B" [dialogVisibility]="formVisibility" [modal]="!(loading || googleLoading)" (onHide)="onLoginCallBack(); selectedDialogTab = dialogTab.LOGIN">
     <div body class="flex aic column gap10 wrapper" [ngClass]="{'connexion': selectedDialogTab === dialogTab.LOGIN, 'register': selectedDialogTab === dialogTab.REGISTER, 'forgetPassword': selectedDialogTab === dialogTab.FORGET_PASSWORD}" style="margin: 0 0 25px 0;">
         <div class="flex aic jcc column gap20 form" style="margin: 25px;" [ngStyle]="{'transform': selectedDialogTab !== dialogTab.FORGET_PASSWORD ? 'translateX(-100%)' : 'translateX(0)'}">
-            <div class="back-button">
-                <button class="button" (click)="selectedDialogTab = dialogTab.LOGIN; email = ''; password = ''" style="padding: 10px; line-height: 0;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" /></svg>
-                </button>
-            </div>
-            <h1 style="color: white; margin: 0;">Réinitialiser le mot de passe</h1>
+            <h1 style="color: white; margin: 0; text-align: center;">Réinitialiser le mot de passe</h1>
             <div class="flex aic jcc column gap30" style="width: 315px;">
                 <div class="flex fw column gap10" style="position: relative;">
                     <span style="color: white;">Email</span>
@@ -16,7 +11,11 @@
                     </button>
                 </div>
                 <button class="button" (click)="sendPasswordResetEmail()">
-                    <span>Envoyer l'email de reset</span>
+                    <span>Envoyer l'email de réinitialisation</span>
+                </button>
+                <div class="whiteBar"></div>
+                <button class="button" (click)="selectedDialogTab = dialogTab.LOGIN; email = ''; password = ''">
+                    <span>Retour</span>
                 </button>
             </div>
         </div>
@@ -79,11 +78,6 @@
             </div>
         </div>
         <div class="flex aic jcc column gap20 form" style="margin: 25px;" [ngStyle]="{'transform': selectedDialogTab !== dialogTab.REGISTER ? 'translateX(100%)' : 'translateX(0)'}">
-            <div class="back-button">
-                <button class="button" (click)="selectedDialogTab = dialogTab.LOGIN; email = ''; password = ''" style="padding: 10px; line-height: 0;">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="30px" fill="white" viewBox="0 0 24 24"><path d="M20,9V15H12V19.84L4.16,12L12,4.16V9H20Z" /></svg>
-                </button>
-            </div>
             <h1 style="color: white; margin: 0;">Inscription</h1>
             <div class="flex aic jcc column gap30" style="width: 315px;">
                 <div class="flex fw column gap10" style="position: relative;">
@@ -116,6 +110,10 @@
                 } @else {
                     <span>Inscription</span>
                 }
+            </button>
+            <div class="whiteBar"></div>
+            <button class="button" [class.disabled]="loading" [disabled]="loading" (click)="selectedDialogTab = dialogTab.LOGIN; email = ''">
+                <span>Retour</span>
             </button>
         </div>
     </div>

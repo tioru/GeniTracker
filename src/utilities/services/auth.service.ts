@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, onAuthStateChanged, UserCredential, createUserWithEmailAndPassword, User, signInWithPopup, sendPasswordResetEmail } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, onAuthStateChanged, UserCredential, createUserWithEmailAndPassword, User, signInWithPopup, sendPasswordResetEmail, updatePassword, confirmPasswordReset } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
 import { NotificationService, notificationSeverity } from './notification.service';
 import { FirebaseErrorService } from './firebase-error.service';
@@ -106,15 +106,15 @@ export class AuthService {
 
   public async sendPasswordResetEmail(email : string) : Promise<void> {
     try {
-      sendPasswordResetEmail(this.auth, email).then(() => {
+      await sendPasswordResetEmail(this.auth, email)
       this.notificationService.addNotification({
         title: 'Connecté',
         severity: notificationSeverity.OK,
-        detail: `Email de reset de mot de passe envoyé`,
+        detail: `Email de réinitialisation de mot de passe envoyé`,
         sticky: false,
         delay: 5000
       });
-    })} catch (error: any) {
+    } catch (error: any) {
       this.notificationService.addNotification({
         title: 'Erreur',
         severity: notificationSeverity.ERROR,
@@ -122,5 +122,30 @@ export class AuthService {
         sticky: true
       });
     }
+  }
+
+  public async confirmPasswordReset(oobCode : string, newPassword: string): Promise<boolean> {
+    try {
+      await confirmPasswordReset(this.auth, oobCode, newPassword)
+      this.notificationService.addNotification({
+        title: 'Modification réussie',
+        severity: notificationSeverity.OK,
+        detail: `Modification du mot de passe réussie`,
+        sticky: false,
+        delay: 5000
+      });
+    } catch (error: any) {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
+      
+      if (error?.code === 'auth/weak-password') {
+        return false;
+      }
+    }
+    return true;
   }
 }

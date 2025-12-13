@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { animations } from '../../app/animation';
 import { AuthService } from '../../utilities/services/auth.service';
 import { Observable, of } from 'rxjs';
 import { User } from 'firebase/auth';
 import { AuthFormComponent } from "../../app/components/auth-form/auth-form.component";
 import { ChatComponent } from "../../app/chat/chat.component";
+import { ResetPasswordFormComponent } from '../../app/components/reset-password-form/reset-password-form.component';
+
+const MODE_PARAMETER = 'mode';
+const OOBCODE_PARAMETER = 'oobCode';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, AuthFormComponent, ChatComponent],
+  imports: [CommonModule, AuthFormComponent, ChatComponent, ResetPasswordFormComponent],
   templateUrl: './topbar.component.html',
   animations: animations,
   styleUrl: './topbar.component.scss'
@@ -24,13 +28,29 @@ export class TopbarComponent {
 
   public chatVisibility : boolean = false;
 
+  public resetPasswordVisibility : boolean = false;
+
+  public modeParam: string | null = null;
+
+  public oobCodeParam: string | null = null;
+
   constructor(
     public router: Router,
-    public authService : AuthService
+    public authService : AuthService,
+    private route: ActivatedRoute
   ) {}
     
   ngOnInit(): void { 
     this.currentUser = this.authService.currentUser$;
+
+    this.route.queryParams.subscribe(params => {
+      this.modeParam = params[MODE_PARAMETER];
+      this.oobCodeParam = params[OOBCODE_PARAMETER];
+    
+      if (this.modeParam === 'resetPassword' && this.oobCodeParam) {
+        this.resetPasswordVisibility = true;
+      }
+    });
   }
 
   public get isHome(): boolean {
@@ -47,6 +67,18 @@ export class TopbarComponent {
 
   public chatVisibilityCallBack() : void {
     this.chatVisibility = false;
+  }
+
+  public resetPasswordVisibilityCallBack() : void {
+    this.resetPasswordVisibility = false;
+    this.cleanUrl();
+  }
+
+  private cleanUrl(): void {
+    this.router.navigate([], {
+      queryParams: {},
+      replaceUrl: false
+    });
   }
 
   public closeList() : void {

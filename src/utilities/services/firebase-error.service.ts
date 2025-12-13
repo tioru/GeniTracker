@@ -16,6 +16,8 @@ export class FirebaseErrorService {
     'auth/weak-password': 'Le mot de passe doit contenir au moins 6 caractères.',
     'auth/invalid-credential': 'Email/mot de passe incorrect.',
     
+    'auth/invalid-action-code': 'Code de réinitialisation invalide ou expiré.',
+    
     'PERMISSION_DENIED': 'Permissions insuffisantes.',
     
     'default': 'Une erreur inattendue s\'est produite.'

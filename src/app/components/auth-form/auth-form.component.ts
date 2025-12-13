@@ -138,6 +138,10 @@ export class AuthFormComponent implements OnInit {
   }
 
   public sendPasswordResetEmail() : void {
-    this.authService.sendPasswordResetEmail(this.email)
+    this.authService.sendPasswordResetEmail(this.email).then(() => {
+      this.selectedDialogTab = this.dialogTab.LOGIN; 
+      this.email = ''; 
+      this.password = ''
+    })
   }
 }

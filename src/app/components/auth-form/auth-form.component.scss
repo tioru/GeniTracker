@@ -36,24 +36,12 @@ input[type=password]::-ms-reveal {
     }
     
     &.register {
-        height: 350px;
+        height: 440px;
         width: 400px;
-
-        .back-button {
-            position: absolute;
-            top: -15px;
-            left: 10px;
-        }
     }
 
     &.forgetPassword {
-        height: 435px;
-
-        .back-button {
-            position: absolute;
-            top: 200px;
-            right: 10px;
-        }
+        height: 390px;
     }
 }
 
