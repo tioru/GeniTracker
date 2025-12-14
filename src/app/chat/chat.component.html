@@ -1,5 +1,9 @@
-<dialog-component *ngIf="chatVisibility" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onConnexionCallBack()">
+<dialog-component *ngIf="chatVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()">
     <div body class="flex aic column gap10">
+        <div class="flex aic jcc column fw">
+            <span style="color: white;">Test</span>
+            <div class="whiteBar"></div>
+        </div>
         <span style="color: white;">Ca arrive fort</span>
         <div class="spinner"></div>
     </div>

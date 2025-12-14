@@ -54,7 +54,7 @@ export class AuthFormComponent implements OnInit {
   @Input() formVisibility : boolean = false;
 
   @Input() onLoginCallBack : () => void = () => {}
-      
+
   ngOnInit(): void { 
     this.currentUser = this.authService.currentUser$;
     this.currentUser.subscribe(user => {

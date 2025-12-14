@@ -5,7 +5,7 @@
             <div class="flex aic jcc column gap30" style="width: 315px;">
                 <div class="flex fw column gap10" style="position: relative;">
                     <span style="color: white;">Email</span>
-                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;">
+                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;" (keydown.enter)="sendPasswordResetEmail()">
                     <button *ngIf="email" class="clear_icon" (click)="email = ''">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                     </button>
@@ -24,7 +24,7 @@
             <div class="flex aic jcc column gap30" style="width: 315px;">
                 <div class="flex fw column gap10" style="position: relative;">
                     <span style="color: white;">Email</span>
-                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;">
+                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;" (keydown.enter)="login()">
                     <button *ngIf="email" class="clear_icon" (click)="email = ''">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                     </button>
@@ -32,7 +32,7 @@
                 <div class="flex fw column gap10" style="position: relative;">
                     <span style="color: white;">Mot de passe</span>
                     <div class="flex ais passwordDiv">
-                        <input id="connexionPasswordField" class="input" type="password" [(ngModel)]="password" style="border-radius: 10px 0px 0px 10px; flex: 1; width: 210px; z-index: 2;">
+                        <input id="connexionPasswordField" class="input" type="password" [(ngModel)]="password" style="border-radius: 10px 0px 0px 10px; flex: 1; width: 210px; z-index: 2;" (keydown.enter)="login()">
                         <button *ngIf="password" class="clear_icon" (click)="password = ''">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="grey" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                         </button>
@@ -82,7 +82,7 @@
             <div class="flex aic jcc column gap30" style="width: 315px;">
                 <div class="flex fw column gap10" style="position: relative;">
                     <span style="color: white;">Email</span>
-                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;">
+                    <input class="input" type="text" [(ngModel)]="email" style="border-radius: 10px;" (keydown.enter)="register()">
                     <button *ngIf="email" class="clear_icon" (click)="email = ''">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                     </button>
@@ -90,7 +90,7 @@
                 <div class="flex fw column gap10" style="position: relative;">
                     <span style="color: white;">Mot de passe</span>
                     <div class="flex ais passwordDiv">
-                        <input id="registerPasswordField" class="input" type="text" [(ngModel)]="password" style="border-radius: 10px 0px 0px 10px; flex: 1; width: 210px; z-index: 2;">
+                        <input id="registerPasswordField" class="input" type="text" [(ngModel)]="password" style="border-radius: 10px 0px 0px 10px; flex: 1; width: 210px; z-index: 2;" (keydown.enter)="register()">
                         <button *ngIf="password" class="clear_icon" (click)="password = ''">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
                         </button>

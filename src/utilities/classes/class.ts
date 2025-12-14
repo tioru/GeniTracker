@@ -10,6 +10,7 @@ import { LSkillTalentsClass } from "./local/characters/skillTalents";
 import { LUpgradeClass } from "./local/characters/upgrade";
 import { LVisionTypeClass, LVisionTypeListEnum } from "./local/characters/visionType";
 import { LChatClass } from "./local/chat/chat";
+import { LGroupClass } from "./local/chat/group";
 import { LVersionClass } from "./local/versions/version";
 import { LWeaponClass } from "./local/weapons/weapon";
 import { LWeaponListingClass } from "./local/weapons/weaponsListing";
@@ -26,6 +27,7 @@ import { RSkillTalentsClass } from "./remote/characters/skillTalents";
 import { RUpgradeClass } from "./remote/characters/upgrade";
 import { RVisionTypeClass, RVisionTypeListEnum } from "./remote/characters/visionType";
 import { RChatClass } from "./remote/chat/chat";
+import { RGroupClass } from "./remote/chat/group";
 import { RVersionClass } from "./remote/versions/version";
 import { RWeaponClass } from "./remote/weapons/weapon";
 import { RWeaponListingClass } from "./remote/weapons/weaponsListing";
@@ -50,6 +52,7 @@ export namespace ProjectClass {
         export class Weapon extends LWeaponClass{};
         export class Version extends LVersionClass{};
         export class Chat extends LChatClass{};
+        export class Group extends LGroupClass{};
     }
 
     export namespace Remote {
@@ -71,5 +74,6 @@ export namespace ProjectClass {
         export class Weapon extends RWeaponClass{};
         export class Version extends RVersionClass{};
         export class Chat extends RChatClass{};
+        export class Group extends RGroupClass{};
     }
 }
