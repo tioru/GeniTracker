@@ -1,4 +1,4 @@
-<dialog-component *ngIf="formVisibility" [style]="dialogStyle.B" [dialogVisibility]="formVisibility" [modal]="!(loading || googleLoading)" (onHide)="onLoginCallBack(); selectedDialogTab = dialogTab.LOGIN">
+<dialog-component *ngIf="formVisibility" [style]="dialogStyle.B" [dialogVisibility]="formVisibility && !authenticated" [modal]="!(loading || googleLoading)" (onHide)="onLoginCallBack(); selectedDialogTab = dialogTab.LOGIN">
     <div body class="flex aic column gap10 wrapper" [ngClass]="{'connexion': selectedDialogTab === dialogTab.LOGIN, 'register': selectedDialogTab === dialogTab.REGISTER, 'forgetPassword': selectedDialogTab === dialogTab.FORGET_PASSWORD}" style="margin: 0 0 25px 0;">
         <div class="flex aic jcc column gap20 form" style="margin: 25px;" [ngStyle]="{'transform': selectedDialogTab !== dialogTab.FORGET_PASSWORD ? 'translateX(-100%)' : 'translateX(0)'}">
             <h1 style="color: white; margin: 0; text-align: center;">Réinitialiser le mot de passe</h1>

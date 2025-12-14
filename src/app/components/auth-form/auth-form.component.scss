@@ -26,10 +26,11 @@ input[type=password]::-ms-reveal {
 }
 
 .wrapper {
+    mask: linear-gradient(90deg,transparent 0%,black 7%,black 93%,transparent 100%);
     position: relative;
     overflow: hidden;
     width: 355px;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: height 400ms ease-in-out, width 400ms ease-in-out;
 
     &.connexion {
         height: 625px;

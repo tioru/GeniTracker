@@ -49,12 +49,17 @@ export class AuthFormComponent implements OnInit {
 
   public googleLoading : boolean = false;
 
+  public authenticated : boolean = false;
+
   @Input() formVisibility : boolean = false;
 
   @Input() onLoginCallBack : () => void = () => {}
       
   ngOnInit(): void { 
     this.currentUser = this.authService.currentUser$;
+    this.currentUser.subscribe(user => {
+      user ? this.authenticated = true : this.authenticated = false;
+    });
   }
 
   constructor(
@@ -68,8 +73,6 @@ export class AuthFormComponent implements OnInit {
     this.authService.register(this.email, this.password).then((result) => {
       this.loading = false;
       if (result) {
-        this.onLoginCallBack();
-
         this.email = "";
         this.password="";
       }
@@ -81,8 +84,6 @@ export class AuthFormComponent implements OnInit {
     this.authService.login(this.email, this.password).then((result) => {
       this.loading = false;
       if (result) {
-        this.onLoginCallBack();
-
         this.email = "";
         this.password="";
       }
@@ -129,8 +130,6 @@ export class AuthFormComponent implements OnInit {
     this.authService.loginWithGoogle().then((result) => {
       this.googleLoading = false;
       if (result) {
-        this.onLoginCallBack();
-
         this.email = "";
         this.password="";
       }
