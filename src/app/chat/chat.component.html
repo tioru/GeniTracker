@@ -1,10 +1,19 @@
 <dialog-component *ngIf="chatVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()">
-    <div body class="flex aic column gap10">
-        <div class="flex aic jcc column fw">
-            <span style="color: white;">Test</span>
-            <div class="whiteBar"></div>
+    <div body class="flex aic column">
+        <div class="flex aic jcc column fw" style="height: 4vh">
+            <span style="color: white;">{{groups[selectedGroupNumber].name}}</span>
         </div>
-        <span style="color: white;">Ca arrive fort</span>
-        <div class="spinner"></div>
+        <div class="whiteBar"></div>
+        <div class="flex groupsDisplay">
+            <div class="groupNameListing flex aic column gap20 p10" style="flex: 1">
+                <button class="button" *ngFor="let groupName of groupsNames; let i = index" [class.disabled]="i === selectedGroupNumber" (click)="openGroup(i)">
+                    <span style="color: white;">{{groupName}}</span>
+                </button>
+            </div>
+            <div class="verticalBar"></div>
+            <div class="groupContent" style="flex: 4">
+
+            </div>
+        </div>
     </div>
 </dialog-component>

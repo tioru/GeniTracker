@@ -3,9 +3,7 @@ import { Component, inject, Input } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
 import { Database, onValue, ref } from '@angular/fire/database';
-import { ChatMapper } from '../../utilities/mapper/chat';
 import { ProjectClass } from '../../utilities/classes/class';
-import { VersionMapper } from '../../utilities/mapper/version';
 import { GroupMapper } from '../../utilities/mapper/group';
 
 @Component({
@@ -19,6 +17,8 @@ export class ChatComponent {
   public dialogStyle : typeof DialogStyle = DialogStyle;
 
   public groups : ProjectClass.Local.Group[] = [];
+
+  public selectedGroupNumber : number = 0;
 
   @Input() chatVisibility : boolean = false;
 
@@ -60,4 +60,12 @@ export class ChatComponent {
       }
     });
   };
+
+  get groupsNames() : string[] {
+    return this.groups.map(group => group.name ?? "").filter(name => name)
+  }
+
+  public openGroup(wantedGroupNumber : number) : void {
+    this.selectedGroupNumber = wantedGroupNumber;
+  }
 }
