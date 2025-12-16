@@ -91,10 +91,8 @@ export class AdminVersionsComponent {
   }
 
   private async versionInitializing() : Promise<void> {
-    return new Promise((resolve) => {
-      const dbRef = ref(this.database, 'versions');
-      
-      onValue(dbRef, (snapshot) => {
+    return new Promise((resolve) => {      
+      onValue(this.dbRef, (snapshot) => {
         if (snapshot.exists()) {
           this.versions = VersionMapper.mapRemoteArray(snapshot.val());
         }

@@ -2,9 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
-import { Database, onValue, ref } from '@angular/fire/database';
+import { Database, onValue, push, ref } from '@angular/fire/database';
 import { ProjectClass } from '../../utilities/classes/class';
 import { GroupMapper } from '../../utilities/mapper/group';
+import { ChatMapper } from '../../utilities/mapper/chat';
+import { AuthService } from '../../utilities/services/auth.service';
+import { Observable, of } from 'rxjs';
+import { User } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-chat',
@@ -14,27 +18,36 @@ import { GroupMapper } from '../../utilities/mapper/group';
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent {
+  private database = inject(Database);
+  
+  private dbRef = ref(this.database, 'groups');
+
   public dialogStyle : typeof DialogStyle = DialogStyle;
 
   public groups : ProjectClass.Local.Group[] = [];
 
   public selectedGroupNumber : number = 0;
 
+  public newMessageContent : string = "";
+
   @Input() chatVisibility : boolean = false;
 
   @Input() onCloseCallBack : () => void = () => {};
 
-  private database = inject(Database);
+  public currentUser: User | null = null;
 
   ngOnInit() {
     this.chatListening();
+    this.authService.currentUser$.subscribe(user => this.currentUser = user);
   }
 
   async ngAfterViewInit() {
     await this.chatInitializing();
   }
 
-  constructor() {}
+  constructor(
+    public authService : AuthService
+  ) {}
 
   private async chatInitializing() : Promise<void> {
     return new Promise((resolve) => {
@@ -67,5 +80,19 @@ export class ChatComponent {
 
   public openGroup(wantedGroupNumber : number) : void {
     this.selectedGroupNumber = wantedGroupNumber;
+  }
+
+  public sendMessage() : void {
+    if (!this.currentUser) return;
+
+    push(this.dbRef, ChatMapper.mapLocal(new ProjectClass.Local.Chat({
+      message: this.newMessageContent,
+      date: Date.now().toString(),
+      userName: this.currentUser.displayName,
+      modified: false,
+      seenBy: []
+    }))).then(() => {
+      this.newMessageContent = "";
+    });
   }
 }

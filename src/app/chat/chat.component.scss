@@ -18,3 +18,18 @@
 .groupNameListing {
     background-color: rgb(104, 104, 104);
 }
+
+.groupContent {
+}
+
+.sendButton {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        transform: scale(1.1);
+        fill: grey
+    }
+}

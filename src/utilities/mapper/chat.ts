@@ -13,7 +13,7 @@ export class ChatMapper {
     
     public static mapRemote(rVersion : ProjectClass.Remote.Chat) : ProjectClass.Local.Chat {
         return new ProjectClass.Local.Chat({
-            user : rVersion.user,
+            userName : rVersion.userName,
             message : rVersion.message,
             date : rVersion.date,
             modified : rVersion.modified,
@@ -27,7 +27,7 @@ export class ChatMapper {
     
     public static mapLocal(lChat : ProjectClass.Local.Chat) : ProjectClass.Remote.Chat {
         return new ProjectClass.Remote.Chat({
-            user: lChat.user,
+            userName: lChat.userName,
             message: lChat.message,
             date: lChat.date,
             modified: lChat.modified,

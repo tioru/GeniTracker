@@ -10,6 +10,7 @@ import { GoogleAuthProvider } from 'firebase/auth';
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private auth: Auth, public notificationService : NotificationService, public firebaseErrorService: FirebaseErrorService) {
