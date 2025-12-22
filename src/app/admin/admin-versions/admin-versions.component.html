@@ -7,7 +7,7 @@
             <div class="versions-display">
                 <div class="m10" *ngFor="let majorVersion of majorVersions | keyvalue">
                     <div class="major-version-title">
-                        <h2>Version {{majorVersion.key}}</h2>
+                        <h2 class="overflowHandler">Version {{majorVersion.key}}</h2>
                     </div>
                     <div class="versions-grid">
                         <div *ngFor="let version of majorVersion.value" [ngClass]="{'on-version-creation': addVersionDialogVisibility}"  class="version-card" (click)="openVersion(version)">

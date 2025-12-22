@@ -1,9 +1,22 @@
-<div class=" flex column fh fw">
+<div class=" flex column fh fw snowEffect">
     <div class="fw topbar">
         <app-topbar></app-topbar>
     </div>
     <main class="fw">
-        <router-outlet></router-outlet>
+        <div class="blurEffect fw">
+            <router-outlet></router-outlet>
+        </div>
     </main>
+    <div class="snow-container">
+        <div class="snowflake"
+            *ngFor="let flake of snowflakes"
+            [style.left.%]="flake.left"
+            [style.width.px]="flake.size"
+            [style.height.px]="flake.size"
+            [style.animationDuration]="flake.duration + 's'"
+            [style.animationDelay]="flake.delay + 's'"
+            [style.filter]="'blur(' + flake.blur + 'px)'">
+        </div>
+    </div>
 </div>
 <notification-center></notification-center>

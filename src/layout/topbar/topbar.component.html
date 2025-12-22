@@ -2,7 +2,7 @@
     <div class="fh flex jcc aic" style="flex: 1"></div>
     <div class="fh flex jcc aic" style="flex: 1">
         <div class="fh flex aic jscb gap10">
-            <button *ngIf="!isHome" class="topbar_item flex jcc aic" (click)="goTo('')" [@enter-leave]>
+            <button [class.disabled]="isCurrentPage('/')" [disabled]="isCurrentPage('/')" class="topbar_item flex jcc aic" (click)="goTo('')" [@enter-leave]>
                 <div class="flex aic gap10">
                     <div class="img_container">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="white" height="40px" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" /></svg>
@@ -10,7 +10,7 @@
                     <span>Accueil</span>
                 </div>
             </button>
-            <button class="topbar_item flex jcc aic" (click)="goTo('/characters')">
+            <button [class.disabled]="isCurrentPage('/characters')" [disabled]="isCurrentPage('/characters')" class="topbar_item flex jcc aic" (click)="goTo('/characters')">
                 <div class="flex aic gap5">
                     <div class="img_container">
                         <img src="assets/img/Characters.png" height="40px">
@@ -18,7 +18,7 @@
                     <span>Personnages</span>
                 </div>
             </button>
-            <button class="topbar_item flex jcc aic" (click)="goTo('/weapons')">
+            <button [class.disabled]="isCurrentPage('/weapons')" [disabled]="isCurrentPage('/weapons')" class="topbar_item flex jcc aic" (click)="goTo('/weapons')">
                 <div class="flex aic gap5">
                     <div class="img_container">
                         <img src="assets/img/Weapons.png" height="40px">
@@ -26,7 +26,7 @@
                     <span>Armes</span>
                 </div>
             </button>
-            <button class="topbar_item flex jcc aic">
+            <button [class.disabled]="isCurrentPage('/events')" [disabled]="isCurrentPage('/events')" class="topbar_item flex jcc aic" (click)="goTo('/events')">
                 <div class="flex aic gap5">
                     <div class="img_container">
                         <img src="assets/img/Events.png" height="40px">

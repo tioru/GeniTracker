@@ -4,6 +4,11 @@ main {
   background-image: url("assets/img/Background.png");
   background-size: cover;
   height: vars.$height-after-topbar;
+
+  .blurEffect {
+    height: vars.$height-after-topbar;
+    backdrop-filter: blur(6px);
+  }
 }
 
 .topbar {
@@ -12,6 +17,39 @@ main {
   box-sizing: border-box;
 }
 
+app-home {
+  backdrop-filter: blur(6px);
+}
+
 app-topbar {
   width: 100%;
+}
+
+.snow-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.snowflake {
+  position: absolute;
+  top: -10px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-10px) translateX(0);
+  }
+  100% {
+    transform: translateY(101vh) translateX(20px);
+  }
 }

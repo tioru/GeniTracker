@@ -8,7 +8,7 @@
 .black_div {
   border: var(--border-color) 1px solid;
   border-radius: 15px;
-  background: linear-gradient(135deg, var(--primary-bg) 0%, rgba(43, 43, 43, 0.8) 100%);
+  background: linear-gradient(135deg, var(--primary-bg) 0%, rgba(43, 43, 43, .8) 100%);
   color: var(--text-primary);
   transition: all var(--transition-smooth);
 }
@@ -23,6 +23,6 @@
 
 .back-button {
   position: absolute;
-  top: 100px;
+  top: 25px;
   left: 20px;
 }

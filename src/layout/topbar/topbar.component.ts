@@ -53,8 +53,8 @@ export class TopbarComponent {
     });
   }
 
-  public get isHome(): boolean {
-    return this.router.url === '/';
+  public isCurrentPage(page : string): boolean {
+    return this.router.url === page;
   }
 
   public goTo(path: string) {

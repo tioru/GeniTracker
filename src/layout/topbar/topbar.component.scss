@@ -4,7 +4,7 @@
 }
 
 .topbar-bg {
-    background: radial-gradient(circle, rgba(56,56,56,1) 25%, rgba(0,0,0,1) 115%);
+    background: #2e2e2e;
 }
 
 .title {
@@ -42,11 +42,25 @@
     backdrop-filter: blur(5px);
     cursor: pointer;
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    &.disabled {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid #2a2a2a;
+        cursor: default;
+        pointer-events: none;
+        opacity: 0.6;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.02);
+            transform: none;
+            box-shadow: none;
+        }
+    }
 }
 
 .openButton {
