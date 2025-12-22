@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ProjectClass } from "../classes/class";
-import { ChatMapper } from "./chat";
+import { MessageMapper } from "./message";
 
 @Injectable({
   providedIn: 'root'
@@ -8,34 +8,60 @@ import { ChatMapper } from "./chat";
 export class GroupMapper {
     constructor() {}
 
-    public static mapRemoteArray(rGroups : ProjectClass.Remote.Group[]) : ProjectClass.Local.Group[] {
-        return rGroups.map(rGroup => this.mapRemote(rGroup));
+    public static mapRemoteDict(rGroups : { [key: string]: ProjectClass.Remote.GroupItem }) : { [key: string]: ProjectClass.Local.GroupItem } {
+        const lGroups : { [key: string]: ProjectClass.Local.GroupItem } = {};
+
+        const keys = Object.keys(rGroups);
+
+        keys.forEach ((key) => {
+            lGroups[key] = this.mapRemoteItem(rGroups[key]);
+        })
+        
+        return lGroups;
     }
-    
-    public static mapRemote(rGroup : ProjectClass.Remote.Group) : ProjectClass.Local.Group {
+
+    public static mapRemoteItem(rGroup : ProjectClass.Remote.GroupItem) : ProjectClass.Local.GroupItem {
         try {
-            return new ProjectClass.Local.Group({
-                name: rGroup.name,
+            const lMessages : { [key: string]: ProjectClass.Local.Message } = {};
+
+            const keys = Object.keys(rGroup.messages);
+
+            keys.forEach ((key) => {
+                lMessages[key] = MessageMapper.mapRemote(rGroup.messages[key]);
+            })
+
+            return new ProjectClass.Local.GroupItem({
                 createdBy: rGroup.createdBy,
-                messages: rGroup.messages.map(rChat => ChatMapper.mapRemote(rChat)),
-                createdAt: rGroup.createdAt
+                messages: lMessages,
+                createdAt: rGroup.createdAt,
+                name: rGroup.name,
+                description: rGroup.description
             })
         } catch (error) {
             throw new Error("Error mapping Remote Group to Local Group: " + error);
         }
     }
     
-    public static mapLocalArray(lGroups : ProjectClass.Local.Group[]) : ProjectClass.Remote.Group[] {
+    public static mapLocalDict(lGroups : ProjectClass.Local.GroupItem[]) : ProjectClass.Remote.GroupItem[] {
         return lGroups.map(lGroup => this.mapLocal(lGroup));
     }
-    
-    public static mapLocal(lGroup : ProjectClass.Local.Group) : ProjectClass.Remote.Group {
+
+    public static mapLocal(lGroup : ProjectClass.Local.GroupItem) : ProjectClass.Remote.GroupItem {
         try {
-            return new ProjectClass.Remote.Group({
-                name: lGroup.name,
+            const rMessages : { [key: string]: ProjectClass.Remote.Message } = {};
+
+            const keys = Object.keys(lGroup.messages);
+
+            keys.forEach ((key) => {
+                rMessages[key] = MessageMapper.mapLocal(lGroup.messages[key]);
+            })
+
+            return new ProjectClass.Remote.GroupItem({
                 createdBy: lGroup.createdBy,
-                messages: lGroup.messages.map(lChat => ChatMapper.mapLocal(lChat)),
-                createdAt: lGroup.createdAt
+                messages: rMessages,
+                createdAt: lGroup.createdAt,
+                name: lGroup.name,
+                description: lGroup.description
             })
         } catch (error) {
             throw new Error("Error mapping Local Group to Remote Group: " + error);

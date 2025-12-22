@@ -4,22 +4,39 @@
     width: 100%;
 }
 
-.verticalBar {
-    width: 2px;
-    background-color: #ffffff;
-    height: 100%;
-}
-
 .groupsDisplay {
     width: 85vw;
     height: 85vh;
 }
 
-.groupNameListing {
-    background-color: rgb(104, 104, 104);
+.imgPlaceholder {
+    width: 80px;
+    height: 80px;
+    background-color: rgb(49, 49, 49);
+    border-radius: 15px;
+    aspect-ratio: 1;
 }
 
-.groupContent {
+.groupItem {
+    border-radius: 15px;
+    background-color: rgba(128, 128, 128, 0.457);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+    &.selected {
+        background-color: rgba(128, 128, 128, 0.674);
+        cursor: default;
+    }
+
+    & span {
+        color: white;
+    }
+
+    &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .sendButton {

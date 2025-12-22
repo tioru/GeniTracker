@@ -118,3 +118,17 @@
         </div>
     </div>
 </dialog-component>
+
+<dialog-component *ngIf="!displayNameDefined && (currentUser | async)" [style]="dialogStyle.B" [dialogVisibility]="true" [modal]="false">
+    <div body class="flex aic column gap20 m20">
+        <h3 style="color: white; margin: 0;">Veuillez saisir votre nom d'utilisateur</h3>
+        <input class="input" [(ngModel)]="displayName" (keydown.enter)="saveNewDisplayName()">
+        <button class="button" (click)="saveNewDisplayName()">
+            @if (displayNameLoading) {
+                <div class="spinner" style="width: 18px; height: 18px; border: 5px solid rgba(0, 0, 0, 0.1); border-top-color: #a1a1a1;"></div>
+            } @else {
+                <span>Enregistrer</span>
+            }
+        </button>
+    </div>
+</dialog-component>

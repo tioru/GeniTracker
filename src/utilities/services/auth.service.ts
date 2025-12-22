@@ -3,7 +3,7 @@ import { Auth, signInWithEmailAndPassword, onAuthStateChanged, UserCredential, c
 import { BehaviorSubject } from 'rxjs';
 import { NotificationService, notificationSeverity } from './notification.service';
 import { FirebaseErrorService } from './firebase-error.service';
-import { GoogleAuthProvider } from 'firebase/auth';
+import { GoogleAuthProvider, updateProfile } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class AuthService {
       this.notificationService.addNotification({
         title: 'Connecté',
         severity: notificationSeverity.OK,
-        detail: `Bienvenue ${userCredential.user.email}`,
+        detail: `Bienvenue ${userCredential.user.displayName ? userCredential.user.displayName : userCredential.user.email}`,
         sticky: false,
         delay: 5000
       });
@@ -146,6 +146,31 @@ export class AuthService {
       if (error?.code === 'auth/weak-password') {
         return false;
       }
+    }
+    return true;
+  }
+
+  public async updateProfile(newUserName : string) : Promise<boolean> {
+    try {
+      await updateProfile(this.auth.currentUser!, {
+        displayName: newUserName
+      });
+
+      this.notificationService.addNotification({
+        title: 'Modification réussie',
+        severity: notificationSeverity.OK,
+        detail: `Modification du nom d'utilisateur réussie`,
+        sticky: false,
+        delay: 5000
+      });
+    } catch (error: any) {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
+      return false;
     }
     return true;
   }

@@ -1,13 +1,9 @@
-import { User } from "@angular/fire/auth";
-import { RChatClass } from "./chat";
+import { RGroupItem } from "./groupItem";
 
 export class RGroupClass {
-  name: string | null = null;
-  createdBy : User | null = null;
-  messages : RChatClass[] = [];
-  createdAt : string | null = null;
+  string: { [key: string]: RGroupItem } = {};
 
-  constructor(init?:Partial<RGroupClass>) {
+  constructor(init?: Partial<RGroupClass>) {
     Object.assign(this, init);
   }
 }

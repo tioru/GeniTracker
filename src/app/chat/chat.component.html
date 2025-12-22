@@ -1,26 +1,39 @@
 <dialog-component *ngIf="chatVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()">
     <div body class="flex aic column">
         <div class="flex aic jcc column fw" style="height: 4vh">
-            <span style="color: white;">{{groups[selectedGroupNumber].name}}</span>
+            <span style="color: white;">{{groups[selectedGroupKey].name}}</span>
         </div>
         <div class="whiteBar"></div>
         <div class="flex groupsDisplay">
-            <div class="groupNameListing flex aic column gap20 p10" style="flex: 1">
-                <button class="button" *ngFor="let groupName of groupsNames; let i = index" [class.disabled]="i === selectedGroupNumber" (click)="openGroup(i)">
-                    <span style="color: white;">{{groupName}}</span>
-                </button>
+            <div class="flex aic column gap20 p20" style="flex: 2; background-color: black;">
+                <div [class.selected]="getGroupBykey(selectedGroupKey).name === groupName" class="groupItem flex fw p10" *ngFor="let groupName of groupsNames" (click)="openGroup(getGroupKeyByName(groupName))">
+                    <div class="imgPlaceholder"></div>
+                    <ng-container *ngIf="getGroupBykey(getGroupKeyByName(groupName)) as group">
+                        <div class="flex ais jcsb column fw" style="flex: 3; margin-left: 10px;">
+                            <div class="flex ais jcsb column fw gap10">
+                                <span>{{ group.name }}</span>
+                                <span style="font-size: 12px;">{{ group.description }}</span>
+                            </div>
+                            <span style="font-size: 12px;"> {{ getLastMessager(getGroupKeyByName(groupName)) }} - {{getTimeSinceLastMessage(getGroupKeyByName(groupName))}}</span>
+                        </div>
+                    </ng-container>
+                </div>
+                <div>
+                    <button class="button flex aic jcc p10" (click)="createNewGroup()" style="background-color: #575757;">
+                        <span style="color: white;">Créer un nouveau groupe</span>
+                    </button>
+                </div>
             </div>
-            <div class="verticalBar"></div>
-            <div class="groupContent flex column" style="flex: 4">
+            <div class="groupContent flex column" style="flex: 5">
                 <div class="fh messagesDissplay">
-                    <div *ngFor="let message of groups[selectedGroupNumber].messages" class="messageItem flex column mb10">
-                        <span>
+                    <div *ngFor="let message of getCurrentGroupMessages()" class="messageItem flex column mb10">
+                        <span style="color: white;">
                             <strong>{{message.userName}}:</strong> {{message.message}}
                         </span>
                     </div>
                 </div>
                 <div class="bottomInput flex aic mb10 jcc fw">
-                    <input class="input" [ngModel]="newMessageContent" style="width: 90%;">
+                    <input class="input" [(ngModel)]="newMessageContent" style="width: 90%;" (keydown.enter)="sendMessage()">
                     <button class="sendButton flex aic jcc" style="border-radius: 50%; line-height: 0;" (click)="sendMessage()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>
                     </button>

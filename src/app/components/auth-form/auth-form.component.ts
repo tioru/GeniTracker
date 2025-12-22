@@ -51,6 +51,12 @@ export class AuthFormComponent implements OnInit {
 
   public authenticated : boolean = false;
 
+  public displayName : string = "";
+
+  public displayNameDefined : boolean = false;
+
+  public displayNameLoading : boolean = false;
+
   @Input() formVisibility : boolean = false;
 
   @Input() onLoginCallBack : () => void = () => {}
@@ -59,6 +65,7 @@ export class AuthFormComponent implements OnInit {
     this.currentUser = this.authService.currentUser$;
     this.currentUser.subscribe(user => {
       user ? this.authenticated = true : this.authenticated = false;
+      this.displayNameDefined = user?.displayName ? true : false;
     });
   }
 
@@ -142,5 +149,16 @@ export class AuthFormComponent implements OnInit {
       this.email = ''; 
       this.password = ''
     })
+  }
+
+  public saveNewDisplayName() : void {
+    this.displayNameLoading = true;
+    this.authService.updateProfile(this.displayName).then((result) => {
+      this.displayNameLoading = false;
+      if (result) {
+        this.displayNameDefined = true;
+        this.displayName = '';
+      }
+    });
   }
 }

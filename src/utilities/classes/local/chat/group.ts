@@ -1,13 +1,9 @@
-import { User } from "@angular/fire/auth";
-import { LChatClass } from "./chat";
+import { LGroupItem } from "./groupItem";
 
 export class LGroupClass {
-  name: string | null = null;
-  createdBy : User | null = null;
-  messages : LChatClass[] = [];
-  createdAt : string | null = null;
+  string: { [key: string]: LGroupItem } = {};
 
-  constructor(init?:Partial<LGroupClass>) {
+  constructor(init?: Partial<LGroupClass>) {
     Object.assign(this, init);
   }
 }

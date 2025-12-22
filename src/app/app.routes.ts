@@ -3,6 +3,7 @@ import { CharactersComponent } from './characters/characters.component';
 import { HomeComponent } from './home/home.component';
 import { WeaponsComponent } from './weapons/weapons.component';
 import { AdminComponent } from './admin/admin.component';
+import { EventsComponent } from './events/events.component';
 
 export const routes: Routes = [
   {
@@ -20,5 +21,9 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminComponent
+  },
+  {
+    path: 'events',
+    component: EventsComponent
   }
 ]

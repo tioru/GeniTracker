@@ -14,7 +14,7 @@
                         <div class="fw img-container">
                             <img [class.loading]="!version.imgLoaded" height="100%" width="100%" (load)="version.imgLoaded = true" [src]="version.imgUrl"/>
                             <div *ngIf="!version.imgLoaded" class="spinner"></div>
-                            <div class="version">
+                            <div class="version overflowHandler">
                                 <span>{{version.version}}</span>
                             </div>
                         </div>

@@ -62,6 +62,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     window.addEventListener('resize', () => {
       this.calculateDimensions();
       this.checkBoundary();
+      this.snapToNearest();
     });
 
     this.createBackgroundParticles();
