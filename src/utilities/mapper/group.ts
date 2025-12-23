@@ -35,7 +35,8 @@ export class GroupMapper {
                 messages: lMessages,
                 createdAt: rGroup.createdAt,
                 name: rGroup.name,
-                description: rGroup.description
+                description: rGroup.description,
+                imgUrl: rGroup.imgUrl
             })
         } catch (error) {
             throw new Error("Error mapping Remote Group to Local Group: " + error);
@@ -61,7 +62,8 @@ export class GroupMapper {
                 messages: rMessages,
                 createdAt: lGroup.createdAt,
                 name: lGroup.name,
-                description: lGroup.description
+                description: lGroup.description,
+                imgUrl: lGroup.imgUrl
             })
         } catch (error) {
             throw new Error("Error mapping Local Group to Remote Group: " + error);

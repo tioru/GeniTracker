@@ -47,6 +47,7 @@ export class DialogComponent {
   @Input() backgroundMask : boolean = true;
   @Input() resetFields : boolean = true;
   @Input() draggable : boolean = false;
+  @Input() borderWidth : string = '1px';
 
   @Input() style : DialogStyle = DialogStyle.HBF;
   @Output() onHide: EventEmitter<void> = new EventEmitter<void>();

@@ -19,12 +19,12 @@
 
 .groupItem {
     border-radius: 15px;
-    background-color: rgba(128, 128, 128, 0.457);
+    background-color: rgb(31, 31, 31);
     cursor: pointer;
     transition: all 0.3s ease-in-out;
 
     &.selected {
-        background-color: rgba(128, 128, 128, 0.674);
+        background-color: rgba(128, 128, 128, 0.7);
         cursor: default;
     }
 
@@ -33,9 +33,10 @@
     }
 
     &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        background: rgba(128, 128, 128, 0.7);
+        box-shadow: 0 2px 5px rgb(39, 39, 39);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -44,10 +45,11 @@
     background: transparent;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    fill: grey;
 
     &:hover {
-        transform: scale(1.1);
-        fill: grey
+        transform: scale(1.2);
+        fill: rgb(255, 255, 255);
     }
 }
 

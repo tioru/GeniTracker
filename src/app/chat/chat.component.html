@@ -1,14 +1,17 @@
-<dialog-component *ngIf="chatVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()">
+<dialog-component *ngIf="chatVisibility" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()">
     <div body class="flex aic column">
         <div class="flex aic jcc column fw" style="height: 4vh">
             <span style="color: white;">{{groups[selectedGroupKey].name}}</span>
         </div>
         <div class="whiteBar"></div>
         <div class="flex groupsDisplay">
-            <div class="flex aic column gap20 p20" style="flex: 2; background-color: black;">
+            <!--background with linear gradient from bottom-->
+            <div class="flex aic column gap20 p20" style="flex: 2; background: radial-gradient(ellipse at bottom, #3b3b3b -34%, #1f1f1f 50%, #121212 100%);">
                 <div [class.selected]="getGroupBykey(selectedGroupKey).name === groupName" class="groupItem flex fw p10" *ngFor="let groupName of groupsNames" (click)="openGroup(getGroupKeyByName(groupName))">
-                    <div class="imgPlaceholder"></div>
                     <ng-container *ngIf="getGroupBykey(getGroupKeyByName(groupName)) as group">
+                        <div class="imgPlaceholder">
+                            <img style="object-fit: cover; height: inherit; width: inherit; border-radius: 15px;" src={{group.imgUrl}}/>
+                        </div>
                         <div class="flex ais jcsb column fw" style="flex: 3; margin-left: 10px;">
                             <div class="flex ais jcsb column fw gap10">
                                 <span>{{ group.name }}</span>
@@ -33,8 +36,8 @@
                     </div>
                 </div>
                 <div class="bottomInput flex aic mb10 jcc fw">
-                    <input class="input" [(ngModel)]="newMessageContent" style="width: 90%;" (keydown.enter)="sendMessage()">
-                    <button class="sendButton flex aic jcc" style="border-radius: 50%; line-height: 0;" (click)="sendMessage()">
+                    <input class="input" [(ngModel)]="newMessageContent" style="width: 90%; margin: 0 10px;" (keydown.enter)="sendMessage()">
+                    <button class="sendButton flex aic jcc" style="border-radius: 50%; line-height: 0; margin-right: 10px;" (click)="sendMessage()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>
                     </button>
                 </div>

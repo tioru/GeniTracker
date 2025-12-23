@@ -7,6 +7,7 @@ export class LGroupItem {
   createdAt: string | null = null;
   name: string | null = null;
   description: string | null = null;
+  imgUrl: string | null = null;
 
   constructor(init?: Partial<LGroupItem>) {
     Object.assign(this, init);
