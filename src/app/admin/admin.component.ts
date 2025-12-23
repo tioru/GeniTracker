@@ -26,10 +26,16 @@ export class AdminComponent {
 
   public selectedAdminPanel: AdminPanels = AdminPanels.DASHBOARD;
 
+  public alterningView: boolean = false;
+
   constructor(
   ) {}
   
   public selectAdminPanel(panel: AdminPanels) {
     this.selectedAdminPanel = panel;
+    this.alterningView = true;
+    setTimeout(() => {
+      this.alterningView = false;
+    }, 300);
   }
 }

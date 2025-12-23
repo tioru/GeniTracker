@@ -62,5 +62,15 @@ export const animations = [
         transform: 'translateX(100%)' 
       }))
     ])
-  ])
+  ]),
+  trigger('contentAnimation', [
+      transition(':enter', [
+        style({ height: 0, width: 0, opacity: 0, overflow: 'hidden' }),
+        animate('300ms ease-out', style({ height: '*', width: '*', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        style({ height: '*', width: '*', opacity: 1, overflow: 'hidden' }),
+        animate('300ms ease-in', style({ height: 0, width: 0, opacity: 0 }))
+      ])
+    ])
 ];

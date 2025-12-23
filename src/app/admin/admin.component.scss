@@ -10,7 +10,9 @@
   border-radius: 15px;
   background: linear-gradient(135deg, var(--primary-bg) 0%, rgba(43, 43, 43, .8) 100%);
   color: var(--text-primary);
-  transition: all var(--transition-smooth);
+  transition: all 0.3s ease;
+  min-width: 370px;
+  min-height: 300px;
 }
 
 .stats-container {
@@ -25,4 +27,9 @@
   position: absolute;
   top: 25px;
   left: 20px;
+}
+
+.content-container {
+  min-width: 370px;
+  min-height: 210px;
 }
