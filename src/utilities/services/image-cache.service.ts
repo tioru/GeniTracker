@@ -20,6 +20,7 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
 
   // Vérifier si le cache est valide
   if (cached && (now - cached.timestamp) < CACHE_DURATION) {
+    console.log('✅ IMAGE CHARGÉE DEPUIS LE CACHE:', req.url);
     return of(cached.response.clone());
   }
 
@@ -30,6 +31,7 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
           response: event.clone(),
           timestamp: now
         });
+        console.log('💾 IMAGE MISE EN CACHE:', req.url);
       }
     })
   );

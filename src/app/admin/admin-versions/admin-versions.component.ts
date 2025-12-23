@@ -8,6 +8,9 @@ import { DialogComponent, DialogStyle } from '../../components/dialog/dialog.com
 import { NotificationService, notificationSeverity } from '../../../utilities/services/notification.service';
 import { animations } from '../../animation';
 import { FirebaseErrorService } from '../../../utilities/services/firebase-error.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
+import { map, tap } from 'rxjs';
 
 @Component({
   selector: 'app-admin-versions',
@@ -57,13 +60,20 @@ export class AdminVersionsComponent {
   
   public versionEdited : boolean = false;
 
+  private imageObjectUrls = new Map<string, string>();
+
+  private http = inject(HttpClient);
+
+  private sanitizer = inject(DomSanitizer);
+
   ngOnInit() {
     this.versionListening()
   }
 
-  async ngAfterViewInit() : Promise<void> {
+  async ngAfterViewInit(): Promise<void> {
     await this.versionInitializing().then(() => {
       this.sortVersion();
+      this.preloadImages();
     });
   }
 
@@ -80,11 +90,40 @@ export class AdminVersionsComponent {
     return new Date();
   }
 
+  private preloadImages(): void {
+    this.versions.forEach(version => {
+      if (version.imgUrl && !this.imageObjectUrls.has(version.imgUrl)) {
+        this.loadImage(version.imgUrl).subscribe(objectUrl => {
+          this.imageObjectUrls.set(version.imgUrl!, objectUrl);
+          version.imgLoaded = true;
+        });
+      }
+    });
+  }
+
+  // Charger une image via HttpClient (sera mise en cache par l'interceptor)
+  private loadImage(url: string) {
+    return this.http.get(url, { responseType: 'blob' }).pipe(
+      tap(blob => {
+        const objectURL = URL.createObjectURL(blob);
+        this.imageObjectUrls.set(url, objectURL);
+      }),
+      map(blob => URL.createObjectURL(blob))
+    );
+  }
+
+  // Obtenir l'URL sécurisée pour l'affichage
+  public getImageUrl(url: string): SafeUrl {
+    const objectUrl = this.imageObjectUrls.get(url);
+    return objectUrl ? this.sanitizer.bypassSecurityTrustUrl(objectUrl) : url;
+  }
+
   public versionListening() : void {
     onValue(this.dbRef, (snapshot) => {
       if (snapshot.exists()) {
         this.versions = VersionMapper.mapRemoteArray(snapshot.val());
         this.sortVersion();
+        this.preloadImages();
         console.log(this.versions)
       }
     });
@@ -238,5 +277,11 @@ export class AdminVersionsComponent {
     if (popover) {
       popover.hidePopover()
     }
+  }
+
+  ngOnDestroy(): void {
+    // Nettoyer les URLs d'objets créés
+    this.imageObjectUrls.forEach(url => URL.revokeObjectURL(url));
+    this.imageObjectUrls.clear();
   }
 }

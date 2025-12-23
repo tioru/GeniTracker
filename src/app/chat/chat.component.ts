@@ -54,7 +54,6 @@ export class ChatComponent {
         if (!this.selectedGroupKey) {
           Object.keys(this.groups).forEach((groupKey) => {
             if (this.groups[groupKey].name === DEFAULT_GROUP_NAME) {
-              console.log("Default group found:");
               this.selectedGroupKey = groupKey;
             }
           });
