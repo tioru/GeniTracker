@@ -11,7 +11,9 @@ import { FirebaseErrorService } from '../../../utilities/services/firebase-error
 enum DialogTab {
   LOGIN,
   REGISTER,
-  FORGET_PASSWORD
+  FORGET_PASSWORD,
+  SET_DISPLAY_NAME,
+  SET_PROFILE_PICTURE
 }
 
 enum PasswordField {
@@ -38,6 +40,8 @@ export class AuthFormComponent implements OnInit {
   public passwordField = PasswordField;
     
   public selectedDialogTab : DialogTab = DialogTab.LOGIN;
+
+  public selectedFirstConnexionDialogTab : DialogTab = DialogTab.SET_DISPLAY_NAME;
   
   public currentUser: Observable<User | null> = of(null);
 
@@ -55,7 +59,9 @@ export class AuthFormComponent implements OnInit {
 
   public displayNameDefined : boolean = false;
 
-  public displayNameLoading : boolean = false;
+  public requestLoading : boolean = false;
+
+  public profilePictureLink : string = "";
 
   @Input() formVisibility : boolean = false;
 
@@ -151,14 +157,32 @@ export class AuthFormComponent implements OnInit {
     })
   }
 
-  public saveNewDisplayName() : void {
-    this.displayNameLoading = true;
-    this.authService.updateProfile(this.displayName).then((result) => {
-      this.displayNameLoading = false;
+  public saveNewDisplayNameAndProfilePictureLink() : void {
+    this.requestLoading = true;
+    this.authService.updateProfile(this.displayName, this.profilePictureLink).then((result) => {
+      this.requestLoading = false;
       if (result) {
         this.displayNameDefined = true;
         this.displayName = '';
+        this.profilePictureLink = '';
       }
     });
+  }
+
+  public checkDisplayName(event: Event) {
+    const inputField = document.querySelector('.input.displayname') as HTMLInputElement;
+    const isValid = this.displayName.trim().length > 0;
+    const isSubmitEvent = (event instanceof KeyboardEvent && event.code === 'Enter') || 
+                          (event instanceof MouseEvent);
+
+    inputField.classList.toggle('error', !isValid);
+
+    if (!isValid && isSubmitEvent) {
+      // Wave animation to indicate error
+    }
+
+    if (isValid && isSubmitEvent) {
+      this.selectedFirstConnexionDialogTab = this.dialogTab.SET_PROFILE_PICTURE;
+    }
   }
 }

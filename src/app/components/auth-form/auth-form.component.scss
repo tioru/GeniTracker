@@ -45,10 +45,37 @@ input[type=password]::-ms-reveal {
     &.forgetPassword {
         height: 390px;
     }
+
+    &.setDisplayName {
+        width: 430px;
+        height: 200px;
+    }
+
+    &.setProfilePicture {
+        height: 400px;
+    }
 }
 
 .form {
     position: absolute;
     width: 100%;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.imgProfilePreview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: solid 3px rgb(205, 205, 205);
+    overflow: hidden;
+
+    img {
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+        z-index: -1;
+        position: relative;
+    }
 }

@@ -120,15 +120,44 @@
 </dialog-component>
 
 <dialog-component *ngIf="!displayNameDefined && (currentUser | async)" [style]="dialogStyle.B" [dialogVisibility]="true" [modal]="false">
-    <div body class="flex aic column gap20 m20">
-        <h3 style="color: white; margin: 0;">Veuillez saisir votre nom d'utilisateur</h3>
-        <input class="input" [(ngModel)]="displayName" (keydown.enter)="saveNewDisplayName()">
-        <button class="button" (click)="saveNewDisplayName()">
-            @if (displayNameLoading) {
-                <div class="spinner" style="width: 18px; height: 18px; border: 5px solid rgba(0, 0, 0, 0.1); border-top-color: #a1a1a1;"></div>
-            } @else {
-                <span>Enregistrer</span>
-            }
-        </button>
+    <div body [ngClass]="{'setDisplayName': selectedFirstConnexionDialogTab === dialogTab.SET_DISPLAY_NAME, 'setProfilePicture': selectedFirstConnexionDialogTab === dialogTab.SET_PROFILE_PICTURE}" class="flex aic column gap20 m20 wrapper" style="mask: none;">
+        <div class="form flex aic jcsa column fh" [ngStyle]="{'transform': selectedFirstConnexionDialogTab === dialogTab.SET_DISPLAY_NAME ? 'translateX(0)' : 'translateX(-100%)'}">
+            <h3 style="color: white; margin: 0; text-align: center;">Veuillez saisir votre nom d'utilisateur</h3>
+            <div style="width: fit-content; position: relative;">
+                <input class="input displayname" [(ngModel)]="displayName" (keyup)="checkDisplayName($event)" (keyup.enter)="checkDisplayName($event)">
+                <button *ngIf="displayName" class="clear_icon" (click)="displayName = ''">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                </button>
+            </div>
+            <div class="flex fw jcc">
+                <button class="button" (click)="checkDisplayName($event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25px" fill="white"><path d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" /></svg>
+                </button>
+            </div>
+        </div>
+        <div class="form flex aic jcsa column fh" [ngStyle]="{'transform': selectedFirstConnexionDialogTab === dialogTab.SET_PROFILE_PICTURE ? 'translateX(0)' : 'translateX(100%)'}">
+            <h3 style="color: white; margin: 0; text-align: center;">Veuillez saisir le lien de votre image de profil</h3>
+            <div class="imgProfilePreview">
+                <img *ngIf="profilePictureLink" [src]="profilePictureLink">
+            </div>
+            <div style="width: fit-content; position: relative;">
+                <input class="input" [(ngModel)]="profilePictureLink" (keydown.enter)="saveNewDisplayNameAndProfilePictureLink()">
+                <button *ngIf="profilePictureLink" class="clear_icon" (click)="profilePictureLink = ''">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                </button>
+            </div>
+            <div class="fw flex jcsa">
+                <button class="button" (click)="selectedFirstConnexionDialogTab = dialogTab.SET_DISPLAY_NAME">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25px" fill="white"><path d="M20,9V15H12V19.84L4.16,12L12,4.16V9H20Z" /></svg>
+                </button>
+                <button class="button" (click)="saveNewDisplayNameAndProfilePictureLink()">
+                    @if (requestLoading) {
+                        <div class="spinner" style="width: 18px; height: 18px; border: 5px solid rgba(0, 0, 0, 0.1); border-top-color: #a1a1a1;"></div>
+                    } @else {
+                        <span>Enregistrer</span>
+                    }
+                </button>
+            </div>
+        </div>
     </div>
 </dialog-component>

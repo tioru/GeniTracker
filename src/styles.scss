@@ -216,6 +216,10 @@ dialog-component {
   transition: all 0.3s ease;
   background-color: #272727;
   anchor-name: --input-field;
+
+  &.error {
+    border-color: #ff4d4d;
+  }
 }
 
 .clear_icon {

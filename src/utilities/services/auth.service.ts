@@ -150,16 +150,17 @@ export class AuthService {
     return true;
   }
 
-  public async updateProfile(newUserName : string) : Promise<boolean> {
+  public async updateProfile(newUserName : string, newProfilePictureLink: string) : Promise<boolean> {
     try {
       await updateProfile(this.auth.currentUser!, {
-        displayName: newUserName
+        displayName: newUserName,
+        photoURL: newProfilePictureLink
       });
 
       this.notificationService.addNotification({
         title: 'Modification réussie',
         severity: notificationSeverity.OK,
-        detail: `Modification du nom d'utilisateur réussie`,
+        detail: `Modification du nom d'utilisateur et de la photo de profil réussie`,
         sticky: false,
         delay: 5000
       });

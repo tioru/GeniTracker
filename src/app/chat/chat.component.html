@@ -5,7 +5,6 @@
         </div>
         <div class="whiteBar"></div>
         <div class="flex groupsDisplay">
-            <!--background with linear gradient from bottom-->
             <div class="flex aic column gap20 p20" style="flex: 2; background: radial-gradient(ellipse at bottom, #3b3b3b -34%, #1f1f1f 50%, #121212 100%);">
                 <div [class.selected]="getGroupBykey(selectedGroupKey).name === groupName" class="groupItem flex fw p10" *ngFor="let groupName of groupsNames" (click)="openGroup(getGroupKeyByName(groupName))">
                     <ng-container *ngIf="getGroupBykey(getGroupKeyByName(groupName)) as group">
