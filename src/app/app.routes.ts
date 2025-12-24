@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { WeaponsComponent } from './weapons/weapons.component';
 import { AdminComponent } from './admin/admin.component';
 import { EventsComponent } from './events/events.component';
+import { ProfileComponent } from './profile/profile.component';
 
 export const routes: Routes = [
   {
@@ -25,5 +26,9 @@ export const routes: Routes = [
   {
     path: 'events',
     component: EventsComponent
+  },
+  {
+    path : 'profile',
+    component : ProfileComponent
   }
 ]

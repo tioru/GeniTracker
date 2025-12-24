@@ -70,6 +70,7 @@ export class AuthFormComponent implements OnInit {
   ngOnInit(): void { 
     this.currentUser = this.authService.currentUser$;
     this.currentUser.subscribe(user => {
+      console.log(user)
       user ? this.authenticated = true : this.authenticated = false;
       this.displayNameDefined = user?.displayName ? true : false;
     });
@@ -165,6 +166,7 @@ export class AuthFormComponent implements OnInit {
         this.displayNameDefined = true;
         this.displayName = '';
         this.profilePictureLink = '';
+        this.authService.duplicateUser()
       }
     });
   }

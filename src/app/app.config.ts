@@ -11,7 +11,6 @@ import { environment } from '../environments/environment';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { imageCacheInterceptor } from '../utilities/core/interceptors/image-cache.interceptor';
 
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 

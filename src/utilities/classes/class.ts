@@ -12,6 +12,7 @@ import { LVisionTypeClass, LVisionTypeListEnum } from "./local/characters/vision
 import { LGroupClass } from "./local/chat/group";
 import { LGroupItem } from "./local/chat/groupItem";
 import { LMessageClass } from "./local/chat/message";
+import { LUserClass } from "./local/users/user";
 import { LVersionClass } from "./local/versions/version";
 import { LWeaponClass } from "./local/weapons/weapon";
 import { LWeaponListingClass } from "./local/weapons/weaponsListing";
@@ -30,6 +31,7 @@ import { RVisionTypeClass, RVisionTypeListEnum } from "./remote/characters/visio
 import { RGroupClass } from "./remote/chat/group";
 import { RGroupItem } from "./remote/chat/groupItem";
 import { RMessageClass } from "./remote/chat/message";
+import { RUserClass } from "./remote/users/user";
 import { RVersionClass } from "./remote/versions/version";
 import { RWeaponClass } from "./remote/weapons/weapon";
 import { RWeaponListingClass } from "./remote/weapons/weaponsListing";
@@ -56,6 +58,7 @@ export namespace ProjectClass {
         export class Message extends LMessageClass {};
         export class Group extends LGroupClass{};
         export class GroupItem extends LGroupItem {};
+        export class User extends LUserClass {};
     }
 
     export namespace Remote {
@@ -79,5 +82,6 @@ export namespace ProjectClass {
         export class Message extends RMessageClass{};
         export class Group extends RGroupClass{};
         export class GroupItem extends RGroupItem {};
+        export class User extends RUserClass {};
     }
 }

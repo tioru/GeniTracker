@@ -130,3 +130,10 @@
 svg {
     line-height: 0;
 }
+
+.logout {
+    background-color: #b91c1c;
+    &:hover {
+        background-color: #991b1b;
+    }
+}

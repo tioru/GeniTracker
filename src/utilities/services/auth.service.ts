@@ -1,9 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, onAuthStateChanged, UserCredential, createUserWithEmailAndPassword, User, signInWithPopup, sendPasswordResetEmail, updatePassword, confirmPasswordReset } from '@angular/fire/auth';
+import { inject, Injectable } from '@angular/core';
+import { Auth, signInWithEmailAndPassword, onAuthStateChanged, UserCredential, createUserWithEmailAndPassword, User, signInWithPopup, sendPasswordResetEmail, confirmPasswordReset } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
 import { NotificationService, notificationSeverity } from './notification.service';
 import { FirebaseErrorService } from './firebase-error.service';
 import { GoogleAuthProvider, updateProfile } from 'firebase/auth';
+import { Database, ref, set } from '@angular/fire/database';
+import { ProjectClass } from '../classes/class';
+import { UserMapper } from '../mapper/user';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +15,8 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   
   public currentUser$ = this.currentUserSubject.asObservable();
+
+  private database = inject(Database);
 
   constructor(private auth: Auth, public notificationService : NotificationService, public firebaseErrorService: FirebaseErrorService) {
     onAuthStateChanged(this.auth, (user) => {
@@ -77,7 +82,10 @@ export class AuthService {
   }
 
   async deconnexion() {
-    await this.auth.signOut();
+    setTimeout(() => {
+      this.auth.signOut();
+    // Delay to allow popover to close before logging out
+    }, 200);
   }
 
   public async loginWithGoogle() : Promise<User | null> {
@@ -174,5 +182,20 @@ export class AuthService {
       return false;
     }
     return true;
+  }
+
+  public async duplicateUser() : Promise<void> {
+    try {
+      const userRef = ref(this.database, `users/${this.auth.currentUser?.uid}`);
+        
+      await set(userRef, UserMapper.mapLocal(new ProjectClass.Local.User({
+        displayName: this.auth.currentUser?.displayName ? this.auth.currentUser.displayName : '',
+        email: this.auth.currentUser?.email ? this.auth.currentUser.email : '',
+        photoURL: this.auth.currentUser?.photoURL ? this.auth.currentUser.photoURL : '',
+        signUpDate: new Date()
+      })));
+    } catch (error) {
+      console.error("Error duplicating user data: ", error);
+    }
   }
 }
