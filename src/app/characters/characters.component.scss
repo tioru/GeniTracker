@@ -53,12 +53,11 @@
     padding: 10px 0;
     overflow: auto;
     
-    --mask-height: 15px;
     mask-image: linear-gradient(
         to bottom,
         transparent,
-        black var(--mask-height),
-        black calc(100% - var(--mask-height)),
+        black 15px,
+        black calc(100% - 15px),
         transparent
     );
 }

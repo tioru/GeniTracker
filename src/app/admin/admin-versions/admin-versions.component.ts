@@ -100,7 +100,6 @@ export class AdminVersionsComponent {
         this.versions = VersionMapper.mapRemoteArray(snapshot.val());
         this.sortVersion();
         this.preloadImages();
-        console.log(this.versions)
       }
     });
   }

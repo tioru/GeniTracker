@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { AfterViewInit, Component, inject, Input, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
 import { Database, onValue, push, ref } from '@angular/fire/database';
@@ -9,17 +9,20 @@ import { MessageMapper } from '../../utilities/mapper/message';
 import { UserService } from '../../utilities/services/user.service';
 import { User } from '@angular/fire/auth';
 import { ImageCacheService } from '../../utilities/services/image-cache.service';
+import { TooltipComponent } from '../components/tooltip/tooltip.component';
+import { animations } from '../animation';
 
 const DEFAULT_GROUP_NAME = "Général";
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, DialogComponent, FormsModule],
+  imports: [CommonModule, DialogComponent, FormsModule, TooltipComponent],
   templateUrl: './chat.component.html',
+  animations: animations,
   styleUrl: './chat.component.scss'
 })
-export class ChatComponent {
+export class ChatComponent implements OnInit{
   private database = inject(Database);
   
   private dbRef = ref(this.database, 'groups');
@@ -92,20 +95,27 @@ export class ChatComponent {
 
   public openGroup(groupKey : string) : void {
     this.selectedGroupKey = groupKey;
+    this.goToBottom()
   }
 
-  public sendMessage() : void {
+  public async sendMessage() : Promise<void> {
     if (!this.currentUser) return;
 
     const dbRef = ref(this.database, 'groups/' + this.selectedGroupKey + '/messages');
 
-    push(dbRef, this.messageMapper.mapLocal(new ProjectClass.Local.Message({
+    let remoteMessage : ProjectClass.Remote.Message | null = null;
+
+    await this.messageMapper.mapLocal(new ProjectClass.Local.Message({
       message: this.newMessageContent,
-      date: new Date().toISOString(),
+      date: new Date(),
       user: this.currentCustomUser,
       modified: false,
-      seenBy: [],
-    }))).then(() => {
+      seenBy: [this.currentCustomUser!],
+    })).then((message) => {
+      remoteMessage = message;
+    })
+    
+    push(dbRef, remoteMessage).then(() => {
       this.newMessageContent = "";
     });
   }
@@ -133,29 +143,14 @@ export class ChatComponent {
 
   public getTimeSinceLastMessage(groupKey: string) : string {
     const lastMessage = Object.values(this.groups[groupKey].messages).sort((a, b) => {
-      const dateA = a.date ? new Date(a.date).getTime() : 0;
-      const dateB = b.date ? new Date(b.date).getTime() : 0;
-      return dateA - dateB;
+        const dateA = a.date ? new Date(a.date).getTime() : 0;
+        const dateB = b.date ? new Date(b.date).getTime() : 0;
+        return dateA - dateB;
     })[Object.values(this.groups[groupKey].messages).length - 1];
+    
     if (!lastMessage || !lastMessage.date) return "";
-
-    const lastMessageDate = new Date(lastMessage.date);
-    const now = new Date();
-    const diffInMs = now.getTime() - lastMessageDate.getTime();
-
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-    if (diffInMinutes < 1) {
-      return "à l'instant";
-    } else if (diffInMinutes < 60) {
-      return `${diffInMinutes} min`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours} h`;
-    } else {
-      return `${diffInDays} j`;
-    }
+    
+    return this.getTimeSince(lastMessage.date);
   }
 
   public createNewGroup() : void {
@@ -168,5 +163,36 @@ export class ChatComponent {
       const dateB = b.date ? new Date(b.date).getTime() : 0;
       return dateA - dateB;
     });
+  }
+
+  public getTimeSince(date: Date | string): string {
+    if (!date) return "";
+
+    const messageDate = typeof date === 'string' ? new Date(date) : date;
+    const now = new Date();
+    const diffInMs = now.getTime() - messageDate.getTime();
+
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) {
+        return "à l'instant";
+    } else if (diffInMinutes < 60) {
+        return `${diffInMinutes} min`;
+    } else if (diffInHours < 24) {
+        return `${diffInHours} h`;
+    } else {
+        return `${diffInDays} j`;
+    }
+  }
+
+  public goToBottom() : void {
+    setTimeout(() => {
+      const messagesDisplay = document.querySelector('.messagesDisplay') as HTMLElement;
+      if (messagesDisplay) {
+        messagesDisplay.scrollTop = messagesDisplay.scrollHeight;
+      }
+    }, 0);
   }
 }

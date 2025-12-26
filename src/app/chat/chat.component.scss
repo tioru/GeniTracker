@@ -56,10 +56,11 @@
 .profilPicture {
   width: 35px;
   height: 35px;
+  min-height: 35px;
+  min-width: 35px;
   border-radius: 50%;
-  margin: 15px;
   object-fit: cover;
-  border: solid 3px rgb(205, 205, 205);
+  border: solid 2px rgb(205, 205, 205);
   overflow: hidden;
 
   img {
@@ -71,10 +72,38 @@
   }
 }
 
-.ownMessage {
-    background-color: red;
+.messagesDisplay {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    mask-image: linear-gradient(to bottom, transparent, black 15px, black calc(100% - 15px), transparent);
+    scrollbar-width: thin;
+    scrollbar-color: grey transparent;
+    padding: 15px 7px;
+    scroll-behavior: smooth;
 }
 
-.otherMessage {
+.ownMessage {
+    display: flex;
+    justify-content: end;
 
+    .profilPicture {
+        margin-left: 10px;
+        margin-right: 0px !important;
+    }
+
+    .messageContent {
+        background-color: grey;
+    }
+}
+
+.messageItem {
+    .profilPicture {
+        margin-right: 10px;
+    }
+}
+
+.messageContent {
+    background-color: rgb(63, 63, 63);
+    border-radius: 15px;
+    padding: 15px;
 }

@@ -23,7 +23,7 @@ export class MessageMapper {
         return new ProjectClass.Local.Message({
             user : user,
             message : rMessage.message,
-            date : rMessage.date,
+            date : new Date(rMessage.date!),
             modified : rMessage.modified,
             seenBy : seenUsers
         })
@@ -37,7 +37,7 @@ export class MessageMapper {
         return new ProjectClass.Remote.Message({
             userUID: lMessage.user?.uid,
             message: lMessage.message,
-            date: lMessage.date,
+            date: lMessage.date!.toISOString(),
             modified: lMessage.modified,
             seenBy: lMessage.seenBy.map((user) => user.uid!)
         })

@@ -27,6 +27,7 @@ export class DialogComponent {
   set dialogVisibility(value: boolean) {
     if (value) {
       setTimeout(()=> {
+        this.onVisible.emit()
         this._dialogVisibility = value;
       }, 1)
     }
@@ -51,6 +52,7 @@ export class DialogComponent {
 
   @Input() style : DialogStyle = DialogStyle.HBF;
   @Output() onHide: EventEmitter<void> = new EventEmitter<void>();
+  @Output() onVisible: EventEmitter<void> = new EventEmitter<void>();
 
   public dialogContainer : HTMLElement | null = null;
 

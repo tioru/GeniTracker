@@ -1,4 +1,4 @@
-<dialog-component *ngIf="chatVisibility && groups" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()">
+<dialog-component *ngIf="chatVisibility && groups" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()" (onVisible)="goToBottom()">
     <div body class="flex aic column">
         <div class="flex aic jcc column fw" style="height: 4vh">
             <span style="color: white;">{{groups[selectedGroupKey].name}}</span>
@@ -27,14 +27,51 @@
                 </div>
             </div>
             <div class="groupContent flex column" style="flex: 5">
-                <div class="fh messagesDissplay">
-                    <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" *ngFor="let message of getCurrentGroupMessages()" class="messageItem flex column mb10">
-                        <div class="profilPicture flex aic jcc">
-                            <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
-                        </div>
-                        <span style="color: white;">
-                            <strong>{{message.user?.displayName}}:</strong> {{message.message}}
-                        </span>
+                <div class="fh messagesDisplay">
+                    <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" *ngFor="let message of getCurrentGroupMessages()" class="messageItem flex mb10">
+                        @if (message.user?.uid === currentCustomUser?.uid) {
+                            <div class="messageContent flex column gap10">
+                                <div style="color: white;" class="flex gap10 jce">
+                                    <span style="color: #ffd700"><strong>{{message.user?.displayName}}</strong></span>
+                                    <span>-</span>
+                                    <tooltip-component>
+                                        <div tooltipedElement>
+                                            <span>{{getTimeSince(message.date!)}}</span>
+                                        </div>
+                                        <div tooltipContent>
+                                            <span>{{message.date | date : 'dd/MM/yyyy HH:mm:ss'}}</span>
+                                        </div>
+                                    </tooltip-component>
+                                </div>
+                                <span style="color: white;">
+                                    {{message.message}}
+                                </span>
+                            </div>
+                            <div class="profilPicture flex aic jcc">
+                                <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
+                            </div>
+                        } @else {
+                            <div class="profilPicture flex aic jcc">
+                                <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
+                            </div>
+                            <div class="messageContent flex column gap10">
+                                <div style="color: white;" class="flex gap10">
+                                    <span style="color: #ffd700"><strong>{{message.user?.displayName}}</strong></span>
+                                    <span>-</span>
+                                    <tooltip-component>
+                                        <div tooltipedElement>
+                                            <span>{{getTimeSince(message.date!)}}</span>
+                                        </div>
+                                        <div tooltipContent>
+                                            <span>{{message.date | date : 'dd/MM/yyyy HH:mm:ss'}}</span>
+                                        </div>
+                                    </tooltip-component>
+                                </div>
+                                <span style="color: white;">
+                                    {{message.message}}
+                                </span>
+                            </div>
+                        }
                     </div>
                 </div>
                 <div class="bottomInput flex aic mb10 jcc fw">
