@@ -25,7 +25,8 @@ export class UserMapper {
                 displayName : rUser.displayName,
                 email : rUser.email,
                 photoURL : rUser.photoURL,
-                signUpDate : new Date(rUser.signUpDate!)
+                signUpDate : new Date(rUser.signUpDate!),
+                lastLoginDate : new Date(rUser.lastLoginDate!)
             })
         } catch (error) {
             throw new Error("Error mapping Remote User to Local User: " + error);
@@ -50,7 +51,8 @@ export class UserMapper {
                 displayName: lUser.displayName,
                 email: lUser.email,
                 photoURL: lUser.photoURL,
-                signUpDate: lUser.signUpDate!.toISOString()
+                signUpDate: lUser.signUpDate!.toISOString(),
+                lastLoginDate: lUser.lastLoginDate!.toISOString()
             })
         } catch (error) {
             throw new Error("Error mapping Local User to Remote User: " + error);

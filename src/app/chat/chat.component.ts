@@ -6,7 +6,7 @@ import { Database, onValue, push, ref } from '@angular/fire/database';
 import { ProjectClass } from '../../utilities/classes/class';
 import { GroupMapper } from '../../utilities/mapper/group';
 import { MessageMapper } from '../../utilities/mapper/message';
-import { AuthService } from '../../utilities/services/auth.service';
+import { UserService } from '../../utilities/services/user.service';
 import { User } from '@angular/fire/auth';
 
 const DEFAULT_GROUP_NAME = "Général";
@@ -39,11 +39,11 @@ export class ChatComponent {
 
   ngOnInit() {
     this.chatListening();
-    this.authService.currentUser$.subscribe(user => this.currentUser = user);
+    this.userService.currentUser$.subscribe(user => this.currentUser = user);
   }
 
   constructor(
-    public authService : AuthService
+    public userService : UserService
   ) {}
 
   private chatListening() {

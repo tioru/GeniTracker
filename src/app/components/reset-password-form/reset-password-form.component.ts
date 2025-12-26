@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../dialog/dialog.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../../utilities/services/auth.service';
+import { UserService } from '../../../utilities/services/user.service';
 
 @Component({
   selector: 'app-reset-password-form',
@@ -25,12 +25,12 @@ export class ResetPasswordFormComponent {
   @Input() onResetCallBack : () => void = () => {}
 
   constructor(
-    public authService : AuthService
+    public userService : UserService
   ) {}
 
   public confirmPasswordReset() : void {
     if (this.oobCode) {
-      this.authService.confirmPasswordReset(this.oobCode, this.newPassword).then((canProceed) => {
+      this.userService.confirmPasswordReset(this.oobCode, this.newPassword).then((canProceed) => {
         if (canProceed) {
           this.onResetCallBack();
         }

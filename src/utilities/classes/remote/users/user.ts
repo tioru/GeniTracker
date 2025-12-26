@@ -3,6 +3,7 @@ export class RUserClass {
   email : string | null = null;
   photoURL : string | null = null;
   signUpDate : string | null = null;
+  lastLoginDate : string | null = null;
 
   constructor(init?:Partial<RUserClass>) {
     Object.assign(this, init);

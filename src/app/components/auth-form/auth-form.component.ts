@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../dialog/dialog.component';
 import { NotificationService } from '../../../utilities/services/notification.service';
-import { AuthService } from '../../../utilities/services/auth.service';
+import { UserService } from '../../../utilities/services/user.service';
 import { User } from '@angular/fire/auth';
 import { Observable, of } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -68,7 +68,7 @@ export class AuthFormComponent implements OnInit {
   @Input() onLoginCallBack : () => void = () => {}
 
   ngOnInit(): void { 
-    this.currentUser = this.authService.currentUser$;
+    this.currentUser = this.userService.currentUser$;
     this.currentUser.subscribe(user => {
       console.log(user)
       user ? this.authenticated = true : this.authenticated = false;
@@ -78,13 +78,13 @@ export class AuthFormComponent implements OnInit {
 
   constructor(
     public notificationService : NotificationService,
-    public authService : AuthService,
+    public userService : UserService,
     public firebaseErrorService: FirebaseErrorService
   ) {}
 
   public register() {
     this.loading = true;
-    this.authService.register(this.email, this.password).then((result) => {
+    this.userService.register(this.email, this.password).then((result) => {
       this.loading = false;
       if (result) {
         this.email = "";
@@ -95,7 +95,7 @@ export class AuthFormComponent implements OnInit {
 
   public login() {
     this.loading = true;
-    this.authService.login(this.email, this.password).then((result) => {
+    this.userService.logIn(this.email, this.password).then((result) => {
       this.loading = false;
       if (result) {
         this.email = "";
@@ -141,7 +141,7 @@ export class AuthFormComponent implements OnInit {
 
   public loginWithGoogle() : void {
     this.googleLoading = true;
-    this.authService.loginWithGoogle().then((result) => {
+    this.userService.loginWithGoogle().then((result) => {
       this.googleLoading = false;
       if (result) {
         this.email = "";
@@ -151,7 +151,7 @@ export class AuthFormComponent implements OnInit {
   }
 
   public sendPasswordResetEmail() : void {
-    this.authService.sendPasswordResetEmail(this.email).then(() => {
+    this.userService.sendPasswordResetEmail(this.email).then(() => {
       this.selectedDialogTab = this.dialogTab.LOGIN; 
       this.email = ''; 
       this.password = ''
@@ -160,13 +160,13 @@ export class AuthFormComponent implements OnInit {
 
   public saveNewDisplayNameAndProfilePictureLink() : void {
     this.requestLoading = true;
-    this.authService.updateProfile(this.displayName, this.profilePictureLink).then((result) => {
+    this.userService.updateUserNameAndProfilePicture(this.displayName, this.profilePictureLink).then((result) => {
       this.requestLoading = false;
       if (result) {
         this.displayNameDefined = true;
         this.displayName = '';
         this.profilePictureLink = '';
-        this.authService.duplicateUser()
+        this.userService.duplicateUser()
       }
     });
   }

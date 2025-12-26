@@ -1,0 +1,127 @@
+.black_div {
+  border: rgb(71, 71, 71) 1px solid;
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgb(43, 43, 43) 0%, rgba(43, 43, 43, .8) 100%);
+  color: rgb(221, 221, 221);
+  transition: all 0.3s ease;
+  z-index: 1;
+  padding: 15px;
+  anchor-name: --edit-button;
+}
+
+.profilPictureWrapper {
+  background-color: rgb(75, 75, 75);
+  width: fit-content;
+  height: fit-content;
+  border: 0px solid transparent;
+  border-radius: 10%;
+  z-index: 1;
+}
+
+.profilPicture ,.imgProfilePreview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin: 15px;
+  object-fit: cover;
+  border: solid 3px rgb(205, 205, 205);
+  overflow: hidden;
+
+  img {
+    object-fit: contain;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    position: relative;
+  }
+}
+
+.loading {
+  filter: blur(5px);
+  transition: filter 0.3s ease-in-out;
+}
+
+.providerWrapper {
+  height: fit-content;
+  width: fit-content;
+  padding: 6px;
+  border-radius: 50%;
+  background-color: rgb(75, 75, 75);
+}
+
+.grey_div {
+  background-color: rgb(75, 75, 75);
+  border-radius: 15px;
+  padding: 0 15px;
+}
+
+.button.edit {
+  position: absolute;
+  anchor-name: --edit-button-popover;
+  position-anchor: --edit-button;
+  top: anchor(top);
+  left: anchor(right);
+  margin-left: 10px;
+  position-try: --below-right, --up-right, --below-left, --up-left;
+  transition: transform 0.3s ease-in-out;
+}
+
+#openEditList {
+  color: white;
+  width: max-content;
+  border: 1px solid #454545;
+  box-shadow: 1px 0px 10px 1px #0e0e0e;
+  border-radius: 10px;
+  background-color: #272727;
+  position: absolute;
+  position-anchor: --edit-button-popover;
+  top: anchor(bottom);
+  left: anchor(left);
+  margin: 10px;
+  padding: 10px;
+  position-try: --below-right, --up-right, --below-left, --up-left;
+}
+
+@position-try --below-right {
+    inset: unset;
+    top: anchor(bottom);
+    left: anchor(left);
+}
+
+@position-try --below-left {
+    inset: unset;
+    top: anchor(bottom);
+    right: anchor(right);
+}
+
+@position-try --up-left {
+    inset: unset;
+    bottom: anchor(top);
+    right: anchor(right);
+}
+
+@position-try --up-right {
+    inset: unset;
+    bottom: anchor(top);
+    left: anchor(left);
+}
+
+.openEditList {
+  transition: opacity 0.2s, translate 0.2s, overlay 0.2s allow-discrete,
+  display 0.2s allow-discrete;
+  opacity: 0;
+  translate: 0 1em;
+  &:popover-open {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@starting-style {
+  .openEditList {
+    &:popover-open {
+      opacity: 0;
+      translate: 0 1em;
+    }
+  }
+}

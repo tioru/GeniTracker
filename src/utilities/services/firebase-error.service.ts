@@ -19,6 +19,7 @@ export class FirebaseErrorService {
     'auth/invalid-action-code': 'Code de réinitialisation invalide ou expiré.',
     
     'PERMISSION_DENIED': 'Permissions insuffisantes.',
+    'CREDENTIAL_TOO_OLD_LOGIN_AGAIN': 'Votre session est trop ancienne afin de procéder à cette opération. Veuillez vous reconnecter et réessayer.',
     
     'default': 'Une erreur inattendue s\'est produite.'
   };

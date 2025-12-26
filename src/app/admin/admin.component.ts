@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AdminVersionsComponent } from "./admin-versions/admin-versions.component";
 import { animations } from '../animation';
-import { FormsModule } from '@angular/forms';
+import { UserService } from '../../utilities/services/user.service';
+import { Router } from '@angular/router';
+import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
 
 enum AdminPanels {
   DASHBOARD = 'Panel d\'aministration',
@@ -20,7 +22,7 @@ enum AdminPanels {
   styleUrls: ['./admin.component.scss'],
   animations: animations
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit{
   
   public adminPanels = AdminPanels;
 
@@ -29,7 +31,22 @@ export class AdminComponent {
   public alterningView: boolean = false;
 
   constructor(
+    public userService : UserService, 
+    public router: Router,
+    public notificationService : NotificationService
   ) {}
+
+  ngOnInit() {
+    if (!this.userService.currentUserValue) {
+      this.router.navigateByUrl("/")
+      this.notificationService.addNotification({
+        title: 'Accès refusé',
+        severity: notificationSeverity.WARNING,
+        detail: 'La page que vous avez essayé d\'accéder requiert une connexion',
+        sticky: true
+      })
+    }
+  }
   
   public selectAdminPanel(panel: AdminPanels) {
     this.selectedAdminPanel = panel;

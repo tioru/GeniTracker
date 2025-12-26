@@ -12,7 +12,7 @@
                     <div class="versions-grid">
                         <div *ngFor="let version of majorVersion.value" [ngClass]="{'on-version-creation': addVersionDialogVisibility}"  class="version-card" (click)="openVersion(version)">
                         <div class="fw img-container">
-                            <img [class.loading]="!version.imgLoaded" height="100%" width="100%" (load)="version.imgLoaded = true" [src]="getImageUrl(version.imgUrl!)"/>
+                            <img [class.loading]="!version.imgLoaded" height="100%" width="100%" (load)="version.imgLoaded = true" [src]="imageCacheService.getImageUrl(version.imgUrl!)"/>
                             <div *ngIf="!version.imgLoaded" class="spinner"></div>
                             <div class="version overflowHandler">
                                 <span>{{version.version}}</span>
@@ -55,7 +55,7 @@
                 <div class="fw flex jcc">
                     <div class="img-placeholder">
                         @if (newVersion.imgUrl) {
-                            <img [src]="getImageUrl(newVersion.imgUrl)" width="100%" height="100%"/>
+                            <img [src]="imageCacheService.getImageUrl(newVersion.imgUrl)" width="100%" height="100%"/>
                         }
                         @else {
                             <span>Aucune image sélectionnée</span>
@@ -113,7 +113,7 @@
             <span>Mode édition</span>
         </div>
         <div class="fade">
-            <img [src]="getImageUrl(selectedVersion.imgUrl!)" style="width: 40vw; max-height: 50vh; object-fit: contain;">
+            <img [src]="imageCacheService.getImageUrl(selectedVersion.imgUrl!)" style="width: 40vw; max-height: 50vh; object-fit: contain;">
         </div>
         <div class="flex jcsb fw aic">
             <div>

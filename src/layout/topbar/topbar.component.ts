@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { animations } from '../../app/animation';
-import { AuthService } from '../../utilities/services/auth.service';
+import { UserService } from '../../utilities/services/user.service';
 import { Observable, of } from 'rxjs';
 import { User } from 'firebase/auth';
 import { AuthFormComponent } from "../../app/components/auth-form/auth-form.component";
@@ -36,12 +36,12 @@ export class TopbarComponent {
 
   constructor(
     public router: Router,
-    public authService : AuthService,
+    public userService : UserService,
     private route: ActivatedRoute
   ) {}
     
   ngOnInit(): void { 
-    this.currentUser = this.authService.currentUser$;
+    this.currentUser = this.userService.currentUser$;
 
     this.route.queryParams.subscribe(params => {
       this.modeParam = params[MODE_PARAMETER];
@@ -86,6 +86,12 @@ export class TopbarComponent {
     
     if (popover) {
       popover.hidePopover()
+    }
+  }
+
+  public checkCurrentPage() : void {
+    if (this.isCurrentPage('/admin') || this.isCurrentPage('/profile')) {
+      this.goTo("/")
     }
   }
 }

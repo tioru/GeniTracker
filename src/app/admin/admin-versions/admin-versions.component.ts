@@ -8,9 +8,7 @@ import { DialogComponent, DialogStyle } from '../../components/dialog/dialog.com
 import { NotificationService, notificationSeverity } from '../../../utilities/services/notification.service';
 import { animations } from '../../animation';
 import { FirebaseErrorService } from '../../../utilities/services/firebase-error.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs';
+import { ImageCacheService } from '../../../utilities/services/image-cache.service';
 
 @Component({
   selector: 'app-admin-versions',
@@ -60,12 +58,6 @@ export class AdminVersionsComponent {
   
   public versionEdited : boolean = false;
 
-  private imageObjectUrls = new Map<string, string>();
-
-  private http = inject(HttpClient);
-
-  private sanitizer = inject(DomSanitizer);
-
   ngOnInit() {
     this.versionListening()
   }
@@ -79,7 +71,8 @@ export class AdminVersionsComponent {
 
   constructor(
     public notificationService : NotificationService,
-    public firebaseErrorService: FirebaseErrorService
+    public firebaseErrorService: FirebaseErrorService,
+    public imageCacheService : ImageCacheService
   ) {}
 
   get isNewVersionCompleted() : boolean {
@@ -92,30 +85,13 @@ export class AdminVersionsComponent {
 
   private preloadImages(): void {
     this.versions.forEach(version => {
-      if (version.imgUrl && !this.imageObjectUrls.has(version.imgUrl)) {
-        this.loadImage(version.imgUrl).subscribe(objectUrl => {
-          this.imageObjectUrls.set(version.imgUrl!, objectUrl);
+      if (version.imgUrl && !this.imageCacheService.imageObjectUrls.has(version.imgUrl)) {
+        this.imageCacheService.loadImage(version.imgUrl).subscribe(objectUrl => {
+          this.imageCacheService.imageObjectUrls.set(version.imgUrl!, objectUrl);
           version.imgLoaded = true;
         });
       }
     });
-  }
-
-  // Charger une image via HttpClient (sera mise en cache par l'interceptor)
-  private loadImage(url: string) {
-    return this.http.get(url, { responseType: 'blob' }).pipe(
-      tap(blob => {
-        const objectURL = URL.createObjectURL(blob);
-        this.imageObjectUrls.set(url, objectURL);
-      }),
-      map(blob => URL.createObjectURL(blob))
-    );
-  }
-
-  // Obtenir l'URL sécurisée pour l'affichage
-  public getImageUrl(url: string): SafeUrl {
-    const objectUrl = this.imageObjectUrls.get(url);
-    return objectUrl ? this.sanitizer.bypassSecurityTrustUrl(objectUrl) : url;
   }
 
   public versionListening() : void {
@@ -280,8 +256,7 @@ export class AdminVersionsComponent {
   }
 
   ngOnDestroy(): void {
-    // Nettoyer les URLs d'objets créés
-    this.imageObjectUrls.forEach(url => URL.revokeObjectURL(url));
-    this.imageObjectUrls.clear();
+    this.imageCacheService.imageObjectUrls.forEach(url => URL.revokeObjectURL(url));
+    this.imageCacheService.imageObjectUrls.clear();
   }
 }

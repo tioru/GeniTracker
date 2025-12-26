@@ -77,9 +77,9 @@
 
 <div [@enter-leave] id="openList" class="open-List" popover>
     <div class="flex aic jcc column gap20">
-        <button class="button" (click)="goTo('/profile')">Profil</button>
-        <button class="button" (click)="goTo('/admin')">Admin</button>
-        <button class="button logout" (click)="authService.deconnexion(); closeList()">Se déconnecter</button>
+        <button [class.disabled]="isCurrentPage('/profile')" [disabled]="isCurrentPage('/profile')" class="button" (click)="goTo('/profile')">Profil</button>
+        <button [class.disabled]="isCurrentPage('/admin')" [disabled]="isCurrentPage('/admin')" class="button" (click)="goTo('/admin')">Admin</button>
+        <button class="button logout" (click)="userService.logOut(); closeList(); checkCurrentPage()">Se déconnecter</button>
     </div>
 </div>
 
