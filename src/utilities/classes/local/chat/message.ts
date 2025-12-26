@@ -1,11 +1,11 @@
-import { User } from "@angular/fire/auth";
+import { LUserClass } from "../users/user";
 
 export class LMessageClass {
-  userName : string | null = null;
+  user : LUserClass | null = null;
   message : string | null = null;
   date : string | null = null;
   modified : boolean | null = null;
-  seenBy : User[] = [];
+  seenBy : LUserClass[] = [];
 
   constructor(init?:Partial<LMessageClass>) {
     Object.assign(this, init);

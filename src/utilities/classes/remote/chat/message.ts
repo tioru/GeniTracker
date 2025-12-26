@@ -1,11 +1,9 @@
-import { User } from "@angular/fire/auth";
-
 export class RMessageClass {
-  userName : string | null = null;
+  userUID : string | null = null;
   message : string | null = null;
   date : string | null = null;
   modified : boolean | null = null;
-  seenBy : User[] = [];
+  seenBy : string[] = [];
 
   constructor(init?:Partial<RMessageClass>) {
     Object.assign(this, init);

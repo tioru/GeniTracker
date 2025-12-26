@@ -63,7 +63,6 @@
   left: anchor(right);
   margin-left: 10px;
   position-try: --below-right, --up-right, --below-left, --up-left;
-  transition: transform 0.3s ease-in-out;
 }
 
 #openEditList {
@@ -123,5 +122,23 @@
       opacity: 0;
       translate: 0 1em;
     }
+  }
+}
+
+.loading_profile {
+  color: white;
+  font-weight: 600;
+  font-style: italic;
+  text-align: center;
+}
+
+.landscape {
+  mask-image: linear-gradient(to left, #272727 80%, transparent 100%);
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
   }
 }

@@ -23,6 +23,9 @@ export enum filterOrder {
   DOWN
 }
 
+const MIN_LANDSCAPE_NUMBER = 1;
+const MAX_LANDSCAPE_NUMBER = 6;
+
 @Component({
   selector: 'app-characters',
   standalone: true,
@@ -168,9 +171,7 @@ export class CharactersComponent implements OnInit{
   }
 
   public getRandomPicture() : string {
-    const min = 1;
-    const max = 6;
-    const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+    const randomNumber = Math.floor(Math.random() * (MAX_LANDSCAPE_NUMBER - MIN_LANDSCAPE_NUMBER + 1)) + MIN_LANDSCAPE_NUMBER;
     return `assets/img/Landscape/${randomNumber}.jpg`
   }
 

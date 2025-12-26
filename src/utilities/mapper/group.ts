@@ -1,37 +1,51 @@
 import { Injectable } from "@angular/core";
 import { ProjectClass } from "../classes/class";
 import { MessageMapper } from "./message";
+import { UserService } from "../services/user.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupMapper {
-    constructor() {}
+    constructor(
+        public messageMapper : MessageMapper,
+        public userService : UserService
+    ) {}
 
-    public static mapRemoteDict(rGroups : { [key: string]: ProjectClass.Remote.GroupItem }) : { [key: string]: ProjectClass.Local.GroupItem } {
+    public async mapRemoteDict(rGroups : { [key: string]: ProjectClass.Remote.GroupItem }) : Promise<{ [key: string]: ProjectClass.Local.GroupItem }> {
         const lGroups : { [key: string]: ProjectClass.Local.GroupItem } = {};
 
         const keys = Object.keys(rGroups);
 
-        keys.forEach ((key) => {
-            lGroups[key] = this.mapRemoteItem(rGroups[key]);
+        const groupsArray = await Promise.all(
+            keys.map(key => this.mapRemoteItem(rGroups[key]))
+        )
+
+        keys.forEach ((key, index) => {
+            lGroups[key] = groupsArray[index];
         })
         
         return lGroups;
     }
 
-    public static mapRemoteItem(rGroup : ProjectClass.Remote.GroupItem) : ProjectClass.Local.GroupItem {
+    public async mapRemoteItem(rGroup : ProjectClass.Remote.GroupItem) : Promise<ProjectClass.Local.GroupItem> {
         try {
+            const creator = await this.userService.getUserByUID(rGroup.createdBy!)
+
             const lMessages : { [key: string]: ProjectClass.Local.Message } = {};
 
             const keys = Object.keys(rGroup.messages);
 
-            keys.forEach ((key) => {
-                lMessages[key] = MessageMapper.mapRemote(rGroup.messages[key]);
-            })
+            const messagesArray = await Promise.all(
+                keys.map(key => this.messageMapper.mapRemote(rGroup.messages[key]))
+            );
+
+            keys.forEach((key, index) => {
+                lMessages[key] = messagesArray[index];
+            });
 
             return new ProjectClass.Local.GroupItem({
-                createdBy: rGroup.createdBy,
+                createdBy: creator,
                 messages: lMessages,
                 createdAt: rGroup.createdAt,
                 name: rGroup.name,
@@ -40,33 +54,6 @@ export class GroupMapper {
             })
         } catch (error) {
             throw new Error("Error mapping Remote Group to Local Group: " + error);
-        }
-    }
-    
-    public static mapLocalDict(lGroups : ProjectClass.Local.GroupItem[]) : ProjectClass.Remote.GroupItem[] {
-        return lGroups.map(lGroup => this.mapLocal(lGroup));
-    }
-
-    public static mapLocal(lGroup : ProjectClass.Local.GroupItem) : ProjectClass.Remote.GroupItem {
-        try {
-            const rMessages : { [key: string]: ProjectClass.Remote.Message } = {};
-
-            const keys = Object.keys(lGroup.messages);
-
-            keys.forEach ((key) => {
-                rMessages[key] = MessageMapper.mapLocal(lGroup.messages[key]);
-            })
-
-            return new ProjectClass.Remote.GroupItem({
-                createdBy: lGroup.createdBy,
-                messages: rMessages,
-                createdAt: lGroup.createdAt,
-                name: lGroup.name,
-                description: lGroup.description,
-                imgUrl: lGroup.imgUrl
-            })
-        } catch (error) {
-            throw new Error("Error mapping Local Group to Remote Group: " + error);
         }
     }
 }

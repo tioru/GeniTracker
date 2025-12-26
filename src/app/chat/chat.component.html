@@ -1,4 +1,4 @@
-<dialog-component *ngIf="chatVisibility" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()">
+<dialog-component *ngIf="chatVisibility && groups" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()">
     <div body class="flex aic column">
         <div class="flex aic jcc column fw" style="height: 4vh">
             <span style="color: white;">{{groups[selectedGroupKey].name}}</span>
@@ -28,9 +28,12 @@
             </div>
             <div class="groupContent flex column" style="flex: 5">
                 <div class="fh messagesDissplay">
-                    <div *ngFor="let message of getCurrentGroupMessages()" class="messageItem flex column mb10">
+                    <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" *ngFor="let message of getCurrentGroupMessages()" class="messageItem flex column mb10">
+                        <div class="profilPicture flex aic jcc">
+                            <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
+                        </div>
                         <span style="color: white;">
-                            <strong>{{message.userName}}:</strong> {{message.message}}
+                            <strong>{{message.user?.displayName}}:</strong> {{message.message}}
                         </span>
                     </div>
                 </div>

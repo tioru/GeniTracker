@@ -1,37 +1,45 @@
 import { Injectable } from "@angular/core";
 import { ProjectClass } from "../classes/class";
+import { UserService } from "../services/user.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageMapper {
-    constructor() {}
+    constructor(
+        public userService : UserService
+    ) {}
 
-    public static mapRemoteArray(rMessages : ProjectClass.Remote.Message[]) : ProjectClass.Local.Message[] {
-        return rMessages.map(rMessage => this.mapRemote(rMessage));
+    public async mapRemoteArray(rMessages : ProjectClass.Remote.Message[]) : Promise<ProjectClass.Local.Message[]> {
+        return Promise.all(rMessages.map(rMessage => this.mapRemote(rMessage)));
     }
     
-    public static mapRemote(rMessage : ProjectClass.Remote.Message) : ProjectClass.Local.Message {
+    public async mapRemote(rMessage : ProjectClass.Remote.Message) : Promise<ProjectClass.Local.Message> {
+        const user = await this.userService.getUserByUID(rMessage.userUID!);
+
+        const seenUsersWithNull = await Promise.all(rMessage.seenBy.map(userId => this.userService.getUserByUID(userId)));
+        const seenUsers = seenUsersWithNull.filter((user) => user !== null );
+        
         return new ProjectClass.Local.Message({
-            userName : rMessage.userName,
+            user : user,
             message : rMessage.message,
             date : rMessage.date,
             modified : rMessage.modified,
-            seenBy : rMessage.seenBy
+            seenBy : seenUsers
         })
     }
     
-    public static mapLocalArray(lMessages : ProjectClass.Local.Message[]) : ProjectClass.Remote.Message[] {
-        return lMessages.map(lMessage => this.mapLocal(lMessage));
+    public async mapLocalArray(lMessages : ProjectClass.Local.Message[]) : Promise<ProjectClass.Remote.Message[]> {
+        return Promise.all(lMessages.map(lMessage => this.mapLocal(lMessage)));
     }
     
-    public static mapLocal(lMessage : ProjectClass.Local.Message) : ProjectClass.Remote.Message {
+    public async mapLocal(lMessage : ProjectClass.Local.Message) : Promise<ProjectClass.Remote.Message> {
         return new ProjectClass.Remote.Message({
-            userName: lMessage.userName,
+            userUID: lMessage.user?.uid,
             message: lMessage.message,
             date: lMessage.date,
             modified: lMessage.modified,
-            seenBy: lMessage.seenBy
+            seenBy: lMessage.seenBy.map((user) => user.uid!)
         })
     }
 }

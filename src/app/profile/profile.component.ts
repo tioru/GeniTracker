@@ -8,17 +8,21 @@ import { CommonModule } from '@angular/common';
 import { animations } from '../animation';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
-import { User } from 'firebase/auth';
+import { TooltipComponent } from "../components/tooltip/tooltip.component";
+import { skip } from 'rxjs';
 
 export enum PROVIDER_DATA_TYPE {
   PASSWORD = "password",
   GOOGLE = "google.com"
 }
 
+const MIN_LANDSCAPE_NUMBER = 1;
+const MAX_LANDSCAPE_NUMBER = 6;
+
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, DialogComponent, FormsModule],
+  imports: [CommonModule, DialogComponent, FormsModule, TooltipComponent],
   templateUrl: './profile.component.html',
   animations: animations,
   styleUrl: './profile.component.scss'
@@ -30,7 +34,7 @@ export class ProfileComponent implements OnInit {
 
   public providerDataType : typeof PROVIDER_DATA_TYPE = PROVIDER_DATA_TYPE;
 
-  public customUser : ProjectClass.Local.User | null = null;
+  public currentCustomUser : ProjectClass.Local.User | null = null;
 
   public userDisplayName : string | null = null;
 
@@ -50,6 +54,10 @@ export class ProfileComponent implements OnInit {
 
   public updateFinished : boolean = false;
 
+  public loadingProfileDialogVisibility : boolean = true;
+
+  public randomPicturePath : string = '';
+
   constructor(
     public imageCacheService : ImageCacheService, 
     public userService : UserService, 
@@ -58,8 +66,9 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.userService.currentUser$.subscribe(() => {
-      console.log(this.userService.currentUserValue)
+    this.randomPicturePath = this.getRandomPicture();
+    
+    this.userService.currentUser$.pipe(skip(1)).subscribe(() => {
       if (!this.userService.currentUserValue) {
         this.router.navigateByUrl("/")
         this.notificationService.addNotification({
@@ -69,15 +78,10 @@ export class ProfileComponent implements OnInit {
           sticky: true
         })
       } else {
-        this.userDisplayName = JSON.parse(JSON.stringify(this.userService.currentUserValue.displayName));
-        this.userMail = JSON.parse(JSON.stringify(this.userService.currentUserValue.email));
-        this.userProfilePictureLink = JSON.parse(JSON.stringify(this.userService.currentUserValue.photoURL));
-        this.userService.getUserByUID(this.userService.currentUserValue.uid).then((customUser) => {
-          this.customUser = customUser;
-          console.log(this.customUser)
-        })
+        this.defineCustomUser();
       }
     });
+    this.defineCustomUser();
   }
 
   public closeList() : void {
@@ -85,6 +89,17 @@ export class ProfileComponent implements OnInit {
     
     if (popover) {
       popover.hidePopover()
+    }
+  }
+
+  public defineCustomUser() : void {
+    if (this.userService.currentUserValue) {
+      this.userDisplayName = JSON.parse(JSON.stringify(this.userService.currentUserValue.displayName));
+      this.userMail = JSON.parse(JSON.stringify(this.userService.currentUserValue.email));
+      this.userProfilePictureLink = JSON.parse(JSON.stringify(this.userService.currentUserValue.photoURL));
+      this.userService.getUserByUID(this.userService.currentUserValue.uid).then((customUser) => {
+        this.currentCustomUser = customUser;
+      })
     }
   }
 
@@ -152,7 +167,7 @@ export class ProfileComponent implements OnInit {
   }
 
   public checkProfilePictureLink(event: Event) : void {
-    if (this.customUser) {
+    if (this.currentCustomUser) {
       const inputField = document.querySelector('.input.password') as HTMLInputElement;
       const isValid = this.userProfilePictureLink!.trim().length > 0;
       const isSubmitEvent = (event instanceof KeyboardEvent && event.code === 'Enter') || 
@@ -172,5 +187,10 @@ export class ProfileComponent implements OnInit {
         })
       }
     }
+  }
+
+  public getRandomPicture() : string {
+    const randomNumber = Math.floor(Math.random() * (MAX_LANDSCAPE_NUMBER - MIN_LANDSCAPE_NUMBER + 1)) + MIN_LANDSCAPE_NUMBER;
+    return `assets/img/Landscape/${randomNumber}.jpg`
   }
 }

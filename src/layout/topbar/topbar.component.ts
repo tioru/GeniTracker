@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { animations } from '../../app/animation';
 import { UserService } from '../../utilities/services/user.service';
@@ -20,7 +20,7 @@ const OOBCODE_PARAMETER = 'oobCode';
   animations: animations,
   styleUrl: './topbar.component.scss'
 })
-export class TopbarComponent {
+export class TopbarComponent implements  OnInit {
 
   public currentUser: Observable<User | null> = of(null);
 

@@ -53,8 +53,26 @@
     }
 }
 
-.ownMessage {
+.profilPicture {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin: 15px;
+  object-fit: cover;
+  border: solid 3px rgb(205, 205, 205);
+  overflow: hidden;
 
+  img {
+    object-fit: contain;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    position: relative;
+  }
+}
+
+.ownMessage {
+    background-color: red;
 }
 
 .otherMessage {

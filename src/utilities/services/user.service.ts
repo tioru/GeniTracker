@@ -210,7 +210,7 @@ export class UserService {
       
       if (snapshot.exists()) {
         const userData = snapshot.val();
-        return UserMapper.mapRemote(userData);
+        return UserMapper.mapRemote(userData, uid);
       } else {
         console.log(`Aucun utilisateur trouvé avec l'UID: ${uid}`);
         return null;

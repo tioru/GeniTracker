@@ -70,7 +70,6 @@ export class AuthFormComponent implements OnInit {
   ngOnInit(): void { 
     this.currentUser = this.userService.currentUser$;
     this.currentUser.subscribe(user => {
-      console.log(user)
       user ? this.authenticated = true : this.authenticated = false;
       this.displayNameDefined = user?.displayName ? true : false;
     });

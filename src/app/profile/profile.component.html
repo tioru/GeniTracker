@@ -1,20 +1,31 @@
 <div class="fh fw flex aic jcc">
     <div class="fw fh flex aic jcc" style="overflow-y: hidden; max-height: 90%">
-        <div class="black_div flex column">
+        <div [@enter-leave] *ngIf="(this.userService.currentUserValue && currentCustomUser)" class="black_div flex column">
             <div class="flex">
                 <div class="profilPictureWrapper" style="margin: 15px;">
                     <div class="profilPicture flex aic jcc">
-                        <img [class.loading]="profilPictureLoading" (load)="profilPictureLoading = false" [src]="imageCacheService.getImageUrl(userService.currentUserValue?.photoURL || '')"/>
+                        <img [class.loading]="profilPictureLoading" (load)="profilPictureLoading = false" [src]="imageCacheService.getImageUrl(userService.currentUserValue.photoURL || '')"/>
                     </div>
                 </div>
-                <h1 class="fw">{{ userService.currentUserValue?.displayName }}</h1>
-                <div class="providerWrapper flex aic jcc">
-                    @if(userService.currentUserValue!.providerData[0].providerId === providerDataType.GOOGLE) {
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg>
-                    } @else {
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 0 24 24" fill="grey"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" /></svg>
-                    }
-                </div>
+                <h1 class="fw">{{ userService.currentUserValue.displayName }}</h1>
+                <tooltip-component *ngIf="userService.currentUserValue" style="height: fit-content;">
+                    <div tooltipedElement class="providerWrapper flex aic jcc">
+                        @if(userService.currentUserValue.providerData[0].providerId === providerDataType.GOOGLE) {
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg>
+                        } @else {
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 0 24 24" fill="white"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" /></svg>
+                        }
+                    </div>
+                    <div tooltipContent>
+                        <div class="flex aic jcc column gap10">
+                            @if(userService.currentUserValue!.providerData[0].providerId === providerDataType.GOOGLE) {
+                                <h4 style="font-weight: normal">Connecté via <strong>Google</strong></h4>
+                            } @else {
+                                <h4 style="font-weight: normal">Connecté via <strong>Email/Mot de passe</strong></h4>
+                            }
+                        </div>
+                    </div>
+                </tooltip-component>
             </div>
             <div class="flex">
                 <div class="grey_div" style="margin: 15px">
@@ -22,25 +33,25 @@
                         <svg xmlns="http://www.w3.org/2000/svg" height="30px" fill="rgb(221, 221, 221)" viewBox="0 0 24 24"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" /></svg>
                         <h2>Adresse mail</h2>
                     </div>
-                    <h4 style="font-weight: normal">{{ userService.currentUserValue?.email }}</h4>
+                    <h4 style="font-weight: normal">{{ userService.currentUserValue.email }}</h4>
                 </div>
                 <div class="grey_div" style="margin: 15px">
                     <div class="flex jcc aic gap10">
                         <svg xmlns="http://www.w3.org/2000/svg" height="30px" fill="rgb(221, 221, 221)" viewBox="0 0 24 24"><path d="M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19M9,14V16H7V14H9M13,14V16H11V14H13M17,14V16H15V14H17Z" /></svg>
                         <h2>Date d'inscription</h2>
                     </div>
-                    <h4 style="font-weight: normal">{{ customUser?.signUpDate | date: 'dd/MM/yyyy H:mm:ss'}}</h4>
+                    <h4 style="font-weight: normal">{{ currentCustomUser.signUpDate| date: 'dd/MM/yyyy H:mm:ss'}}</h4>
                 </div>
                 <div class="grey_div" style="margin: 15px">
                     <div class="flex jcc aic gap10">
                         <svg xmlns="http://www.w3.org/2000/svg" height="30px" fill="rgb(221, 221, 221)" viewBox="0 0 24 24"><path d="M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19M9,14V16H7V14H9M13,14V16H11V14H13M17,14V16H15V14H17Z" /></svg>
                         <h2>Date de dernière connexion</h2>
                     </div>
-                    <h4 style="font-weight: normal">{{ customUser?.lastLoginDate | date: 'dd/MM/yyyy H:mm:ss'}}</h4>
+                    <h4 style="font-weight: normal">{{ currentCustomUser.lastLoginDate| date: 'dd/MM/yyyy HH:mm:ss'}}</h4>
                 </div>
             </div>
         </div>
-        <div>
+        <div [@enter-leave] *ngIf="(this.userService.currentUserValue && currentCustomUser)">
             <button class="button edit" popovertarget="openEditList">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
             </button>
@@ -49,7 +60,7 @@
 </div>
 
 <div [@enter-leave] id="openEditList" class="openEditList" popover>
-    <div class="flex aic jcc column gap20">
+    <div *ngIf="userService.currentUserValue" class="flex aic jcc column gap20">
         <button class="button" (click)="displayNameDialogUpdate = true; closeList(); updateFinished = false;">Modifier le nom d'utilisateur</button>
         <button class="button" [class.disabled]="userService.currentUserValue!.providerData[0].providerId === providerDataType.GOOGLE" [disabled]="userService.currentUserValue!.providerData[0].providerId === providerDataType.GOOGLE" (click)="mailDialogUpdate = true; closeList(); updateFinished = false;">Modifier l'adresse mail</button>
         <button class="button" [class.disabled]="userService.currentUserValue!.providerData[0].providerId === providerDataType.GOOGLE" [disabled]="userService.currentUserValue!.providerData[0].providerId === providerDataType.GOOGLE" (click)="passwordDialogUpdate = true; closeList(); updateFinished = false">Modifier le mot de passe</button>
@@ -139,6 +150,20 @@
                         Enregistrer
                     </span>
                 </button>
+            </div>
+        </div>
+    </div>
+</dialog-component>
+
+<dialog-component *ngIf="loadingProfileDialogVisibility" [style]="dialogStyle.B" [dialogVisibility]="!(this.userService.currentUserValue && currentCustomUser)" [modal]="false" (onHide)="loadingProfileDialogVisibility = false">
+    <div body>
+        <div class="flex" style="width: 60vw; height: 60vh;">
+            <div class="flex aic jcc column gap50" style="flex: 1;">
+                <div class="spinner"></div>
+                <span class="loading_profile">Chargements du profil</span>
+            </div>
+            <div class="landscape" style="flex: 2;">
+                <img [src]='randomPicturePath'>
             </div>
         </div>
     </div>

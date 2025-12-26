@@ -8,6 +8,7 @@ import { GroupMapper } from '../../utilities/mapper/group';
 import { MessageMapper } from '../../utilities/mapper/message';
 import { UserService } from '../../utilities/services/user.service';
 import { User } from '@angular/fire/auth';
+import { ImageCacheService } from '../../utilities/services/image-cache.service';
 
 const DEFAULT_GROUP_NAME = "Général";
 
@@ -31,33 +32,51 @@ export class ChatComponent {
 
   public newMessageContent : string = "";
 
+  public messagesSortedByDate : {[key : string]: ProjectClass.Local.Message} = {}
+
   @Input() chatVisibility : boolean = false;
 
   @Input() onCloseCallBack : () => void = () => {};
 
-  public currentUser: User | null = null;
+  public currentUser : User | null = null;
+
+  public currentCustomUser : ProjectClass.Local.User | null = null;
 
   ngOnInit() {
     this.chatListening();
-    this.userService.currentUser$.subscribe(user => this.currentUser = user);
+    this.userService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      this.userService.getUserByUID(user?.uid!).then((customUser) => {
+        this.currentCustomUser = customUser;
+      });
+    });
   }
 
   constructor(
-    public userService : UserService
+    public userService : UserService,
+    public groupMapper : GroupMapper,
+    public messageMapper : MessageMapper,
+    public imageCacheService : ImageCacheService
   ) {}
 
   private chatListening() {
     onValue(this.dbRef, (snapshot) => {
       if (snapshot.exists()) {
-        this.groups = GroupMapper.mapRemoteDict(snapshot.val());
+        this.groupMapper.mapRemoteDict(snapshot.val()).then((result) => {
+          this.groups = result;
 
-        if (!this.selectedGroupKey) {
-          Object.keys(this.groups).forEach((groupKey) => {
-            if (this.groups[groupKey].name === DEFAULT_GROUP_NAME) {
-              this.selectedGroupKey = groupKey;
-            }
-          });
-        }
+          if (!this.selectedGroupKey) {
+            Object.keys(this.groups).forEach((groupKey) => {
+              if (this.groups[groupKey].name === DEFAULT_GROUP_NAME) {
+                this.selectedGroupKey = groupKey;
+              }
+            });
+          }
+
+          if (!this.selectedGroupKey) {
+            this.selectedGroupKey = Object.keys(this.groups)[0];
+          }
+        });
       }
     });
   };
@@ -80,12 +99,12 @@ export class ChatComponent {
 
     const dbRef = ref(this.database, 'groups/' + this.selectedGroupKey + '/messages');
 
-    push(dbRef, MessageMapper.mapLocal(new ProjectClass.Local.Message({
+    push(dbRef, this.messageMapper.mapLocal(new ProjectClass.Local.Message({
       message: this.newMessageContent,
       date: new Date().toISOString(),
-      userName: this.currentUser.displayName,
+      user: this.currentCustomUser,
       modified: false,
-      seenBy: []
+      seenBy: [],
     }))).then(() => {
       this.newMessageContent = "";
     });
@@ -109,7 +128,7 @@ export class ChatComponent {
       const dateA = a.date ? new Date(a.date).getTime() : 0;
       const dateB = b.date ? new Date(b.date).getTime() : 0;
       return dateA - dateB;
-    })[Object.values(this.groups[groupKey].messages).length - 1].userName!
+    })[Object.values(this.groups[groupKey].messages).length - 1].user?.displayName!
   }
 
   public getTimeSinceLastMessage(groupKey: string) : string {
