@@ -84,7 +84,9 @@ export class ChatComponent implements OnInit{
       if (snapshot.exists()) {
         this.groupMapper.mapRemoteDict(snapshot.val()).then((result) => {
           this.groups = result;
-          this.goToBottom();
+          if (this.isNearTheBottom()) {
+            this.goToBottom()
+          }
 
           if (!this.selectedGroupKey) {
             Object.keys(this.groups).forEach((groupKey) => {
@@ -113,7 +115,6 @@ export class ChatComponent implements OnInit{
 
   public openGroup(groupKey : string) : void {
     this.selectedGroupKey = groupKey;
-    this.goToBottom()
   }
 
   public async sendMessage(): Promise<void> {
@@ -123,7 +124,7 @@ export class ChatComponent implements OnInit{
     
     const newMessageRef = push(dbRef);
     const messageId = newMessageRef.key;
-    
+        
     set(newMessageRef, this.messageMapper.mapLocal(new ProjectClass.Local.Message({
       id: messageId!,
       message: this.newMessageContent,
@@ -203,6 +204,26 @@ export class ChatComponent implements OnInit{
     }
   }
 
+  public isNearTheBottom(): boolean {
+    const messagesDisplay = document.querySelector('.messagesDisplay') as HTMLElement;
+    
+    if (!messagesDisplay) {
+      return false;
+    }
+
+    const threshold = 100; // pixels de tolérance
+    const scrollTop = messagesDisplay.scrollTop;
+    const scrollHeight = messagesDisplay.scrollHeight;
+    const clientHeight = messagesDisplay.clientHeight;
+
+    // Distance entre la position actuelle et le bas
+    const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+
+    console.log("Distance entre l'utilisateur et le bas ", distanceFromBottom)
+
+    return distanceFromBottom <= threshold;
+  }
+
   public goToBottom() : void {
     setTimeout(() => {
       const messagesDisplay = document.querySelector('.messagesDisplay') as HTMLElement;
@@ -237,7 +258,7 @@ export class ChatComponent implements OnInit{
         detail: `La suppression d'un message n'est possible que pour son créateur.`,
         sticky: true
       });
-    } else {
+    } else {      
       this.messageService.deleteMessage(this.selectedGroupKey, message.id!)
     }
   }
@@ -264,5 +285,9 @@ export class ChatComponent implements OnInit{
   public exitUpdateMode() : void {
     this.selectedMessageMode = MESSAGE_MODE.CREATE;
     this.selectedMessageToUpdate = null;
+  }
+
+  public trackByMessageId(index: number, message: ProjectClass.Local.Message): string {
+    return message.id || index.toString();
   }
 }

@@ -28,7 +28,7 @@
             </div>
             <div class="groupContent flex column" style="flex: 5">
                 <div class="fh messagesDisplay">
-                    <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" *ngFor="let message of getCurrentGroupMessages()" class="messageItem flex mb10">
+                    <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" *ngFor="let message of getCurrentGroupMessages(); trackBy: trackByMessageId" class="messageItem flex mb10">
                         @if (message.user?.uid === currentCustomUser?.uid) {
                             <div class="messageContent flex column gap10 jcsb">
                                 <div style="color: white;" class="flex gap10 jce">
