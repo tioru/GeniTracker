@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
 import { Database, onValue, push, ref, set } from '@angular/fire/database';
@@ -15,6 +15,7 @@ import { MessageService } from '../../utilities/services/message.service';
 import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
 
 const DEFAULT_GROUP_NAME = "Général";
+const SCROLLBAR_THRESHOLD = 100;
 
 export enum MESSAGE_MODE {
   CREATE,
@@ -29,7 +30,7 @@ export enum MESSAGE_MODE {
   animations: animations,
   styleUrl: './chat.component.scss'
 })
-export class ChatComponent implements OnInit{
+export class ChatComponent implements OnInit, OnDestroy{
   private database = inject(Database);
   
   private dbRef = ref(this.database, 'groups');
@@ -60,12 +61,17 @@ export class ChatComponent implements OnInit{
 
   public selectedMessageToUpdate : ProjectClass.Local.Message | null = null;
 
+  private intersectionObserver?: IntersectionObserver;
+
+  public unreadMessages : number = 0;
+
   ngOnInit() {
     this.chatListening();
     this.userService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.userService.getUserByUID(user?.uid!).then((customUser) => {
         this.currentCustomUser = customUser;
+        this.initializeMessageObserver();
       });
     });
   }
@@ -99,6 +105,12 @@ export class ChatComponent implements OnInit{
           if (!this.selectedGroupKey) {
             this.selectedGroupKey = Object.keys(this.groups)[0];
           }
+
+          this.getCurrentGroupMessages().forEach((message) => {
+            if (!(this.isMessageSeenByCurrentUser(message))) {
+              this.unreadMessages += 1;
+            }
+          });
         });
       }
     });
@@ -113,8 +125,25 @@ export class ChatComponent implements OnInit{
     .map(([key, group]) => group.name!);
   }
 
-  public openGroup(groupKey : string) : void {
+  public openGroup(groupKey: string): void {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+
     this.selectedGroupKey = groupKey;
+
+    setTimeout(() => {
+      this.observeAllMessages();
+    }, 100);
+  }
+
+  private observeAllMessages(): void {
+    if (!this.intersectionObserver) return;
+
+    const messageElements = document.querySelectorAll('.messageItem');
+    messageElements.forEach(el => {
+      this.intersectionObserver!.observe(el);
+    });
   }
 
   public async sendMessage(): Promise<void> {
@@ -134,6 +163,7 @@ export class ChatComponent implements OnInit{
       seenBy: [this.currentCustomUser!],
     }))).then(() => {
       this.newMessageContent = "";
+      setTimeout(() => this.observeAllMessages(), 100);
     });
   }
 
@@ -211,17 +241,13 @@ export class ChatComponent implements OnInit{
       return false;
     }
 
-    const threshold = 100; // pixels de tolérance
     const scrollTop = messagesDisplay.scrollTop;
     const scrollHeight = messagesDisplay.scrollHeight;
     const clientHeight = messagesDisplay.clientHeight;
 
-    // Distance entre la position actuelle et le bas
     const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
 
-    console.log("Distance entre l'utilisateur et le bas ", distanceFromBottom)
-
-    return distanceFromBottom <= threshold;
+    return distanceFromBottom <= SCROLLBAR_THRESHOLD;
   }
 
   public goToBottom() : void {
@@ -289,5 +315,54 @@ export class ChatComponent implements OnInit{
 
   public trackByMessageId(index: number, message: ProjectClass.Local.Message): string {
     return message.id || index.toString();
+  }
+
+  private initializeMessageObserver(): void {
+    const options = {
+      root: document.querySelector('.messagesDisplay'),
+      rootMargin: '0px',
+      threshold: 0.5 // 50% du message doit être visible
+    };
+
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const messageId = entry.target.getAttribute('data-message-id');
+        if (!messageId) return;
+
+        if (entry.isIntersecting) {
+          this.markMessageAsSeen(messageId);
+        }
+      });
+    }, options);
+  }
+
+  private markMessageAsSeen(messageId: string): void {
+    if (!this.currentCustomUser) return;
+
+    const message = this.getCurrentGroupMessages().find(message => message.id === messageId);
+    if (!message) return;
+
+    this.messageService.markMessageAsSeen(this.selectedGroupKey, messageId, this.currentCustomUser.uid!);
+  }
+
+  public isMessageSeenByCurrentUser(message: ProjectClass.Local.Message): boolean {
+    if (!this.currentCustomUser) return false;
+    return message.seenBy?.some(user => user.uid === this.currentCustomUser!.uid) || false;
+  }
+
+  public onChatVisible() : void {
+    this.goToBottom()
+    this.getCurrentGroupMessages().forEach((message) => {
+      this.markMessageAsSeen(message.id!)
+    })
+    setTimeout(() => {
+      this.observeAllMessages();
+    }, 100);
+  }
+
+  ngOnDestroy() {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
   }
 }

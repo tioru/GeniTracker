@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { Database, ref, remove, update } from "@angular/fire/database";
+import { Database, ref, remove, runTransaction, update } from "@angular/fire/database";
 import { NotificationService, notificationSeverity } from "./notification.service";
 import { ProjectClass } from "../classes/class";
 import { MessageMapper } from "../mapper/message";
@@ -55,6 +55,50 @@ export class MessageService {
             return true;
         } catch (error) {
             console.error('Erreur lors de la suppression du message:', error);
+            return false;
+        }
+    } 
+
+    public async markMessageAsSeen(selectedGroupKey : string, messageId : string, userUID : string): Promise<boolean> {
+        try {
+
+            if (!messageId || !selectedGroupKey) {
+                console.error('Message ID ou groupe manquant');
+                return false;
+            }
+
+            const messageRef = ref(this.database, `groups/${selectedGroupKey}/messages/${messageId}`);
+
+            await runTransaction(messageRef, (currentMessage) => {
+                if (!currentMessage) {
+                    return currentMessage;
+                }
+
+                const currentSeenBy = currentMessage.seenBy;
+
+                const alreadySeen = currentSeenBy.some(
+                    (currentSeenUID: string) => currentSeenUID === userUID
+                );
+
+                if (alreadySeen) {
+                    return currentMessage;
+                }
+
+                const updatedSeenBy = [
+                    ...currentSeenBy,
+                    userUID
+                ];
+
+                return {
+                    ...currentMessage,
+                    seenBy: updatedSeenBy
+                };
+            });
+
+            return true;
+
+        } catch (error) {
+            console.error('Erreur lors du marquage du message comme vu:', error);
             return false;
         }
     }
