@@ -25,21 +25,23 @@ export class MessageMapper {
             message : rMessage.message,
             date : new Date(rMessage.date!),
             modified : rMessage.modified,
-            seenBy : seenUsers
+            seenBy : seenUsers,
+            id: rMessage.id
         })
     }
     
-    public async mapLocalArray(lMessages : ProjectClass.Local.Message[]) : Promise<ProjectClass.Remote.Message[]> {
-        return Promise.all(lMessages.map(lMessage => this.mapLocal(lMessage)));
+    public mapLocalArray(lMessages : ProjectClass.Local.Message[]) : ProjectClass.Remote.Message[] {
+        return lMessages.map(lMessage => this.mapLocal(lMessage));
     }
     
-    public async mapLocal(lMessage : ProjectClass.Local.Message) : Promise<ProjectClass.Remote.Message> {
+    public mapLocal(lMessage : ProjectClass.Local.Message) : ProjectClass.Remote.Message {
         return new ProjectClass.Remote.Message({
             userUID: lMessage.user?.uid,
             message: lMessage.message,
             date: lMessage.date!.toISOString(),
             modified: lMessage.modified,
-            seenBy: lMessage.seenBy.map((user) => user.uid!)
+            seenBy: lMessage.seenBy.map((user) => user.uid!),
+            id: lMessage.id
         })
     }
 }

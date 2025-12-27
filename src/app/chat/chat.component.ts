@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
-import { Database, onValue, push, ref } from '@angular/fire/database';
+import { Database, onValue, push, ref, set } from '@angular/fire/database';
 import { ProjectClass } from '../../utilities/classes/class';
 import { GroupMapper } from '../../utilities/mapper/group';
 import { MessageMapper } from '../../utilities/mapper/message';
@@ -11,8 +11,15 @@ import { User } from '@angular/fire/auth';
 import { ImageCacheService } from '../../utilities/services/image-cache.service';
 import { TooltipComponent } from '../components/tooltip/tooltip.component';
 import { animations } from '../animation';
+import { MessageService } from '../../utilities/services/message.service';
+import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
 
 const DEFAULT_GROUP_NAME = "Général";
+
+export enum MESSAGE_MODE {
+  CREATE,
+  UPDATE
+} 
 
 @Component({
   selector: 'app-chat',
@@ -45,6 +52,14 @@ export class ChatComponent implements OnInit{
 
   public currentCustomUser : ProjectClass.Local.User | null = null;
 
+  private notificationSeverity : typeof notificationSeverity = notificationSeverity;
+
+  public messageMode : typeof MESSAGE_MODE = MESSAGE_MODE;
+
+  public selectedMessageMode : MESSAGE_MODE = MESSAGE_MODE.CREATE;
+
+  public selectedMessageToUpdate : ProjectClass.Local.Message | null = null;
+
   ngOnInit() {
     this.chatListening();
     this.userService.currentUser$.subscribe(user => {
@@ -59,7 +74,9 @@ export class ChatComponent implements OnInit{
     public userService : UserService,
     public groupMapper : GroupMapper,
     public messageMapper : MessageMapper,
-    public imageCacheService : ImageCacheService
+    public imageCacheService : ImageCacheService,
+    public messageService : MessageService,
+    public notificationService : NotificationService
   ) {}
 
   private chatListening() {
@@ -67,6 +84,7 @@ export class ChatComponent implements OnInit{
       if (snapshot.exists()) {
         this.groupMapper.mapRemoteDict(snapshot.val()).then((result) => {
           this.groups = result;
+          this.goToBottom();
 
           if (!this.selectedGroupKey) {
             Object.keys(this.groups).forEach((groupKey) => {
@@ -98,24 +116,22 @@ export class ChatComponent implements OnInit{
     this.goToBottom()
   }
 
-  public async sendMessage() : Promise<void> {
+  public async sendMessage(): Promise<void> {
     if (!this.currentUser) return;
 
     const dbRef = ref(this.database, 'groups/' + this.selectedGroupKey + '/messages');
-
-    let remoteMessage : ProjectClass.Remote.Message | null = null;
-
-    await this.messageMapper.mapLocal(new ProjectClass.Local.Message({
+    
+    const newMessageRef = push(dbRef);
+    const messageId = newMessageRef.key;
+    
+    set(newMessageRef, this.messageMapper.mapLocal(new ProjectClass.Local.Message({
+      id: messageId!,
       message: this.newMessageContent,
       date: new Date(),
       user: this.currentCustomUser,
       modified: false,
       seenBy: [this.currentCustomUser!],
-    })).then((message) => {
-      remoteMessage = message;
-    })
-    
-    push(dbRef, remoteMessage).then(() => {
+    }))).then(() => {
       this.newMessageContent = "";
     });
   }
@@ -194,5 +210,59 @@ export class ChatComponent implements OnInit{
         messagesDisplay.scrollTop = messagesDisplay.scrollHeight;
       }
     }, 0);
+  }
+
+  public updateMessage() : void {
+    if (this.currentCustomUser?.uid !== this.selectedMessageToUpdate!.user?.uid) {
+      this.notificationService.addNotification({
+        title: 'Modification impossible',
+        severity: this.notificationSeverity.ERROR,
+        detail: `La modification d'un message n'est possible que pour son créateur.`,
+        sticky: true
+      });
+    } else {
+      this.messageService.updateMessage(this.selectedGroupKey, this.selectedMessageToUpdate!).then((result) => {
+        if (result) {
+          this.exitUpdateMode();
+        }
+      })
+    }
+  }
+
+  public deleteMessage(message : ProjectClass.Local.Message) : void {
+    if (this.currentCustomUser?.uid !== message.user?.uid) {
+      this.notificationService.addNotification({
+        title: 'Suppression impossible',
+        severity: this.notificationSeverity.ERROR,
+        detail: `La suppression d'un message n'est possible que pour son créateur.`,
+        sticky: true
+      });
+    } else {
+      this.messageService.deleteMessage(this.selectedGroupKey, message.id!)
+    }
+  }
+
+  public get messageInputContent(): string {
+    return this.selectedMessageMode === this.messageMode.UPDATE && this.selectedMessageToUpdate 
+      ? this.selectedMessageToUpdate.message! 
+      : this.newMessageContent;
+  }
+
+  public set messageInputContent(value: string) {
+    if (this.selectedMessageMode === this.messageMode.UPDATE && this.selectedMessageToUpdate) {
+      this.selectedMessageToUpdate.message = value;
+    } else {
+      this.newMessageContent = value;
+    }
+  }
+
+  public selectMessageForUpdate(message : ProjectClass.Local.Message) : void {
+    this.selectedMessageToUpdate = structuredClone(message)
+    this.selectedMessageToUpdate.modified = true;
+  }
+
+  public exitUpdateMode() : void {
+    this.selectedMessageMode = MESSAGE_MODE.CREATE;
+    this.selectedMessageToUpdate = null;
   }
 }

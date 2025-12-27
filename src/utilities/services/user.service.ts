@@ -77,7 +77,7 @@ export class UserService {
       return userCredential;
     } catch (error) {
       this.notificationService.addNotification({
-        title: 'Erreur',
+        title: 'Erreur lors de l\'enregistrement',
         severity: notificationSeverity.ERROR,
         detail: this.firebaseErrorService.handleFirebaseError(error),
         sticky: true

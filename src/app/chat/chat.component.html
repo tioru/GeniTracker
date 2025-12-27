@@ -30,7 +30,7 @@
                 <div class="fh messagesDisplay">
                     <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" *ngFor="let message of getCurrentGroupMessages()" class="messageItem flex mb10">
                         @if (message.user?.uid === currentCustomUser?.uid) {
-                            <div class="messageContent flex column gap10">
+                            <div class="messageContent flex column gap10 jcsb">
                                 <div style="color: white;" class="flex gap10 jce">
                                     <span style="color: #ffd700"><strong>{{message.user?.displayName}}</strong></span>
                                     <span>-</span>
@@ -42,13 +42,42 @@
                                             <span>{{message.date | date : 'dd/MM/yyyy HH:mm:ss'}}</span>
                                         </div>
                                     </tooltip-component>
+                                    @if(message.modified) {
+                                        <tooltip-component>
+                                            <div tooltipedElement>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                                            </div>
+                                            <div tooltipContent>
+                                                <span>Modifié</span>
+                                            </div>
+                                        </tooltip-component>
+                                    }
                                 </div>
                                 <span style="color: white;">
                                     {{message.message}}
                                 </span>
                             </div>
-                            <div class="profilPicture flex aic jcc">
-                                <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
+                            <div class="flex jcc column profilPictureWrapper gap10">
+                                <div class="profilPicture">
+                                    <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
+                                </div>
+                                <button class="button optionList" [attr.popovertarget]="'openOptionList-' + message.id" [style.anchor-name]="'--option-button-' + message.id" style="padding: 7px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" fill="white" viewBox="0 0 24 24"><path d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z" /></svg>
+                                </button>
+                                <div [@enter-leave] [id]="'openOptionList-' + message.id" class="openOptionList" popover [style.position-anchor]="'--option-button-' + message.id">
+                                    <div *ngIf="userService.currentUserValue" class="flex aic jcc column gap20">
+                                        <button class="button flex aic jcc gap10" (click)="selectedMessageMode = messageMode.UPDATE; selectMessageForUpdate(message)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                                            <span>
+                                                Modifier le message
+                                            </span>
+                                        </button>
+                                        <button class="button flex aic jcc gap10 trash" (click)="deleteMessage(message)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" /></svg>
+                                            <span>Supprimer</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         } @else {
                             <div class="profilPicture flex aic jcc">
@@ -74,9 +103,24 @@
                         }
                     </div>
                 </div>
-                <div class="bottomInput flex aic mb10 jcc fw">
-                    <input class="input" [(ngModel)]="newMessageContent" style="width: 90%; margin: 0 10px;" (keydown.enter)="sendMessage()">
-                    <button class="sendButton flex aic jcc" style="border-radius: 50%; line-height: 0; margin-right: 10px;" (click)="sendMessage()">
+                <div class="flex aic mb10 jcc fw" style="transition: all 0.5s ease-in-out;">
+                    <div class="flex fw column jcc" style="transition: all 0.5s ease-in-out;">
+                        <div class="flex aic jcc" style="transition: all 0.5s ease-in-out;">
+                            <div [@slideYAnimation] class="updateMessage flex aic jcsb" style="padding: 2px; z-index: 2;" *ngIf="selectedMessageMode === messageMode.UPDATE">
+                                <div class="flex aic gap10">
+                                    <svg style="padding-left: 5px;" xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                                    <span style="color: white;">
+                                        Modification
+                                    </span>
+                                </div>
+                                <button class="flex aic jcc" style="margin-right: 5px; background-color: transparent; cursor: pointer; border: 0px transparent solid;" (click)="exitUpdateMode()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <input class="input" [(ngModel)]="messageInputContent" style="margin: 0 10px; z-index: 3;" (keydown.enter)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()">
+                    </div>
+                    <button class="sendButton flex aic jcc" style="border-radius: 50%; line-height: 0; margin-right: 10px;" (click)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>
                     </button>
                 </div>

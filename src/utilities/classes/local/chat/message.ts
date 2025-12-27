@@ -6,6 +6,7 @@ export class LMessageClass {
   date : Date | null = null;
   modified : boolean | null = null;
   seenBy : LUserClass[] = [];
+  id : string | null = null;
 
   constructor(init?:Partial<LMessageClass>) {
     Object.assign(this, init);

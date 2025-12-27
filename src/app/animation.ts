@@ -72,5 +72,23 @@ export const animations = [
         style({ height: '*', width: '*', opacity: 1, overflow: 'hidden' }),
         animate('300ms ease-in', style({ height: 0, width: 0, opacity: 0 }))
       ])
+  ]),
+  trigger('slideYAnimation', [
+    transition(':enter', [
+      style({ 
+        opacity: 0, 
+        transform: 'translateY(100%)' 
+      }),
+      animate('500ms ease', style({ 
+        opacity: 1, 
+        transform: 'translateY(0)' 
+      }))
+    ]),
+    transition(':leave', [
+      animate('500ms ease', style({ 
+        opacity: 0, 
+        transform: 'translateY(100%)' 
+      }))
     ])
+  ]),
 ];
