@@ -1,4 +1,4 @@
-import { trigger, style, animate, transition, state } from '@angular/animations';
+import { trigger, style, animate, transition, state, group, query } from '@angular/animations';
 
 export const animations = [
   trigger('hover', [
@@ -112,13 +112,21 @@ export const animations = [
         animate('300ms ease-in-out')
       ])
     ]),
-    trigger('fadeInOut', [
-  transition(':enter', [
-    style({ opacity: 0 }),
-    animate('300ms ease-in-out', style({ opacity: 1 }))
-  ]),
-  transition(':leave', [
-    animate('300ms ease-in-out', style({ opacity: 0 }))
-  ])
-])
+    trigger('crossfade', [
+      transition('1 <=> 2', [
+        group([
+          query('.active', [
+            style({ opacity: 0, scale: 0.7 })
+          ]),
+          query(':not(.active)', [
+              animate('0.15s ease-out', 
+                style({ opacity: 0, scale: 0.7 }))
+          ]),
+          query('.active', [
+              animate('0.15s ease-in',
+                style({ opacity: 1, scale: 1 }))
+          ])
+        ])
+      ])
+    ])
 ];

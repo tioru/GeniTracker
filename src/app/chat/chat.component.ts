@@ -23,8 +23,8 @@ export enum MESSAGE_MODE {
 }
 
 export enum SLIDE_BAR_VISIBILITY {
-  REDUCED,
-  NORMAL
+  REDUCED = 1,
+  NORMAL = 2
 }
 
 @Component({

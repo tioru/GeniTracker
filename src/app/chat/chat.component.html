@@ -22,16 +22,10 @@
                         </ng-container>
                     </div>
                     <button class="button createGroupButton flex aic jcc p10" (click)="createNewGroup()" style="background-color: #575757;">
-                        <span [@fadeInOut] 
-                              *ngIf="selectedSlideBarVisibility !== slideBarVisibility.REDUCED" 
-                              style="color: white;">
-                            Créer un nouveau groupe
-                        </span>
-                        <span [@fadeInOut] 
-                              *ngIf="selectedSlideBarVisibility === slideBarVisibility.REDUCED" 
-                              style="color: white; font-size: 24px;">
-                            +
-                        </span>
+                        <div [@crossfade]="selectedSlideBarVisibility" class="container">
+                            <span class="buttonText" [class.active]="selectedSlideBarVisibility === slideBarVisibility.NORMAL" style="color: white;">Créer un nouveau groupe</span>
+                            <span class="buttonText" [class.active]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" style="color: white; font-size: 24px;">+</span>
+                        </div>
                     </button>
                 </div>
                 <button class="button openCloseButton" (click)="switchSlideBarVisibility()">
