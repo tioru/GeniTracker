@@ -97,8 +97,8 @@ export const animations = [
     transition('false <=> true', animate('300ms ease-in-out'))
   ]),
   trigger('fade', [
-    state('false', style({ opacity: 1, height: '*', overflow: 'hidden'})),
-    state('true', style({ opacity: 0, height: 0, overflow: 'hidden'})),
+    state('false', style({ opacity: 1, height: '*', width: '*', overflow: 'hidden'})),
+    state('true', style({ opacity: 0, height: 0, width: 0, overflow: 'hidden'})),
     transition('false <=> true', animate('300ms ease-in-out'))
   ]),
   trigger('buttonResize', [
@@ -119,12 +119,12 @@ export const animations = [
             style({ opacity: 0, scale: 0.7 })
           ]),
           query(':not(.active)', [
-              animate('0.15s ease-out', 
-                style({ opacity: 0, scale: 0.7 }))
+            animate('0.15s ease-out', 
+            style({ opacity: 0, scale: 0.7 }))
           ]),
           query('.active', [
-              animate('0.15s ease-in',
-                style({ opacity: 1, scale: 1 }))
+            animate('0.15s ease-in',
+            style({ opacity: 1, scale: 1 }))
           ])
         ])
       ])

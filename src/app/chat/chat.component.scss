@@ -224,10 +224,6 @@
 .container {
     display: grid;
     position: relative;
-
-    
-
-    transition: all 0.3s ease-in-out;
 }
 
 .buttonText {
@@ -237,13 +233,7 @@
     grid-row: 1;
     grid-column: 1;
 
-    transition: all 0.3s ease-in-out;
-
     &:not(.active):not(.ng-animating) {
         display: none;
     }
-}
-
-.createGroupButton {
-    transition: all 0.3s ease-in-out;
 }
