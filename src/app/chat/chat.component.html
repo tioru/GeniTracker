@@ -34,7 +34,7 @@
             </div>
             <div class="flex column" style="flex: 5">
                 <div class="messagesDisplay">
-                    <div class="dateGroup" *ngFor="let messagesByDate of messagesSortedByDate | keyvalue">
+                    <div class="dateGroup" *ngFor="let messagesByDate of messagesSortedByDate | keyvalue; trackBy: trackByDate">
                         <div class="dateSeparator">
                             <h2 style="color: #ffd700">{{messagesByDate.key | date : 'dd/MM/yyyy'}}</h2>
                         </div>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValue } from '@angular/common';
 import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
@@ -338,6 +338,10 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public trackByMessageId(index: number, message: ProjectClass.Local.Message): string {
     return message.id || index.toString();
+  }
+
+  trackByDate(index: number, item: KeyValue<string, ProjectClass.Local.Message[]>): string {
+    return item.key; // La date en string
   }
 
   private initializeMessageObserver(): void {
