@@ -5,7 +5,7 @@
         </div>
         <div class="whiteBar"></div>
         <div class="flex groupsDisplay">
-            <div  [class.reduced]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" class="groupList flex column jcsb">
+            <div [class.reduced]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" class="groupList flex column jcsb">
                 <div class="flex aic column gap20 p20">
                     <div [class.selected]="getGroupBykey(selectedGroupKey).name === groupName" class="groupItem flex fw p10" *ngFor="let groupName of groupsNames" (click)="openGroup(getGroupKeyByName(groupName))">
                         <ng-container *ngIf="getGroupBykey(getGroupKeyByName(groupName)) as group">
@@ -32,110 +32,115 @@
                     <svg [@rotateArrow]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20,10V14H11L14.5,17.5L12.08,19.92L4.16,12L12.08,4.08L14.5,6.5L11,10H20Z" /></svg>
                 </button>
             </div>
-            <div class="groupContent flex column" style="flex: 5">
-                <div class="fh messagesDisplay">
-                    <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" [attr.data-message-id]="message.id" *ngFor="let message of getCurrentGroupMessages(); trackBy: trackByMessageId" class="messageItem flex mb10">
-                        @if (message.user?.uid === currentCustomUser?.uid) {
-                            <div class="flex" style="flex-direction: column-reverse; margin-right: 10px;">
-                                @if (isMessageSeen(message)) {
-                                    <tooltip-component>
-                                        <div tooltipedElement>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,4.5C17,4.5 21.27,7.61 23,12C21.27,16.39 17,19.5 12,19.5C7,19.5 2.73,16.39 1,12C2.73,7.61 7,4.5 12,4.5M3.18,12C4.83,15.36 8.24,17.5 12,17.5C15.76,17.5 19.17,15.36 20.82,12C19.17,8.64 15.76,6.5 12,6.5C8.24,6.5 4.83,8.64 3.18,12Z" /></svg>
-                                        </div>
-                                        <div tooltipContent>
-                                            <div class="flex column gap10">
-                                                <span>Lu par :</span>
-                                                <div class="fw" *ngFor="let seener of message.seenBy">
-                                                    <div class="flex aic gap10" *ngIf="seener.uid !== currentCustomUser?.uid">
-                                                        <div class="profilPicture">
-                                                            <img [src]="imageCacheService.getImageUrl(seener?.photoURL!)" height="20px" width="20px">
+            <div class="flex column" style="flex: 5">
+                <div class="messagesDisplay">
+                    <div class="dateGroup" *ngFor="let messagesByDate of messagesSortedByDate | keyvalue">
+                        <div class="dateSeparator">
+                            <h2 style="color: #ffd700">{{messagesByDate.key | date : 'dd/MM/yyyy'}}</h2>
+                        </div>
+                        <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" [attr.data-message-id]="message.id" *ngFor="let message of messagesByDate.value; trackBy: trackByMessageId" class="messageItem flex mb10">
+                            @if (message.user?.uid === currentCustomUser?.uid) {
+                                <div class="flex" style="flex-direction: column-reverse; margin-right: 10px;">
+                                    @if (isMessageSeen(message)) {
+                                        <tooltip-component>
+                                            <div tooltipedElement>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,4.5C17,4.5 21.27,7.61 23,12C21.27,16.39 17,19.5 12,19.5C7,19.5 2.73,16.39 1,12C2.73,7.61 7,4.5 12,4.5M3.18,12C4.83,15.36 8.24,17.5 12,17.5C15.76,17.5 19.17,15.36 20.82,12C19.17,8.64 15.76,6.5 12,6.5C8.24,6.5 4.83,8.64 3.18,12Z" /></svg>
+                                            </div>
+                                            <div tooltipContent>
+                                                <div class="flex column gap10">
+                                                    <span>Lu par :</span>
+                                                    <div class="fw" *ngFor="let seener of message.seenBy">
+                                                        <div class="flex aic gap10" *ngIf="seener.uid !== currentCustomUser?.uid">
+                                                            <div class="profilPicture">
+                                                                <img [src]="imageCacheService.getImageUrl(seener?.photoURL!)" height="20px" width="20px">
+                                                            </div>
+                                                            <span>{{ seener.displayName }}</span>
                                                         </div>
-                                                        <span>{{ seener.displayName }}</span>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </tooltip-component>
-                                } @else {
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M2,5.27L3.28,4L20,20.72L18.73,22L15.65,18.92C14.5,19.3 13.28,19.5 12,19.5C7,19.5 2.73,16.39 1,12C1.69,10.24 2.79,8.69 4.19,7.46L2,5.27M12,9A3,3 0 0,1 15,12C15,12.35 14.94,12.69 14.83,13L11,9.17C11.31,9.06 11.65,9 12,9M12,4.5C17,4.5 21.27,7.61 23,12C22.18,14.08 20.79,15.88 19,17.19L17.58,15.76C18.94,14.82 20.06,13.54 20.82,12C19.17,8.64 15.76,6.5 12,6.5C10.91,6.5 9.84,6.68 8.84,7L7.3,5.47C8.74,4.85 10.33,4.5 12,4.5M3.18,12C4.83,15.36 8.24,17.5 12,17.5C12.69,17.5 13.37,17.43 14,17.29L11.72,15C10.29,14.85 9.15,13.71 9,12.28L5.6,8.87C4.61,9.72 3.78,10.78 3.18,12Z" /></svg>
-                                }
-                            </div>
-                            <div class="messageContent flex column gap10 jcsb">
-                                <div style="color: white;" class="flex gap10 jce">
-                                    <span style="color: #ffd700"><strong>{{message.user?.displayName}}</strong></span>
-                                    <span>-</span>
-                                    <tooltip-component>
-                                        <div tooltipedElement>
-                                            <span>{{getTimeSince(message.date!)}}</span>
-                                        </div>
-                                        <div tooltipContent>
-                                            <span>{{message.date | date : 'dd/MM/yyyy HH:mm:ss'}}</span>
-                                        </div>
-                                    </tooltip-component>
-                                    @if(message.modified) {
-                                        <tooltip-component>
-                                            <div tooltipedElement>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="15px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
-                                            </div>
-                                            <div tooltipContent>
-                                                <span>Modifié</span>
-                                            </div>
                                         </tooltip-component>
+                                    } @else {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M2,5.27L3.28,4L20,20.72L18.73,22L15.65,18.92C14.5,19.3 13.28,19.5 12,19.5C7,19.5 2.73,16.39 1,12C1.69,10.24 2.79,8.69 4.19,7.46L2,5.27M12,9A3,3 0 0,1 15,12C15,12.35 14.94,12.69 14.83,13L11,9.17C11.31,9.06 11.65,9 12,9M12,4.5C17,4.5 21.27,7.61 23,12C22.18,14.08 20.79,15.88 19,17.19L17.58,15.76C18.94,14.82 20.06,13.54 20.82,12C19.17,8.64 15.76,6.5 12,6.5C10.91,6.5 9.84,6.68 8.84,7L7.3,5.47C8.74,4.85 10.33,4.5 12,4.5M3.18,12C4.83,15.36 8.24,17.5 12,17.5C12.69,17.5 13.37,17.43 14,17.29L11.72,15C10.29,14.85 9.15,13.71 9,12.28L5.6,8.87C4.61,9.72 3.78,10.78 3.18,12Z" /></svg>
                                     }
                                 </div>
-                                <span style="color: white;">
-                                    {{message.message}}
-                                </span>
-                            </div>
-                            <div class="flex column profilPictureWrapper gap10">
-                                <div class="profilPicture">
-                                    <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
+                                <div class="messageContent flex column gap10 jcsb">
+                                    <div style="color: white;" class="flex gap10 jce">
+                                        <span style="color: #ffd700"><strong>{{message.user?.displayName}}</strong></span>
+                                        <span>-</span>
+                                        <tooltip-component>
+                                            <div tooltipedElement>
+                                                <span>{{getTimeSince(message.date!)}}</span>
+                                            </div>
+                                            <div tooltipContent>
+                                                <span>{{message.date | date : 'dd/MM/yyyy HH:mm:ss'}}</span>
+                                            </div>
+                                        </tooltip-component>
+                                        @if(message.modified) {
+                                            <tooltip-component>
+                                                <div tooltipedElement>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="15px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                                                </div>
+                                                <div tooltipContent>
+                                                    <span>Modifié</span>
+                                                </div>
+                                            </tooltip-component>
+                                        }
+                                    </div>
+                                    <span style="color: white;">
+                                        {{message.message}}
+                                    </span>
                                 </div>
-                                <button class="button optionList" [attr.popovertarget]="'openOptionList-' + message.id" [style.anchor-name]="'--option-button-' + message.id" style="padding: 7px;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" fill="white" viewBox="0 0 24 24"><path d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z" /></svg>
-                                </button>
-                                <div [@enter-leave] [id]="'openOptionList-' + message.id" class="openOptionList" popover [style.position-anchor]="'--option-button-' + message.id">
-                                    <div *ngIf="userService.currentUserValue" class="flex aic jcc column gap20">
-                                        <button class="button flex aic jcc gap10" (click)="selectedMessageMode = messageMode.UPDATE; selectMessageForUpdate(message)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
-                                            <span>
-                                                Modifier le message
-                                            </span>
-                                        </button>
-                                        <button class="button flex aic jcc gap10 trash" (click)="deleteMessage(message)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" /></svg>
-                                            <span>Supprimer</span>
-                                        </button>
+                                <div class="flex column profilPictureWrapper gap10">
+                                    <div class="profilPicture">
+                                        <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
+                                    </div>
+                                    <button class="button optionList" [attr.popovertarget]="'openOptionList-' + message.id" [style.anchor-name]="'--option-button-' + message.id" style="padding: 7px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20px" fill="white" viewBox="0 0 24 24"><path d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z" /></svg>
+                                    </button>
+                                    <div [@enter-leave] [id]="'openOptionList-' + message.id" class="openOptionList" popover [style.position-anchor]="'--option-button-' + message.id">
+                                        <div *ngIf="userService.currentUserValue" class="flex aic jcc column gap20">
+                                            <button class="button flex aic jcc gap10" (click)="selectedMessageMode = messageMode.UPDATE; selectMessageForUpdate(message)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                                                <span>
+                                                    Modifier le message
+                                                </span>
+                                            </button>
+                                            <button class="button flex aic jcc gap10 trash" (click)="deleteMessage(message)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" /></svg>
+                                                <span>Supprimer</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        } @else {
-                            <div class="profilPicture flex aic">
-                                <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
-                            </div>
-                            <div class="messageContent flex column gap10">
-                                <div style="color: white;" class="flex gap10">
-                                    <span style="color: #ffd700"><strong>{{message.user?.displayName}}</strong></span>
-                                    <span>-</span>
-                                    <tooltip-component>
-                                        <div tooltipedElement>
-                                            <span>{{getTimeSince(message.date!)}}</span>
-                                        </div>
-                                        <div tooltipContent>
-                                            <span>{{message.date | date : 'dd/MM/yyyy HH:mm:ss'}}</span>
-                                        </div>
-                                    </tooltip-component>
+                            } @else {
+                                <div class="profilPicture flex aic">
+                                    <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
                                 </div>
-                                <span style="color: white;">
-                                    {{message.message}}
-                                </span>
-                            </div>
-                        }
+                                <div class="messageContent flex column gap10">
+                                    <div style="color: white;" class="flex gap10">
+                                        <span style="color: #ffd700"><strong>{{message.user?.displayName}}</strong></span>
+                                        <span>-</span>
+                                        <tooltip-component>
+                                            <div tooltipedElement>
+                                                <span>{{getTimeSince(message.date!)}}</span>
+                                            </div>
+                                            <div tooltipContent>
+                                                <span>{{message.date | date : 'dd/MM/yyyy HH:mm:ss'}}</span>
+                                            </div>
+                                        </tooltip-component>
+                                    </div>
+                                    <span style="color: white;">
+                                        {{message.message}}
+                                    </span>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-                <div class="flex aic mb10 jcc fw" style="transition: all 0.5s ease-in-out;">
-                    <div class="flex fw column jcc" style="transition: all 0.5s ease-in-out;">
-                        <div class="flex aic jcc" style="transition: all 0.5s ease-in-out;">
+                <div class="flex aic mb10 jcc fw">
+                    <div class="flex fw column jcc">
+                        <div class="flex aic jcc">
                             <div [@slideYAnimation] class="updateMessage flex aic jcsb" style="padding: 2px; z-index: 2;" *ngIf="selectedMessageMode === messageMode.UPDATE">
                                 <div class="flex aic gap10">
                                     <svg style="padding-left: 5px;" xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>

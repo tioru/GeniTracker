@@ -186,7 +186,7 @@
     }
 }
 
-.beginConversationText {
+.dateSeparator {
     background-color: rgb(121, 121, 121);
     position: relative;
     display: flex;
@@ -195,6 +195,7 @@
     height: 5px;
     border-radius: 6px;
     margin-bottom: 30px;
+
     h2 {
         background-color: rgb(39, 39, 39);
         border: 15px solid rgb(39, 39, 39);
@@ -236,4 +237,12 @@
     &:not(.active):not(.ng-animating) {
         display: none;
     }
+}
+
+.dateGroup:not(:last-child) {
+  margin-bottom: 30px;
+}
+
+.dateGroup {
+  margin-top: 10px;
 }

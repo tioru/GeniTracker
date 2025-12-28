@@ -48,7 +48,7 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public newMessageContent : string = "";
 
-  public messagesSortedByDate : {[key : string]: ProjectClass.Local.Message} = {}
+  public messagesSortedByDate : {[key : string]: ProjectClass.Local.Message[]} = {}
 
   @Input() chatVisibility : boolean = false;
 
@@ -98,6 +98,7 @@ export class ChatComponent implements OnInit, OnDestroy{
       if (snapshot.exists()) {
         this.groupMapper.mapRemoteDict(snapshot.val()).then((result) => {
           this.groups = result;
+
           if (this.isNearTheBottom()) {
             this.goToBottom()
           }
@@ -114,6 +115,8 @@ export class ChatComponent implements OnInit, OnDestroy{
             this.selectedGroupKey = Object.keys(this.groups)[0];
           }
 
+          this.sortMessagesByDate();
+
           this.getCurrentGroupMessages().forEach((message) => {
             if (!(this.isMessageSeenByCurrentUser(message))) {
               this.unreadMessages += 1;
@@ -123,6 +126,7 @@ export class ChatComponent implements OnInit, OnDestroy{
           if (this.intersectionObserver) {
             this.intersectionObserver.disconnect();
           }
+
           this.initializeMessageObserver();
           setTimeout(() => {
             this.observeAllMessages();
@@ -147,6 +151,7 @@ export class ChatComponent implements OnInit, OnDestroy{
     }
 
     this.selectedGroupKey = groupKey;
+    this.sortMessagesByDate();
     this.goToBottom();
 
 
@@ -388,6 +393,34 @@ export class ChatComponent implements OnInit, OnDestroy{
     } else {
       this.selectedSlideBarVisibility = SLIDE_BAR_VISIBILITY.NORMAL;
     }
+  }
+
+  public sortMessagesByDate(): void {
+    this.messagesSortedByDate = {};
+    
+    this.getCurrentGroupMessages().forEach(message => {
+      if (message.date) {
+
+        const date = new Date(message.date);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const dateKey = `${year}-${month}-${day}`;
+
+        if (!this.messagesSortedByDate[dateKey]) {
+          this.messagesSortedByDate[dateKey] = [];
+        }
+
+        this.messagesSortedByDate[dateKey].push(message);
+      }
+    });
+  
+    Object.keys(this.messagesSortedByDate).forEach(dateKey => {
+      this.messagesSortedByDate[dateKey].sort((a, b) => {
+        if (!a.date || !b.date) return 0;
+        return a.date.getTime() - b.date.getTime();
+      });
+    });
   }
 
   ngOnDestroy() {
