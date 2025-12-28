@@ -61,7 +61,6 @@ export class MessageService {
 
     public async markMessageAsSeen(selectedGroupKey : string, messageId : string, userUID : string): Promise<boolean> {
         try {
-
             if (!messageId || !selectedGroupKey) {
                 console.error('Message ID ou groupe manquant');
                 return false;

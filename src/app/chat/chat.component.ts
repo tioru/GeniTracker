@@ -20,7 +20,12 @@ const SCROLLBAR_THRESHOLD = 100;
 export enum MESSAGE_MODE {
   CREATE,
   UPDATE
-} 
+}
+
+export enum SLIDE_BAR_VISIBILITY {
+  REDUCED,
+  NORMAL
+}
 
 @Component({
   selector: 'app-chat',
@@ -65,13 +70,16 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public unreadMessages : number = 0;
 
+  public selectedSlideBarVisibility : SLIDE_BAR_VISIBILITY = SLIDE_BAR_VISIBILITY.NORMAL;
+
+  public slideBarVisibility : typeof SLIDE_BAR_VISIBILITY = SLIDE_BAR_VISIBILITY
+
   ngOnInit() {
     this.chatListening();
     this.userService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.userService.getUserByUID(user?.uid!).then((customUser) => {
         this.currentCustomUser = customUser;
-        this.initializeMessageObserver();
       });
     });
   }
@@ -111,6 +119,14 @@ export class ChatComponent implements OnInit, OnDestroy{
               this.unreadMessages += 1;
             }
           });
+
+          if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
+          }
+          this.initializeMessageObserver();
+          setTimeout(() => {
+            this.observeAllMessages();
+          }, 100);
         });
       }
     });
@@ -131,6 +147,8 @@ export class ChatComponent implements OnInit, OnDestroy{
     }
 
     this.selectedGroupKey = groupKey;
+    this.goToBottom();
+
 
     setTimeout(() => {
       this.observeAllMessages();
@@ -358,6 +376,18 @@ export class ChatComponent implements OnInit, OnDestroy{
     setTimeout(() => {
       this.observeAllMessages();
     }, 100);
+  }
+
+  public isMessageSeen(message: ProjectClass.Local.Message): boolean {
+    return message.seenBy.filter((user) => user.uid !== this.currentCustomUser?.uid).length > 0
+  }
+
+  public switchSlideBarVisibility() : void {
+    if (this.selectedSlideBarVisibility === SLIDE_BAR_VISIBILITY.NORMAL) {
+      this.selectedSlideBarVisibility = SLIDE_BAR_VISIBILITY.REDUCED;
+    } else {
+      this.selectedSlideBarVisibility = SLIDE_BAR_VISIBILITY.NORMAL;
+    }
   }
 
   ngOnDestroy() {

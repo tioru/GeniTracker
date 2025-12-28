@@ -191,12 +191,15 @@ export class UserService {
   public async duplicateUser() : Promise<void> {
     try {
       const userRef = ref(this.database, `users/${this.auth.currentUser?.uid}`);
+
+      const currentDate : Date = new Date() 
         
       await set(userRef, UserMapper.mapLocal(new ProjectClass.Local.User({
         displayName: this.auth.currentUser?.displayName ? this.auth.currentUser.displayName : '',
         email: this.auth.currentUser?.email ? this.auth.currentUser.email : '',
         photoURL: this.auth.currentUser?.photoURL ? this.auth.currentUser.photoURL : '',
-        signUpDate: new Date()
+        signUpDate: currentDate,
+        lastLoginDate: currentDate,
       })));
     } catch (error) {
       console.error("Error duplicating user data: ", error);

@@ -91,4 +91,34 @@ export const animations = [
       }))
     ])
   ]),
+  trigger('rotateArrow', [
+    state('false', style({ transform: 'rotate(0deg)' })),
+    state('true', style({ transform: 'rotate(180deg)' })),
+    transition('false <=> true', animate('300ms ease-in-out'))
+  ]),
+  trigger('fade', [
+    state('false', style({ opacity: 1, height: '*', overflow: 'hidden'})),
+    state('true', style({ opacity: 0, height: 0, overflow: 'hidden'})),
+    transition('false <=> true', animate('300ms ease-in-out'))
+  ]),
+  trigger('buttonResize', [
+      state('expanded', style({
+        width: '{{expandedWidth}}px'
+      }), { params: { expandedWidth: 200 } }),
+      state('reduced', style({
+        width: '{{reducedWidth}}px'
+      }), { params: { reducedWidth: 50 } }),
+      transition('expanded <=> reduced', [
+        animate('300ms ease-in-out')
+      ])
+    ]),
+    trigger('fadeInOut', [
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate('300ms ease-in-out', style({ opacity: 1 }))
+  ]),
+  transition(':leave', [
+    animate('300ms ease-in-out', style({ opacity: 0 }))
+  ])
+])
 ];

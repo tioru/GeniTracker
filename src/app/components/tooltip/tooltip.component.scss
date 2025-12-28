@@ -19,12 +19,13 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0.2s ease;
-  z-index: 10;
+  z-index: 1000;
   bottom: anchor(top);
   left: anchor(center);
   translate: -50% -6px;
   position-anchor: --tooltip-anchor;
   position-try: --tooltip-top, --tooltip-bottom, --tooltip-left, --tooltip-right;
+  isolation: isolate;
 }
 
 .tooltip-content::after {

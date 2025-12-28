@@ -5,31 +5,67 @@
         </div>
         <div class="whiteBar"></div>
         <div class="flex groupsDisplay">
-            <div class="flex aic column gap20 p20" style="flex: 2; background: radial-gradient(ellipse at bottom, #3b3b3b -34%, #1f1f1f 50%, #121212 100%);">
-                <div [class.selected]="getGroupBykey(selectedGroupKey).name === groupName" class="groupItem flex fw p10" *ngFor="let groupName of groupsNames" (click)="openGroup(getGroupKeyByName(groupName))">
-                    <ng-container *ngIf="getGroupBykey(getGroupKeyByName(groupName)) as group">
-                        <div class="imgPlaceholder">
-                            <img style="object-fit: cover; height: inherit; width: inherit; border-radius: 15px;" src={{group.imgUrl}}/>
-                        </div>
-                        <div class="flex ais jcsb column fw" style="flex: 3; margin-left: 10px;">
-                            <div class="flex ais jcsb column fw gap10">
-                                <span>{{ group.name }}</span>
-                                <span style="font-size: 12px;">{{ group.description }}</span>
+            <div  [class.reduced]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" class="groupList flex column jcsb">
+                <div class="flex aic column gap20 p20">
+                    <div [class.selected]="getGroupBykey(selectedGroupKey).name === groupName" class="groupItem flex fw p10" *ngFor="let groupName of groupsNames" (click)="openGroup(getGroupKeyByName(groupName))">
+                        <ng-container *ngIf="getGroupBykey(getGroupKeyByName(groupName)) as group">
+                            <div class="imgPlaceholder">
+                                <img style="object-fit: cover; height: inherit; width: inherit; border-radius: 15px;" src={{group.imgUrl}}/>
                             </div>
-                            <span style="font-size: 12px;"> {{ getLastMessager(getGroupKeyByName(groupName)) }} - {{getTimeSinceLastMessage(getGroupKeyByName(groupName))}}</span>
-                        </div>
-                    </ng-container>
-                </div>
-                <div>
-                    <button class="button flex aic jcc p10" (click)="createNewGroup()" style="background-color: #575757;">
-                        <span style="color: white;">Créer un nouveau groupe</span>
+                            <div [@fade]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" class="flex ais jcsb column fw" style="flex: 3; margin-left: 10px;">
+                                <div class="flex ais jcsb column fw gap10">
+                                    <span>{{ group.name }}</span>
+                                    <span style="font-size: 12px;">{{ group.description }}</span>
+                                </div>
+                                <span style="font-size: 12px;"> {{ getLastMessager(getGroupKeyByName(groupName)) }} - {{getTimeSinceLastMessage(getGroupKeyByName(groupName))}}</span>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <button class="button createGroupButton flex aic jcc p10" (click)="createNewGroup()" style="background-color: #575757;">
+                        <span [@fadeInOut] 
+                              *ngIf="selectedSlideBarVisibility !== slideBarVisibility.REDUCED" 
+                              style="color: white;">
+                            Créer un nouveau groupe
+                        </span>
+                        <span [@fadeInOut] 
+                              *ngIf="selectedSlideBarVisibility === slideBarVisibility.REDUCED" 
+                              style="color: white; font-size: 24px;">
+                            +
+                        </span>
                     </button>
                 </div>
+                <button class="button openCloseButton" (click)="switchSlideBarVisibility()">
+                    <svg [@rotateArrow]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M20,10V14H11L14.5,17.5L12.08,19.92L4.16,12L12.08,4.08L14.5,6.5L11,10H20Z" /></svg>
+                </button>
             </div>
             <div class="groupContent flex column" style="flex: 5">
                 <div class="fh messagesDisplay">
                     <div [class.ownMessage]="message.user?.uid === currentCustomUser?.uid" [attr.data-message-id]="message.id" *ngFor="let message of getCurrentGroupMessages(); trackBy: trackByMessageId" class="messageItem flex mb10">
                         @if (message.user?.uid === currentCustomUser?.uid) {
+                            <div class="flex" style="flex-direction: column-reverse; margin-right: 10px;">
+                                @if (isMessageSeen(message)) {
+                                    <tooltip-component>
+                                        <div tooltipedElement>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,4.5C17,4.5 21.27,7.61 23,12C21.27,16.39 17,19.5 12,19.5C7,19.5 2.73,16.39 1,12C2.73,7.61 7,4.5 12,4.5M3.18,12C4.83,15.36 8.24,17.5 12,17.5C15.76,17.5 19.17,15.36 20.82,12C19.17,8.64 15.76,6.5 12,6.5C8.24,6.5 4.83,8.64 3.18,12Z" /></svg>
+                                        </div>
+                                        <div tooltipContent>
+                                            <div class="flex column gap10">
+                                                <span>Lu par :</span>
+                                                <div class="fw" *ngFor="let seener of message.seenBy">
+                                                    <div class="flex aic gap10" *ngIf="seener.uid !== currentCustomUser?.uid">
+                                                        <div class="profilPicture">
+                                                            <img [src]="imageCacheService.getImageUrl(seener?.photoURL!)" height="20px" width="20px">
+                                                        </div>
+                                                        <span>{{ seener.displayName }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tooltip-component>
+                                } @else {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" fill="white" viewBox="0 0 24 24"><path d="M2,5.27L3.28,4L20,20.72L18.73,22L15.65,18.92C14.5,19.3 13.28,19.5 12,19.5C7,19.5 2.73,16.39 1,12C1.69,10.24 2.79,8.69 4.19,7.46L2,5.27M12,9A3,3 0 0,1 15,12C15,12.35 14.94,12.69 14.83,13L11,9.17C11.31,9.06 11.65,9 12,9M12,4.5C17,4.5 21.27,7.61 23,12C22.18,14.08 20.79,15.88 19,17.19L17.58,15.76C18.94,14.82 20.06,13.54 20.82,12C19.17,8.64 15.76,6.5 12,6.5C10.91,6.5 9.84,6.68 8.84,7L7.3,5.47C8.74,4.85 10.33,4.5 12,4.5M3.18,12C4.83,15.36 8.24,17.5 12,17.5C12.69,17.5 13.37,17.43 14,17.29L11.72,15C10.29,14.85 9.15,13.71 9,12.28L5.6,8.87C4.61,9.72 3.78,10.78 3.18,12Z" /></svg>
+                                }
+                            </div>
                             <div class="messageContent flex column gap10 jcsb">
                                 <div style="color: white;" class="flex gap10 jce">
                                     <span style="color: #ffd700"><strong>{{message.user?.displayName}}</strong></span>
@@ -57,7 +93,7 @@
                                     {{message.message}}
                                 </span>
                             </div>
-                            <div class="flex jcc column profilPictureWrapper gap10">
+                            <div class="flex column profilPictureWrapper gap10">
                                 <div class="profilPicture">
                                     <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
                                 </div>
@@ -80,7 +116,7 @@
                                 </div>
                             </div>
                         } @else {
-                            <div class="profilPicture flex aic jcc">
+                            <div class="profilPicture flex aic">
                                 <img [src]="imageCacheService.getImageUrl(message.user?.photoURL!)" height="40px" width="40px">
                             </div>
                             <div class="messageContent flex column gap10">
