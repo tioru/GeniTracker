@@ -101,32 +101,21 @@ export const animations = [
     state('true', style({ opacity: 0, height: 0, width: 0, overflow: 'hidden'})),
     transition('false <=> true', animate('300ms ease-in-out'))
   ]),
-  trigger('buttonResize', [
-      state('expanded', style({
-        width: '{{expandedWidth}}px'
-      }), { params: { expandedWidth: 200 } }),
-      state('reduced', style({
-        width: '{{reducedWidth}}px'
-      }), { params: { reducedWidth: 50 } }),
-      transition('expanded <=> reduced', [
-        animate('300ms ease-in-out')
-      ])
-    ]),
-    trigger('crossfade', [
-      transition('1 <=> 2', [
-        group([
-          query('.active', [
-            style({ opacity: 0, scale: 0.7 })
-          ]),
-          query(':not(.active)', [
-            animate('0.15s ease-out', 
-            style({ opacity: 0, scale: 0.7 }))
-          ]),
-          query('.active', [
-            animate('0.15s ease-in',
-            style({ opacity: 1, scale: 1 }))
-          ])
+  trigger('crossfade', [
+    transition('1 <=> 2', [
+      group([
+        query('.active', [
+          style({ opacity: 0, scale: 0.7 })
+        ]),
+        query(':not(.active)', [
+          animate('0.15s ease-out', 
+          style({ opacity: 0, scale: 0.7 }))
+        ]),
+        query('.active', [
+          animate('0.15s ease-in',
+          style({ opacity: 1, scale: 1 }))
         ])
       ])
     ])
+  ])
 ];
