@@ -9,7 +9,7 @@
     height: 85vh;
 }
 
-.imgPlaceholder {
+.imgPlaceholder ,.imgGroupPreview {
     width: 80px;
     height: 80px;
     background-color: rgb(49, 49, 49);
@@ -245,4 +245,38 @@
 
 .dateGroup {
   margin-top: 10px;
+}
+
+.form {
+    position: absolute;
+    width: 100%;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 355px;
+    transition: height 400ms ease-in-out, width 400ms ease-in-out;
+    height: fit-content;
+
+    &.setDisplayName {
+        height: 440px;
+        width: 400px;
+    }
+
+    &.setDescription {
+        height: 440px;
+        width: 400px;
+    }
+
+    &.setPicture {
+        height: 440px;
+        width: 400px;
+    }
+
+    .imgGroupPreview {
+        height: 150px;
+        width: 150px;
+    }
 }

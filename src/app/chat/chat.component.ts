@@ -28,9 +28,9 @@ export enum SLIDE_BAR_VISIBILITY {
 }
 
 export enum NEW_GROUP_DIALOG_TAB {
-  DISPLAY_NAME,
-  DESCRIPTION,
-  PICTURE
+  SET_DISPLAY_NAME,
+  SET_DESCRIPTION,
+  SET_PICTURE
 }
 
 @Component({
@@ -82,11 +82,13 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public newGroupDialogVisibility : boolean = false;
 
-  public selectedNewGroupDialogTab : NEW_GROUP_DIALOG_TAB = NEW_GROUP_DIALOG_TAB.DISPLAY_NAME;
+  public selectedNewGroupDialogTab : NEW_GROUP_DIALOG_TAB = NEW_GROUP_DIALOG_TAB.SET_DISPLAY_NAME;
 
   public newGroupDialogTab : typeof NEW_GROUP_DIALOG_TAB = NEW_GROUP_DIALOG_TAB;
 
-  public newGroup : ProjectClass.Local.GroupItem = new ProjectClass.Local.GroupItem(); 
+  public newGroup : ProjectClass.Local.GroupItem = new ProjectClass.Local.GroupItem();
+
+  public newGroupRequestCreationLoading : boolean = false;
 
   ngOnInit() {
     this.chatListening();
@@ -238,7 +240,10 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   public createNewGroup() : void {
-    
+    const inputField = document.querySelector('.input.pictureLink') as HTMLInputElement;
+    const isValid = this.newGroup.description!.trim().length > 0;
+
+    inputField.classList.toggle('error', !isValid);
   }
 
   public getCurrentGroupMessages() : ProjectClass.Local.Message[] {
@@ -454,7 +459,24 @@ export class ChatComponent implements OnInit, OnDestroy{
     }
 
     if (isValid && isSubmitEvent) {
-      this.selectedNewGroupDialogTab = this.newGroupDialogTab.DISPLAY_NAME;
+      this.selectedNewGroupDialogTab = this.newGroupDialogTab.SET_DESCRIPTION;
+    }
+  }
+
+  public checkDescription(event: Event) {
+    const inputField = document.querySelector('.input.pictureLink') as HTMLInputElement;
+    const isValid = this.newGroup.description!.trim().length > 0;
+    const isSubmitEvent = (event instanceof KeyboardEvent && event.code === 'Enter') || 
+                          (event instanceof MouseEvent);
+
+    inputField.classList.toggle('error', !isValid);
+
+    if (!isValid && isSubmitEvent) {
+      // Wave animation to indicate error
+    }
+
+    if (isValid && isSubmitEvent) {
+      this.selectedNewGroupDialogTab = this.newGroupDialogTab.SET_PICTURE;
     }
   }
 
