@@ -21,7 +21,7 @@
                             </div>
                         </ng-container>
                     </div>
-                    <button class="button createGroupButton flex aic jcc p10" (click)="createNewGroup()" style="background-color: #575757;">
+                    <button class="button createGroupButton flex aic jcc p10" (click)="newGroupDialogVisibility = true" style="background-color: #575757;">
                         <div [@crossfade]="selectedSlideBarVisibility" class="container">
                             <span class="buttonText" [class.active]="selectedSlideBarVisibility === slideBarVisibility.NORMAL" style="color: white;">Créer un nouveau groupe</span>
                             <span class="buttonText" [class.active]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" style="color: white; font-size: 24px;">+</span>
@@ -159,6 +159,25 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</dialog-component>
+
+<dialog-component *ngIf="newGroupDialogVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true">
+    <div body [ngClass]="{'setDisplayName': selectedNewGroupDialogTab === newGroupDialogTab.DISPLAY_NAME, 'setDescription': selectedNewGroupDialogTab === newGroupDialogTab.DESCRIPTION, 'setPicture': selectedNewGroupDialogTab === newGroupDialogTab.PICTURE}" class="flex aic column">
+        <div class="form flex aic jcsa column fh" [ngStyle]="{'transform': selectedNewGroupDialogTab === newGroupDialogTab.DISPLAY_NAME ? 'translateX(0)' : selectedNewGroupDialogTab === newGroupDialogTab.DESCRIPTION ? 'translateX(-100%)' : 'translateX(-200%)'}">
+            <h3 style="color: white; margin: 0; text-align: center;">Veuillez saisir le nom du groupe</h3>
+            <div style="width: fit-content; position: relative;">
+                <input class="input displayname" [(ngModel)]="newGroup.name" (keyup)="checkDisplayName($event)" (keyup.enter)="checkDisplayName($event)">
+                <button *ngIf="newGroup.name" class="clear_icon" (click)="newGroup.name = ''">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25px" viewBox="0 0 24 24"><path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" /></svg>
+                </button>
+            </div>
+            <div class="flex fw jcc">
+                <button class="button" (click)="checkDisplayName($event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25px" fill="white"><path d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" /></svg>
+                </button>
             </div>
         </div>
     </div>

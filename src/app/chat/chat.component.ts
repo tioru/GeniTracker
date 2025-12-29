@@ -27,6 +27,12 @@ export enum SLIDE_BAR_VISIBILITY {
   NORMAL = 2
 }
 
+export enum NEW_GROUP_DIALOG_TAB {
+  DISPLAY_NAME,
+  DESCRIPTION,
+  PICTURE
+}
+
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -72,7 +78,15 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public selectedSlideBarVisibility : SLIDE_BAR_VISIBILITY = SLIDE_BAR_VISIBILITY.NORMAL;
 
-  public slideBarVisibility : typeof SLIDE_BAR_VISIBILITY = SLIDE_BAR_VISIBILITY
+  public slideBarVisibility : typeof SLIDE_BAR_VISIBILITY = SLIDE_BAR_VISIBILITY;
+
+  public newGroupDialogVisibility : boolean = false;
+
+  public selectedNewGroupDialogTab : NEW_GROUP_DIALOG_TAB = NEW_GROUP_DIALOG_TAB.DISPLAY_NAME;
+
+  public newGroupDialogTab : typeof NEW_GROUP_DIALOG_TAB = NEW_GROUP_DIALOG_TAB;
+
+  public newGroup : ProjectClass.Local.GroupItem = new ProjectClass.Local.GroupItem(); 
 
   ngOnInit() {
     this.chatListening();
@@ -425,6 +439,23 @@ export class ChatComponent implements OnInit, OnDestroy{
         return a.date.getTime() - b.date.getTime();
       });
     });
+  }
+
+  public checkDisplayName(event: Event) {
+    const inputField = document.querySelector('.input.displayname') as HTMLInputElement;
+    const isValid = this.newGroup.name!.trim().length > 0;
+    const isSubmitEvent = (event instanceof KeyboardEvent && event.code === 'Enter') || 
+                          (event instanceof MouseEvent);
+
+    inputField.classList.toggle('error', !isValid);
+
+    if (!isValid && isSubmitEvent) {
+      // Wave animation to indicate error
+    }
+
+    if (isValid && isSubmitEvent) {
+      this.selectedNewGroupDialogTab = this.newGroupDialogTab.DISPLAY_NAME;
+    }
   }
 
   ngOnDestroy() {
