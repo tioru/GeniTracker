@@ -261,17 +261,17 @@
     height: fit-content;
 
     &.setDisplayName {
-        height: 440px;
+        height: 220px;
         width: 400px;
     }
 
     &.setDescription {
-        height: 440px;
+        height: 220px;
         width: 400px;
     }
 
     &.setPicture {
-        height: 440px;
+        height: 400px;
         width: 400px;
     }
 
@@ -279,4 +279,15 @@
         height: 150px;
         width: 150px;
     }
+}
+
+.unreadMessageAnchor {
+    position : relative; 
+}
+
+.unreadMessage {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translate(-50%, 0);
 }

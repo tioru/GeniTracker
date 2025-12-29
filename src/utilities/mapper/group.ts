@@ -34,15 +34,17 @@ export class GroupMapper {
 
             const lMessages : { [key: string]: ProjectClass.Local.Message } = {};
 
-            const keys = Object.keys(rGroup.messages);
+            if (rGroup.messages) {
+                const keys = Object.keys(rGroup.messages);
 
-            const messagesArray = await Promise.all(
-                keys.map(key => this.messageMapper.mapRemote(rGroup.messages[key]))
-            );
+                const messagesArray = await Promise.all(
+                    keys.map(key => this.messageMapper.mapRemote(rGroup.messages![key]))
+                );
 
-            keys.forEach((key, index) => {
-                lMessages[key] = messagesArray[index];
-            });
+                keys.forEach((key, index) => {
+                    lMessages[key] = messagesArray[index];
+                });
+            }
 
             return new ProjectClass.Local.GroupItem({
                 createdBy: creator,
@@ -54,6 +56,21 @@ export class GroupMapper {
             })
         } catch (error) {
             throw new Error("Error mapping Remote Group to Local Group: " + error);
+        }
+    }
+
+    public mapLocalItem(lGroup : ProjectClass.Local.GroupItem) : ProjectClass.Remote.GroupItem {
+        try {
+            return new ProjectClass.Remote.GroupItem({
+                createdBy: lGroup.createdBy?.uid,
+                messages: null,
+                createdAt: new Date().toISOString(),
+                name: lGroup.name,
+                description: lGroup.description,
+                imgUrl: lGroup.imgUrl
+            })
+        } catch (error) {
+            throw new Error("Error mapping Local Group to Remote Group: " + error);
         }
     }
 }

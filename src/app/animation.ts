@@ -117,5 +117,23 @@ export const animations = [
         ])
       ])
     ])
-  ])
+  ]),
+  trigger('slideYCenteredAnimation', [
+    transition(':enter', [
+      style({ 
+        opacity: 0, 
+        transform: 'translate(-50%, 100%)'
+      }),
+      animate('500ms ease', style({ 
+        opacity: 1, 
+        transform: 'translate(-50%, 0)'
+      }))
+    ]),
+    transition(':leave', [
+      animate('500ms ease', style({ 
+        opacity: 0, 
+        transform: 'translate(-50%, 100%)'
+      }))
+    ])
+  ]),
 ];

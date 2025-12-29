@@ -17,11 +17,11 @@
                                     <span>{{ group.name }}</span>
                                     <span style="font-size: 12px;">{{ group.description }}</span>
                                 </div>
-                                <span style="font-size: 12px;"> {{ getLastMessager(getGroupKeyByName(groupName)) }} - {{getTimeSinceLastMessage(getGroupKeyByName(groupName))}}</span>
+                                <span *ngIf="getLastMessager(getGroupKeyByName(groupName))" style="font-size: 12px;"> {{ getLastMessager(getGroupKeyByName(groupName)) }} - {{getTimeSinceLastMessage(getGroupKeyByName(groupName))}}</span>
                             </div>
                         </ng-container>
                     </div>
-                    <button class="button createGroupButton flex aic jcc p10" (click)="newGroupDialogVisibility = true" style="background-color: #575757;">
+                    <button class="button createGroupButton flex aic jcc p10" (click)="newGroupDialogVisibility = true; groupCreationFinished = false" style="background-color: #575757;">
                         <div [@crossfade]="selectedSlideBarVisibility" class="container">
                             <span class="buttonText" [class.active]="selectedSlideBarVisibility === slideBarVisibility.NORMAL" style="color: white;">Créer un nouveau groupe</span>
                             <span class="buttonText" [class.active]="selectedSlideBarVisibility === slideBarVisibility.REDUCED" style="color: white; font-size: 24px;">+</span>
@@ -33,7 +33,7 @@
                 </button>
             </div>
             <div class="flex column" style="flex: 5">
-                <div class="messagesDisplay">
+                <div class="messagesDisplay fh">
                     <div class="dateGroup" *ngFor="let messagesByDate of messagesSortedByDate | keyvalue; trackBy: trackByDate">
                         <div class="dateSeparator">
                             <h2 style="color: #ffd700">{{messagesByDate.key | date : 'dd/MM/yyyy'}}</h2>
@@ -138,7 +138,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex aic mb10 jcc fw">
+                <div class="flex aic mb10 jcc fw unreadMessageAnchor">
                     <div class="flex fw column jcc">
                         <div class="flex aic jcc">
                             <div [@slideYAnimation] class="updateMessage flex aic jcsb" style="padding: 2px; z-index: 2;" *ngIf="selectedMessageMode === messageMode.UPDATE">
@@ -153,6 +153,16 @@
                                 </button>
                             </div>
                         </div>
+                        <div [@slideYCenteredAnimation] class="unreadMessage" *ngIf="getUnreadMessages">
+                            <button class="button" (click)="goToBottom()">
+                                <span>{{getUnreadMessages}} </span>
+                                @if(getUnreadMessages > 1) {
+                                    <span>nouveaux messages</span>
+                                } @else {
+                                    <span>nouveau message</span>
+                                }
+                            </button>
+                        </div>
                         <input class="input" [(ngModel)]="messageInputContent" style="margin: 0 10px; z-index: 3;" (keydown.enter)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()">
                     </div>
                     <button class="sendButton flex aic jcc" style="border-radius: 50%; line-height: 0; margin-right: 10px;" (click)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()">
@@ -164,7 +174,7 @@
     </div>
 </dialog-component>
 
-<dialog-component *ngIf="newGroupDialogVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true">
+<dialog-component *ngIf="newGroupDialogVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="newGroupDialogVisibility && !groupCreationFinished" [modal]="true" (onHide)="newGroupDialogVisibility = false;">
     <div body [ngClass]="{'setDisplayName': selectedNewGroupDialogTab === newGroupDialogTab.SET_DISPLAY_NAME, 'setDescription': selectedNewGroupDialogTab === newGroupDialogTab.SET_DESCRIPTION, 'setPicture': selectedNewGroupDialogTab === newGroupDialogTab.SET_PICTURE}" class="flex aic column gap20 m20 wrapper">
         <div class="form flex aic jcsa column fh" [ngStyle]="{'transform': selectedNewGroupDialogTab === newGroupDialogTab.SET_DISPLAY_NAME ? 'translateX(0)' : selectedNewGroupDialogTab === newGroupDialogTab.SET_DESCRIPTION ? 'translateX(-100%)' : 'translateX(-200%)'}">
             <h3 style="color: white; margin: 0; text-align: center;">Veuillez saisir le nom du groupe</h3>

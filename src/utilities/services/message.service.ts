@@ -1,9 +1,10 @@
 import { inject, Injectable } from "@angular/core";
-import { Database, ref, remove, runTransaction, update } from "@angular/fire/database";
+import { Database, push, ref, remove, runTransaction, set, update } from "@angular/fire/database";
 import { NotificationService, notificationSeverity } from "./notification.service";
 import { ProjectClass } from "../classes/class";
 import { MessageMapper } from "../mapper/message";
 import { FirebaseErrorService } from "./firebase-error.service";
+import { GroupMapper } from "../mapper/group";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class MessageService {
     constructor(
         public notificationService : NotificationService,
         public messageMapper : MessageMapper,
-        public firebaseErrorService: FirebaseErrorService
+        public firebaseErrorService: FirebaseErrorService,
+        public groupMapper : GroupMapper
     ) { }
 
     public async updateMessage(selectedGroupKey : string, updatedMessage : ProjectClass.Local.Message) : Promise<boolean> {
@@ -98,6 +100,19 @@ export class MessageService {
 
         } catch (error) {
             console.error('Erreur lors du marquage du message comme vu:', error);
+            return false;
+        }
+    }
+
+    public async createGroup(newGroup : ProjectClass.Local.GroupItem): Promise<boolean> {
+        try {
+            const groupRef = ref(this.database, 'groups')
+
+            await push(groupRef, this.groupMapper.mapLocalItem(newGroup))
+
+            return true;
+        } catch(error) {
+            console.error("Error creating new group: ", error);
             return false;
         }
     }

@@ -1,5 +1,5 @@
 import { CommonModule, KeyValue } from '@angular/common';
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
 import { Database, onValue, push, ref, set } from '@angular/fire/database';
@@ -90,6 +90,8 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public newGroupRequestCreationLoading : boolean = false;
 
+  public groupCreationFinished : boolean = false;
+
   ngOnInit() {
     this.chatListening();
     this.userService.currentUser$.subscribe(user => {
@@ -132,12 +134,6 @@ export class ChatComponent implements OnInit, OnDestroy{
           }
 
           this.sortMessagesByDate();
-
-          this.getCurrentGroupMessages().forEach((message) => {
-            if (!(this.isMessageSeenByCurrentUser(message))) {
-              this.unreadMessages += 1;
-            }
-          });
 
           if (this.intersectionObserver) {
             this.intersectionObserver.disconnect();
@@ -220,11 +216,14 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   public getLastMessager(groupKey: string) : string {
-    return Object.values(this.groups[groupKey].messages).sort((a, b) => {
-      const dateA = a.date ? new Date(a.date).getTime() : 0;
-      const dateB = b.date ? new Date(b.date).getTime() : 0;
-      return dateA - dateB;
-    })[Object.values(this.groups[groupKey].messages).length - 1].user?.displayName!
+    if (Object.values(this.groups[groupKey].messages).length > 0) {
+      return Object.values(this.groups[groupKey].messages).sort((a, b) => {
+        const dateA = a.date ? new Date(a.date).getTime() : 0;
+        const dateB = b.date ? new Date(b.date).getTime() : 0;
+        return dateA - dateB;
+        })[Object.values(this.groups[groupKey].messages).length - 1].user?.displayName!
+    }
+    return ""
   }
 
   public getTimeSinceLastMessage(groupKey: string) : string {
@@ -244,6 +243,18 @@ export class ChatComponent implements OnInit, OnDestroy{
     const isValid = this.newGroup.description!.trim().length > 0;
 
     inputField.classList.toggle('error', !isValid);
+
+    if (isValid) {
+      this.newGroup.createdBy = this.currentCustomUser;
+      this.messageService.createGroup(this.newGroup).then((result) => {
+        if (result) {
+          this.newGroupDialogVisibility = false;
+          this.selectedNewGroupDialogTab = NEW_GROUP_DIALOG_TAB.SET_DISPLAY_NAME;
+          this.newGroup = new ProjectClass.Local.GroupItem();
+          this.groupCreationFinished = true;
+        }
+      })
+    }
   }
 
   public getCurrentGroupMessages() : ProjectClass.Local.Message[] {
@@ -360,7 +371,7 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   trackByDate(index: number, item: KeyValue<string, ProjectClass.Local.Message[]>): string {
-    return item.key; // La date en string
+    return item.key;
   }
 
   private initializeMessageObserver(): void {
@@ -478,6 +489,10 @@ export class ChatComponent implements OnInit, OnDestroy{
     if (isValid && isSubmitEvent) {
       this.selectedNewGroupDialogTab = this.newGroupDialogTab.SET_PICTURE;
     }
+  }
+
+  get getUnreadMessages(): number {
+    return this.getCurrentGroupMessages().filter(message => !this.isMessageSeenByCurrentUser(message)).length;
   }
 
   ngOnDestroy() {

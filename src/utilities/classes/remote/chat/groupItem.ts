@@ -2,7 +2,7 @@ import { RMessageClass } from "./message";
 
 export class RGroupItem {
   createdBy: string | null = null;
-  messages: { [key: string]: RMessageClass } = {};
+  messages: { [key: string]: RMessageClass } | null = null;
   createdAt: string | null = null;
   name: string | null = null;
   description: string | null = null;
