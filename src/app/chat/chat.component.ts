@@ -99,6 +99,7 @@ export class ChatComponent implements OnInit, OnDestroy{
       this.userService.getUserByUID(user?.uid!).then((customUser) => {
         this.currentCustomUser = customUser;
       });
+      this.chatListening();
     });
   }
 
