@@ -253,3 +253,7 @@ dialog-component {
 svg {
   line-height: 0;
 }
+
+body:has([popover]:not([style*="display: none"])) {
+  overflow: hidden;
+}
