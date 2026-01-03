@@ -1,5 +1,5 @@
 import { LUserClass } from "../users/user";
-import { LAttachedFiles } from "./attachedFiles";
+import { LAttachedFile } from "./attachedFile";
 
 export class LMessageClass {
   user : LUserClass | null = null;
@@ -7,7 +7,7 @@ export class LMessageClass {
   date : Date | null = null;
   modified : boolean | null = null;
   seenBy : LUserClass[] = [];
-  attachedFiles : LAttachedFiles[] = [];
+  attachedFiles : LAttachedFile[] = [];
   id : string | null = null;
 
   constructor(init?:Partial<LMessageClass>) {

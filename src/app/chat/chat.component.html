@@ -87,12 +87,12 @@
                                             </tooltip-component>
                                         }
                                     </div>
-                                    <div *ngFor="let attachedFile of message.attachedFiles">
-                                        <img [src]="getAttachedFileUrl(attachedFile.file)" width="40px" height="40px">
-                                    </div>
                                     <span style="color: white;">
                                         {{message.message}}
                                     </span>
+                                    <div class="fw flex jce" *ngFor="let attachedFile of message.attachedFiles">
+                                        <img (click)="openFile(attachedFile)" class="messageImg" [src]="imageCacheService.getFileUrl(attachedFile.file!)" max-width="400px" max-height="400px">
+                                    </div>
                                 </div>
                                 <div class="flex column profilPictureWrapper gap10">
                                     <div class="profilPicture">
@@ -143,6 +143,16 @@
                 </div>
                 <div class="flex aic mb10 jcc fw unreadMessageAnchor gap20">
                     <div class="flex fw column jcc">
+                        <div *ngIf="attachedFiles.length > 0" style="display: flex; gap: 10px; margin: 0 10px 10px 10px; flex-wrap: wrap;">
+                            <div *ngFor="let attachedFile of attachedFiles; let i = index" style="position: relative;">
+                                @if (getFileType(attachedFile) === supportedPreviewFile.IMG) {
+                                    <img (click)="openFile(attachedFile)" class="imgPreview" [src]="imageCacheService.getFileUrl(attachedFile?.file!)">
+                                } @else if (getFileType(attachedFile) === supportedPreviewFile.VIDEO) {
+                                    <img (click)="openFile(attachedFile)" class="imgPreview" [src]="imageCacheService.getFileUrl(attachedFile?.file!)">
+                                }
+                                <button class="removeButton" (click)="removeFile(attachedFile)">×</button>
+                            </div>
+                        </div>
                         <div class="flex aic jcc">
                             <div [@slideYAnimation] class="updateMessage flex aic jcsb" style="padding: 2px; z-index: 2;" *ngIf="selectedMessageMode === messageMode.UPDATE">
                                 <div class="flex aic gap10">
@@ -166,12 +176,6 @@
                                 }
                             </button>
                         </div>
-                        <div *ngIf="attachedFiles.length > 0" style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-                            <div *ngFor="let file of attachedFiles; let i = index" style="position: relative;">
-                                <img [src]="file.base64" style="max-width: 100px; max-height: 100px; border-radius: 8px; border: 2px solid #ddd;">
-                                <button (click)="removeFile(file)" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer;">×</button>
-                            </div>
-                        </div>
                         <textarea id="expandingInput" (input)="updateTextArea()" [(ngModel)]="messageInputContent" style="margin: 0 10px; z-index: 3; padding: 10px 15px" (keydown.enter)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()"></textarea>
                     </div>
                     <button class="sendButton flex aic jcc" style="border-radius: 50%; line-height: 0; margin-right: 10px;" (click)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()">
@@ -183,7 +187,7 @@
     </div>
 </dialog-component>
 
-<dialog-component *ngIf="newGroupDialogVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="newGroupDialogVisibility && !groupCreationFinished" [modal]="true" (onHide)="newGroupDialogVisibility = false;">
+<dialog-component *ngIf="newGroupDialogVisibility" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="newGroupDialogVisibility && !groupCreationFinished" (onHide)="newGroupDialogVisibility = false;">
     <div body [ngClass]="{'setDisplayName': selectedNewGroupDialogTab === newGroupDialogTab.SET_DISPLAY_NAME, 'setDescription': selectedNewGroupDialogTab === newGroupDialogTab.SET_DESCRIPTION, 'setPicture': selectedNewGroupDialogTab === newGroupDialogTab.SET_PICTURE}" class="flex aic column gap20 m20 wrapper">
         <div class="form flex aic jcsa column fh" [ngStyle]="{'transform': selectedNewGroupDialogTab === newGroupDialogTab.SET_DISPLAY_NAME ? 'translateX(0)' : selectedNewGroupDialogTab === newGroupDialogTab.SET_DESCRIPTION ? 'translateX(-100%)' : 'translateX(-200%)'}">
             <h3 style="color: white; margin: 0; text-align: center;">Veuillez saisir le nom du groupe</h3>
@@ -240,5 +244,11 @@
                 </button>
             </div>
         </div>
+    </div>
+</dialog-component>
+
+<dialog-component *ngIf="previewFileDialogVisibilty" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="previewFileDialogVisibilty && !false" (onHide)="previewFileDialogVisibilty = false;">
+    <div body class="flex aic jcc">
+        <img class="previewedImg" [src]="imageCacheService.getFileUrl(previewedFile?.file!)">
     </div>
 </dialog-component>

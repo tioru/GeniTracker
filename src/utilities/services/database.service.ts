@@ -19,11 +19,11 @@ export class DatabaseService {
     this.storage = new Storage(this.client);
   }
 
-  public async getFilesFromIDsArray(fileIds : string[]) : Promise<ProjectClass.Remote.AttachedFiles[]> {
+  public async getFilesFromIDsArray(fileIds: string[]) : Promise<ProjectClass.Remote.AttachedFile[]> {
     return Promise.all(fileIds.map((fileId) => this.getFileFromID(fileId)))
   }
 
-  public async getFileFromID(fileId: string): Promise<ProjectClass.Remote.AttachedFiles> {
+  public async getFileFromID(fileId: string): Promise<ProjectClass.Remote.AttachedFile> {
     try {
       const fileMetadata = await this.storage.getFile(
         environment.writeappConfig.bucketId,
@@ -54,7 +54,7 @@ export class DatabaseService {
         reader.readAsDataURL(fileBlob);
       });
 
-      return new ProjectClass.Remote.AttachedFiles({
+      return new ProjectClass.Remote.AttachedFile({
         base64: base64,
         file: file,
         id: fileId
@@ -65,11 +65,11 @@ export class DatabaseService {
     }
   }
 
-  public async uploadFilesArrayToBucket(files : ProjectClass.Local.AttachedFiles[]) : Promise<ProjectClass.Local.AttachedFiles[]> {
+  public async uploadFilesArrayToBucket(files: ProjectClass.Local.AttachedFile[]) : Promise<ProjectClass.Local.AttachedFile[]> {
     return Promise.all(files.map((file) => this.uploadFileToBucket(file)))
   }
 
-  public async uploadFileToBucket(file: ProjectClass.Local.AttachedFiles): Promise<ProjectClass.Local.AttachedFiles> {
+  public async uploadFileToBucket(file: ProjectClass.Local.AttachedFile): Promise<ProjectClass.Local.AttachedFile> {
     try {
       if (!file.file) {
         throw new Error('No file provided');
@@ -88,5 +88,16 @@ export class DatabaseService {
     } catch (error) {
       throw new Error(`Error while uploading new file: ${error}`);
     }
+  }
+
+  public async deleteFilesArray(files: ProjectClass.Local.AttachedFile[]): Promise<void[]> {
+    return Promise.all(files.map((file) => this.deleteFile(file)))
+  }
+
+  public async deleteFile(file: ProjectClass.Local.AttachedFile): Promise<void> {
+    await this.storage.deleteFile({
+      bucketId: environment.writeappConfig.bucketId,
+      fileId: file.id!
+    })
   }
 }

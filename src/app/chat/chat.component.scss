@@ -299,8 +299,8 @@ textarea {
     scrollbar-color: grey transparent;
     box-sizing: border-box;
     width: 100%;
-    min-height: 60px;
-    height: 60px;
+    min-height: 68px;
+    height: 68px;
     max-height: 200px;
     border: 2px solid #5f5f5f;
     border-radius: 25px;
@@ -319,4 +319,47 @@ textarea:focus {
 
 textarea.scrollable {
     overflow-y: auto;
+}
+
+.imgPreview {
+    max-width: 100px; 
+    max-height: 100px; 
+    border-radius: 8px; 
+    border: 2px solid #ddd;
+    cursor: pointer;
+    transition: filter 0.3s ease;
+    
+    &:hover {
+        filter: brightness(0.6);
+    }
+}
+
+.removeButton {
+    position: absolute; 
+    top: -5px; 
+    right: -5px; 
+    background: red; 
+    color: white; 
+    border: none; 
+    border-radius: 50%; 
+    width: 20px; 
+    height: 20px; 
+    cursor: pointer;
+}
+
+.messageImg {
+    max-width: 400px; 
+    max-height: 400px; 
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: filter 0.3s ease;
+    &:hover {
+        filter: brightness(0.6);
+    }
+}
+
+.previewedImg {
+    max-width: 75vw;
+    max-height: 75vh;
+    border-radius: 8px;
 }

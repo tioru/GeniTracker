@@ -25,7 +25,7 @@ export class MessageMapper {
             const seenUsersWithNull = await Promise.all(rMessage.seenBy.map(userId => this.userService.getUserByUID(userId)));
             const seenUsers = seenUsersWithNull.filter((user) => user !== null);
 
-            let attachedFiles: ProjectClass.Remote.AttachedFiles[] = [];
+            let attachedFiles: ProjectClass.Remote.AttachedFile[] = [];
 
             if (rMessage.attachedFilesIds && rMessage.attachedFilesIds.length > 0) {
                 attachedFiles = await this.databaseService.getFilesFromIDsArray(rMessage.attachedFilesIds);

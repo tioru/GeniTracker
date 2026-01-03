@@ -9,7 +9,7 @@ import { LPassiveTalentsClass } from "./local/characters/passiveTalents";
 import { LSkillTalentsClass } from "./local/characters/skillTalents";
 import { LUpgradeClass } from "./local/characters/upgrade";
 import { LVisionTypeClass, LVisionTypeListEnum } from "./local/characters/visionType";
-import { LAttachedFiles } from "./local/chat/attachedFiles";
+import { LAttachedFile } from "./local/chat/attachedFile";
 import { LGroupClass } from "./local/chat/group";
 import { LGroupItem } from "./local/chat/groupItem";
 import { LMessageClass } from "./local/chat/message";
@@ -29,7 +29,7 @@ import { RPassiveTalentsClass } from "./remote/characters/passiveTalents";
 import { RSkillTalentsClass } from "./remote/characters/skillTalents";
 import { RUpgradeClass } from "./remote/characters/upgrade";
 import { RVisionTypeClass, RVisionTypeListEnum } from "./remote/characters/visionType";
-import { RAttachedFiles } from "./remote/chat/attachedFiles";
+import { RAttachedFile } from "./remote/chat/attachedFile";
 import { RGroupClass } from "./remote/chat/group";
 import { RGroupItem } from "./remote/chat/groupItem";
 import { RMessageClass } from "./remote/chat/message";
@@ -61,7 +61,7 @@ export namespace ProjectClass {
         export class Group extends LGroupClass{};
         export class GroupItem extends LGroupItem {};
         export class User extends LUserClass{};
-        export class AttachedFiles extends LAttachedFiles{};
+        export class AttachedFile extends LAttachedFile{};
     }
 
     export namespace Remote {
@@ -86,6 +86,6 @@ export namespace ProjectClass {
         export class Group extends RGroupClass{};
         export class GroupItem extends RGroupItem {};
         export class User extends RUserClass {};
-        export class AttachedFiles extends RAttachedFiles{};
+        export class AttachedFile extends RAttachedFile{};
     }
 }

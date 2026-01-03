@@ -13,9 +13,11 @@ import { TooltipComponent } from '../components/tooltip/tooltip.component';
 import { animations } from '../animation';
 import { MessageService } from '../../utilities/services/message.service';
 import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
+import { DatabaseService } from '../../utilities/services/database.service';
 
 const DEFAULT_GROUP_NAME = "Général";
 const SCROLLBAR_THRESHOLD = 100;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export enum MESSAGE_MODE {
   CREATE,
@@ -31,6 +33,12 @@ export enum NEW_GROUP_DIALOG_TAB {
   SET_DISPLAY_NAME,
   SET_DESCRIPTION,
   SET_PICTURE
+}
+
+export enum SUPPORTED_PREVIEW_FILE {
+  IMG,
+  VIDEO,
+  DOCUMENT
 }
 
 @Component({
@@ -92,7 +100,13 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public groupCreationFinished : boolean = false;
 
-  public attachedFiles: ProjectClass.Local.AttachedFiles[] = [];
+  public attachedFiles: ProjectClass.Local.AttachedFile[] = [];
+
+  public supportedPreviewFile : typeof SUPPORTED_PREVIEW_FILE = SUPPORTED_PREVIEW_FILE;
+
+  public previewFileDialogVisibilty : boolean = false;
+
+  public previewedFile : ProjectClass.Local.AttachedFile | null = null;
 
   ngOnInit() {
     this.chatListening();
@@ -111,7 +125,8 @@ export class ChatComponent implements OnInit, OnDestroy{
     public messageMapper : MessageMapper,
     public imageCacheService : ImageCacheService,
     public messageService : MessageService,
-    public notificationService : NotificationService
+    public notificationService : NotificationService,
+    public databaseService : DatabaseService
   ) {}
 
   private chatListening() {
@@ -312,7 +327,7 @@ export class ChatComponent implements OnInit, OnDestroy{
     }, 0);
   }
 
-  public updateMessage() : void {
+  public async updateMessage() : Promise<void> {
     if (this.currentCustomUser?.uid !== this.selectedMessageToUpdate!.user?.uid) {
       this.notificationService.addNotification({
         title: 'Modification impossible',
@@ -320,13 +335,46 @@ export class ChatComponent implements OnInit, OnDestroy{
         detail: `La modification d'un message n'est possible que pour son créateur.`,
         sticky: true
       });
-    } else {
-      this.messageService.updateMessage(this.selectedGroupKey, this.selectedMessageToUpdate!).then((result) => {
-        if (result) {
-          this.exitUpdateMode();
-        }
-      })
+      return;
     }
+
+    if (this.selectedMessageToUpdate!.message!.trim().length <= 0 && this.attachedFiles.length <= 0) {
+      this.notificationService.addNotification({
+        title: 'Modification impossible',
+        severity: this.notificationSeverity.ERROR,
+        detail: `Le message doit au moins contenir un message ou un fichier.`,
+        sticky: true
+      });
+      return;
+    }
+
+    const originalFiles = this.getCurrentGroupMessages().find((message) => message.id === this.selectedMessageToUpdate?.id)?.attachedFiles || [];
+
+    const filesToAdd = this.attachedFiles.filter((attachedFile) => 
+      originalFiles.some((originalFile) => 
+        originalFile.file?.name === attachedFile.file?.name &&
+        originalFile.file?.size === attachedFile.file?.size &&
+        originalFile.file?.type === attachedFile.file?.type
+      )
+    );
+
+    if (filesToAdd.length > 0) {
+      const uploadedFiles = await this.databaseService.uploadFilesArrayToBucket(filesToAdd);
+      this.selectedMessageToUpdate!.attachedFiles = [...originalFiles, ...uploadedFiles];
+    }
+
+    this.messageService.updateMessage(this.selectedGroupKey, this.selectedMessageToUpdate!).then((result) => {
+      if (result) {
+        const filesToDelete = originalFiles.filter(
+          file => !new Set(this.attachedFiles.map(file => file.id)).has(file.id)
+        );
+
+        if (filesToDelete.length > 0) {
+          this.databaseService.deleteFilesArray(filesToDelete);
+        }
+        this.exitUpdateMode();
+      }
+    })
   }
 
   public deleteMessage(message : ProjectClass.Local.Message) : void {
@@ -357,13 +405,15 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   public selectMessageForUpdate(message : ProjectClass.Local.Message) : void {
-    this.selectedMessageToUpdate = structuredClone(message)
+    this.selectedMessageToUpdate = structuredClone(message);
+    this.attachedFiles = structuredClone(this.selectedMessageToUpdate.attachedFiles);
     this.selectedMessageToUpdate.modified = true;
   }
 
   public exitUpdateMode() : void {
     this.selectedMessageMode = MESSAGE_MODE.CREATE;
     this.selectedMessageToUpdate = null;
+    this.attachedFiles = [];
   }
 
   public trackByMessageId(index: number, message: ProjectClass.Local.Message): string {
@@ -529,15 +579,41 @@ export class ChatComponent implements OnInit, OnDestroy{
     
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      
-      if (item.type.indexOf('image') !== -1) {
-        event.preventDefault(); // Empêcher le collage par défaut dans le textarea
+
+      if (!(item.kind.includes("file") && (item.type.includes('image') || item.type.includes('video') || item.type.includes('json') || item.type.includes('word') || item.type.includes('pdf') || item.type.includes('text')))) {
+        this.notificationService.addNotification({
+          title: 'Erreur',
+          severity: notificationSeverity.ERROR,
+          detail: `Type de fichier non supporté.`,
+          sticky: true,
+        });
+        return;
+      }
+
+      event.preventDefault();
+      const file = item.getAsFile();
+
+      if (file?.size && file.size > MAX_FILE_SIZE) {
+        this.notificationService.addNotification({
+          title: 'Erreur',
+          severity: notificationSeverity.ERROR,
+          detail: `Taille de fichier dépassant les 10 Mo.`,
+          sticky: true,
+        });
+        return;
+      }
         
-        const file = item.getAsFile();
-        if (file) {
+      if (file) {
+        const isDuplicate = this.attachedFiles.some(attachedFile => 
+          attachedFile.file!.name === file.name &&
+          attachedFile.file!.size === file.size &&
+          attachedFile.file!.type === file.type
+        );
+
+        if (!isDuplicate) {
           const reader = new FileReader();
           reader.onload = (e) => {
-            this.attachedFiles.push(new ProjectClass.Local.AttachedFiles(
+            this.attachedFiles.push(new ProjectClass.Local.AttachedFile(
               {
                 base64: e.target?.result as string,
                 file: file
@@ -545,20 +621,48 @@ export class ChatComponent implements OnInit, OnDestroy{
             ));
           };
           reader.readAsDataURL(file);
+        } else {
+          this.notificationService.addNotification({
+            title: 'Erreur',
+            severity: notificationSeverity.ERROR,
+            detail: `Le fichier a déjà été ajouté.`,
+            sticky: true,
+          })
         }
+      } else {
+        this.notificationService.addNotification({
+          title: 'Erreur',
+          severity: notificationSeverity.ERROR,
+          detail: `Le type de fichier n\' est pas supporté : ${item.type}`,
+          sticky: true,
+        })
       }
     }
   }
 
-  public removeFile(file : ProjectClass.Local.AttachedFiles): void {
-    const fileIndex = this.attachedFiles.indexOf(file);
-    this.attachedFiles.splice(fileIndex);
+  public removeFile(attachedFile : ProjectClass.Local.AttachedFile): void {
+    const fileIndex = this.attachedFiles.indexOf(attachedFile);
+    this.attachedFiles.splice(fileIndex, 1);
   }
 
-  public getAttachedFileUrl(file: File | null): string {
+  public getFileUrl(file: File | null): string {
     if (!file) return '';
 
     return URL.createObjectURL(file);
+  }
+
+  public getFileType(attachedFile : ProjectClass.Local.AttachedFile) : SUPPORTED_PREVIEW_FILE {
+    if (attachedFile.file?.type === "image/png" || attachedFile.file?.type === "image/jpeg" || attachedFile.file?.type === "image/webp" || attachedFile.file?.type === "image/gif") {
+      return this.supportedPreviewFile.IMG
+    } else if (attachedFile.file?.type === "video/mp4") {
+      return this.supportedPreviewFile.VIDEO
+    }      
+    return this.supportedPreviewFile.DOCUMENT
+  }
+
+  public openFile(attachedFile : ProjectClass.Local.AttachedFile) : void {
+    this.previewFileDialogVisibilty = true;
+    this.previewedFile = attachedFile;
   }
 
   ngOnDestroy() {

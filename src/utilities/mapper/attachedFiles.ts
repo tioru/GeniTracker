@@ -7,21 +7,21 @@ import { ProjectClass } from "../classes/class";
 export class AttachedFilesMapper {
   constructor() {}
 
-  public mapRemoteArray(rAttachedFiles : ProjectClass.Remote.AttachedFiles[]) : ProjectClass.Local.AttachedFiles[] {
+  public mapRemoteArray(rAttachedFiles : ProjectClass.Remote.AttachedFile[]) : ProjectClass.Local.AttachedFile[] {
     return rAttachedFiles.map((rAttachedFile) => {
       return this.mapRemote(rAttachedFile);
     })
   }
 
-  public mapRemote(rAttachedFile : ProjectClass.Remote.AttachedFiles) : ProjectClass.Local.AttachedFiles {
+  public mapRemote(rAttachedFile : ProjectClass.Remote.AttachedFile) : ProjectClass.Local.AttachedFile {
     try {
-      return new ProjectClass.Local.AttachedFiles ({
+      return new ProjectClass.Local.AttachedFile ({
         base64: rAttachedFile.base64,
         file: rAttachedFile.file,
         id: rAttachedFile.id
       })
     } catch (error) {
-      throw new Error("Error mapping Remote AttachedFiles to Local AttachedFiles: " + error);
+      throw new Error("Error mapping Remote AttachedFile to Local AttachedFile: " + error);
     }
   }
 }

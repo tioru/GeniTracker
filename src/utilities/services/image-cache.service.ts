@@ -14,6 +14,8 @@ private sanitizer = inject(DomSanitizer);
 
 public imageObjectUrls = new Map<string, string>();
 
+private fileObjectUrls = new Map<File, string>();
+
 public loadImage(url: string) {
     return this.http.get(url, { responseType: 'blob' }).pipe(
       tap(blob => {
@@ -27,5 +29,33 @@ public loadImage(url: string) {
   public getImageUrl(url: string): SafeUrl {
     const objectUrl = this.imageObjectUrls.get(url);
     return objectUrl ? this.sanitizer.bypassSecurityTrustUrl(objectUrl) : url;
+  }
+
+  public getFileUrl(file: File): string {
+    if (!file) return '';
+
+    if (this.fileObjectUrls.has(file)) {
+      return this.fileObjectUrls.get(file)!;
+    }
+
+    const url = URL.createObjectURL(file);
+    this.fileObjectUrls.set(file, url);
+    return url;
+  }
+
+  public revokeFileUrl(file: File): void {
+    const url = this.fileObjectUrls.get(file);
+    if (url) {
+      URL.revokeObjectURL(url);
+      this.fileObjectUrls.delete(file);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.imageObjectUrls.forEach(url => URL.revokeObjectURL(url));
+    this.imageObjectUrls.clear();
+
+    this.fileObjectUrls.forEach(url => URL.revokeObjectURL(url));
+    this.fileObjectUrls.clear();
   }
 }
