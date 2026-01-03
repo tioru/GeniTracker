@@ -4,6 +4,7 @@ export class RMessageClass {
   date : string | null = null;
   modified : boolean | null = null;
   seenBy : string[] = [];
+  attachedFilesIds : string[] = [];
   id : string | null = null;
 
   constructor(init?:Partial<RMessageClass>) {

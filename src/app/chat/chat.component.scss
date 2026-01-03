@@ -79,7 +79,7 @@
 .messagesDisplay {
     overflow-y: scroll;
     overflow-x: hidden;
-    mask-image: linear-gradient(to bottom, transparent, black 15px, black calc(100% - 15px), transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 30px, black calc(100% - 30px), transparent);
     scrollbar-width: thin;
     scrollbar-color: grey transparent;
     padding: 15px 7px;
@@ -290,4 +290,33 @@
     bottom: 60px;
     left: 50%;
     transform: translate(-50%, 0);
+}
+
+textarea {
+    resize: none;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: grey transparent;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 60px;
+    height: 60px;
+    max-height: 200px;
+    border: 2px solid #5f5f5f;
+    border-radius: 25px;
+    font-size: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #272727;
+    color: white;
+    font-family: Genshin;
+    src: url(./../../assets/font/genshin_policy.ttf);
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #939393;
+}
+
+textarea.scrollable {
+    overflow-y: auto;
 }

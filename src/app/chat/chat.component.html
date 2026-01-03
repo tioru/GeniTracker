@@ -1,4 +1,4 @@
-<dialog-component *ngIf="chatVisibility && groups" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()" (onVisible)="onChatVisible()">
+<dialog-component *ngIf="chatVisibility && groups" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()" (onVisible)="onChatVisible(); initPasteListener()">
     <div body class="flex aic column">
         <div class="flex aic jcc column fw" style="height: 4vh">
             <span style="color: white;">{{groups[selectedGroupKey].name}}</span>
@@ -87,6 +87,9 @@
                                             </tooltip-component>
                                         }
                                     </div>
+                                    <div *ngFor="let attachedFile of message.attachedFiles">
+                                        <img [src]="getAttachedFileUrl(attachedFile.file)" width="40px" height="40px">
+                                    </div>
                                     <span style="color: white;">
                                         {{message.message}}
                                     </span>
@@ -138,7 +141,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex aic mb10 jcc fw unreadMessageAnchor">
+                <div class="flex aic mb10 jcc fw unreadMessageAnchor gap20">
                     <div class="flex fw column jcc">
                         <div class="flex aic jcc">
                             <div [@slideYAnimation] class="updateMessage flex aic jcsb" style="padding: 2px; z-index: 2;" *ngIf="selectedMessageMode === messageMode.UPDATE">
@@ -163,7 +166,13 @@
                                 }
                             </button>
                         </div>
-                        <input class="input" [(ngModel)]="messageInputContent" style="margin: 0 10px; z-index: 3;" (keydown.enter)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()">
+                        <div *ngIf="attachedFiles.length > 0" style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                            <div *ngFor="let file of attachedFiles; let i = index" style="position: relative;">
+                                <img [src]="file.base64" style="max-width: 100px; max-height: 100px; border-radius: 8px; border: 2px solid #ddd;">
+                                <button (click)="removeFile(file)" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer;">×</button>
+                            </div>
+                        </div>
+                        <textarea id="expandingInput" (input)="updateTextArea()" [(ngModel)]="messageInputContent" style="margin: 0 10px; z-index: 3; padding: 10px 15px" (keydown.enter)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()"></textarea>
                     </div>
                     <button class="sendButton flex aic jcc" style="border-radius: 50%; line-height: 0; margin-right: 10px;" (click)="selectedMessageMode === messageMode.UPDATE ? updateMessage() : sendMessage()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>

@@ -1,8 +1,8 @@
 import { CommonModule, KeyValue } from '@angular/common';
-import { Component, inject, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
-import { Database, onValue, push, ref, set } from '@angular/fire/database';
+import { Database, onValue, ref } from '@angular/fire/database';
 import { ProjectClass } from '../../utilities/classes/class';
 import { GroupMapper } from '../../utilities/mapper/group';
 import { MessageMapper } from '../../utilities/mapper/message';
@@ -91,6 +91,8 @@ export class ChatComponent implements OnInit, OnDestroy{
   public newGroupRequestCreationLoading : boolean = false;
 
   public groupCreationFinished : boolean = false;
+
+  public attachedFiles: ProjectClass.Local.AttachedFiles[] = [];
 
   ngOnInit() {
     this.chatListening();
@@ -185,20 +187,19 @@ export class ChatComponent implements OnInit, OnDestroy{
   public async sendMessage(): Promise<void> {
     if (!this.currentUser) return;
 
-    const dbRef = ref(this.database, 'groups/' + this.selectedGroupKey + '/messages');
-    
-    const newMessageRef = push(dbRef);
-    const messageId = newMessageRef.key;
-        
-    set(newMessageRef, this.messageMapper.mapLocal(new ProjectClass.Local.Message({
-      id: messageId!,
+    const message = new ProjectClass.Local.Message({
+      id: null,
       message: this.newMessageContent,
       date: new Date(),
       user: this.currentCustomUser,
       modified: false,
       seenBy: [this.currentCustomUser!],
-    }))).then(() => {
+      attachedFiles: this.attachedFiles
+    })
+
+    this.messageService.sendMessage(message, this.selectedGroupKey).then(() => {
       this.newMessageContent = "";
+      this.attachedFiles = [];
       setTimeout(() => this.observeAllMessages(), 100);
     });
   }
@@ -247,13 +248,11 @@ export class ChatComponent implements OnInit, OnDestroy{
 
     if (isValid) {
       this.newGroup.createdBy = this.currentCustomUser;
-      this.messageService.createGroup(this.newGroup).then((result) => {
-        if (result) {
-          this.newGroupDialogVisibility = false;
-          this.selectedNewGroupDialogTab = NEW_GROUP_DIALOG_TAB.SET_DISPLAY_NAME;
-          this.newGroup = new ProjectClass.Local.GroupItem();
-          this.groupCreationFinished = true;
-        }
+      this.messageService.createGroup(this.newGroup).then(() => {
+        this.newGroupDialogVisibility = false;
+        this.selectedNewGroupDialogTab = NEW_GROUP_DIALOG_TAB.SET_DISPLAY_NAME;
+        this.newGroup = new ProjectClass.Local.GroupItem();
+        this.groupCreationFinished = true;
       })
     }
   }
@@ -496,9 +495,84 @@ export class ChatComponent implements OnInit, OnDestroy{
     return this.getCurrentGroupMessages().filter(message => !this.isMessageSeenByCurrentUser(message)).length;
   }
 
+  public updateTextArea() : void {
+    const textarea = document.getElementById('expandingInput') as HTMLTextAreaElement;
+
+    if (textarea) {
+      textarea.style.height = 'auto';
+        
+      const newHeight = textarea.scrollHeight;
+        
+      if (newHeight <= 200) {
+          textarea.style.height = newHeight + 'px';
+          textarea.classList.remove('scrollable');
+      } else {
+          textarea.style.height = '200px';
+          textarea.classList.add('scrollable');
+      }
+    } else {
+      console.error("TextArea is not defined");
+    }
+  }
+
+  public initPasteListener(): void {
+    const textarea = document.getElementById('expandingInput') as HTMLTextAreaElement;
+    if (textarea) {
+        textarea.addEventListener('paste', (e) => this.handlePaste(e));
+    }
+  }
+
+  public handlePaste(event: ClipboardEvent): void {
+    const items = event.clipboardData?.items;
+    
+    if (!items) return;
+    
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      
+      if (item.type.indexOf('image') !== -1) {
+        event.preventDefault(); // Empêcher le collage par défaut dans le textarea
+        
+        const file = item.getAsFile();
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.attachedFiles.push(new ProjectClass.Local.AttachedFiles(
+              {
+                base64: e.target?.result as string,
+                file: file
+              }
+            ));
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+  }
+
+  public removeFile(file : ProjectClass.Local.AttachedFiles): void {
+    const fileIndex = this.attachedFiles.indexOf(file);
+    this.attachedFiles.splice(fileIndex);
+  }
+
+  public getAttachedFileUrl(file: File | null): string {
+    if (!file) return '';
+
+    return URL.createObjectURL(file);
+  }
+
   ngOnDestroy() {
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
     }
+    Object.keys(this.groups).forEach((groupKey) => {
+      Object.keys(this.groups[groupKey].messages).forEach((messageKey) => {
+        this.groups[groupKey].messages[messageKey].attachedFiles?.forEach(file => {
+          if (file.file) {
+            URL.revokeObjectURL(URL.createObjectURL(file.file));
+          }
+        })
+      })
+    })
   }
 }

@@ -5,6 +5,7 @@ import { ProjectClass } from "../classes/class";
 import { MessageMapper } from "../mapper/message";
 import { FirebaseErrorService } from "./firebase-error.service";
 import { GroupMapper } from "../mapper/group";
+import { DatabaseService } from "./database.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +17,30 @@ export class MessageService {
         public notificationService : NotificationService,
         public messageMapper : MessageMapper,
         public firebaseErrorService: FirebaseErrorService,
-        public groupMapper : GroupMapper
+        public groupMapper : GroupMapper,
+        public databaseService : DatabaseService
     ) { }
+
+    public async sendMessage(message : ProjectClass.Local.Message, groupKey : string) : Promise<boolean> {
+        try {
+            const dbRef = ref(this.database, 'groups/' + groupKey + '/messages');
+    
+            const newMessageRef = push(dbRef);
+            const messageId = newMessageRef.key;
+
+            if (message.attachedFiles.length > 0) {
+                message.attachedFiles = await this.databaseService.uploadFilesArrayToBucket(message.attachedFiles)
+            }
+
+            await set(newMessageRef, this.messageMapper.mapLocal({...message, id : messageId}))
+            
+            return true;
+        } catch (error) {
+            console.error("Error while creating new message: ", error);
+            return false;
+        }   
+    }
+    
 
     public async updateMessage(selectedGroupKey : string, updatedMessage : ProjectClass.Local.Message) : Promise<boolean> {
         try {
@@ -104,16 +127,13 @@ export class MessageService {
         }
     }
 
-    public async createGroup(newGroup : ProjectClass.Local.GroupItem): Promise<boolean> {
+    public async createGroup(newGroup : ProjectClass.Local.GroupItem): Promise<void> {
         try {
             const groupRef = ref(this.database, 'groups')
 
             await push(groupRef, this.groupMapper.mapLocalItem(newGroup))
-
-            return true;
         } catch(error) {
-            console.error("Error creating new group: ", error);
-            return false;
+            throw new Error(`Error while creating new group: ${error}`);
         }
     }
 }
