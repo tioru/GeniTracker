@@ -30,10 +30,14 @@ export class DatabaseService {
         fileId
       );
 
-      const fileArrayBuffer = await this.storage.getFileDownload(
+      let fileArrayBuffer : any = await this.storage.getFileDownload(
         environment.writeappConfig.bucketId,
         fileId
       );
+
+      if (!(fileArrayBuffer instanceof ArrayBuffer) && !(fileArrayBuffer instanceof Blob) && typeof fileArrayBuffer === 'object') {
+        fileArrayBuffer = new TextEncoder().encode(JSON.stringify(fileArrayBuffer));
+      }
 
       const fileBlob = new Blob([fileArrayBuffer], { 
         type: fileMetadata.mimeType 

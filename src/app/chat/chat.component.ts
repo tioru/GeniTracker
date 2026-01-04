@@ -14,6 +14,8 @@ import { animations } from '../animation';
 import { MessageService } from '../../utilities/services/message.service';
 import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
 import { DatabaseService } from '../../utilities/services/database.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { from, Observable } from 'rxjs';
 
 const DEFAULT_GROUP_NAME = "Général";
 const SCROLLBAR_THRESHOLD = 100;
@@ -38,7 +40,8 @@ export enum NEW_GROUP_DIALOG_TAB {
 export enum SUPPORTED_PREVIEW_FILE {
   IMG,
   VIDEO,
-  DOCUMENT
+  DOCUMENT,
+  AUDIO
 }
 
 @Component({
@@ -108,6 +111,12 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public previewedFile : ProjectClass.Local.AttachedFile | null = null;
 
+  public isDragging : boolean = false;
+
+  public jsonContent: string | null = null;
+
+  public textContent: string | null = null;
+
   ngOnInit() {
     this.chatListening();
     this.userService.currentUser$.subscribe(user => {
@@ -126,7 +135,8 @@ export class ChatComponent implements OnInit, OnDestroy{
     public imageCacheService : ImageCacheService,
     public messageService : MessageService,
     public notificationService : NotificationService,
-    public databaseService : DatabaseService
+    public databaseService : DatabaseService,
+    private sanitizer: DomSanitizer
   ) {}
 
   private chatListening() {
@@ -351,7 +361,7 @@ export class ChatComponent implements OnInit, OnDestroy{
     const originalFiles = this.getCurrentGroupMessages().find((message) => message.id === this.selectedMessageToUpdate?.id)?.attachedFiles || [];
 
     const filesToAdd = this.attachedFiles.filter((attachedFile) => 
-      originalFiles.some((originalFile) => 
+      !originalFiles.some((originalFile) => 
         originalFile.file?.name === attachedFile.file?.name &&
         originalFile.file?.size === attachedFile.file?.size &&
         originalFile.file?.type === attachedFile.file?.type
@@ -363,15 +373,21 @@ export class ChatComponent implements OnInit, OnDestroy{
       this.selectedMessageToUpdate!.attachedFiles = [...originalFiles, ...uploadedFiles];
     }
 
+    const filesToDelete = originalFiles.filter(
+      file => !new Set(this.attachedFiles.map(file => file.id)).has(file.id)
+    );
+
+    if (filesToDelete.length > 0) {
+      await this.databaseService.deleteFilesArray(filesToDelete);
+      this.selectedMessageToUpdate!.attachedFiles = this.selectedMessageToUpdate!.attachedFiles.filter(
+        (attachedFile) => !filesToDelete.some((fileToDelete) => fileToDelete.id === attachedFile.id)
+      );
+    }
+
+    console.log(this.selectedMessageToUpdate!.attachedFiles)
+
     this.messageService.updateMessage(this.selectedGroupKey, this.selectedMessageToUpdate!).then((result) => {
       if (result) {
-        const filesToDelete = originalFiles.filter(
-          file => !new Set(this.attachedFiles.map(file => file.id)).has(file.id)
-        );
-
-        if (filesToDelete.length > 0) {
-          this.databaseService.deleteFilesArray(filesToDelete);
-        }
         this.exitUpdateMode();
       }
     })
@@ -408,12 +424,18 @@ export class ChatComponent implements OnInit, OnDestroy{
     this.selectedMessageToUpdate = structuredClone(message);
     this.attachedFiles = structuredClone(this.selectedMessageToUpdate.attachedFiles);
     this.selectedMessageToUpdate.modified = true;
+    setTimeout(() => {
+      this.updateTextArea();
+    }, 0)
   }
 
   public exitUpdateMode() : void {
     this.selectedMessageMode = MESSAGE_MODE.CREATE;
     this.selectedMessageToUpdate = null;
     this.attachedFiles = [];
+    setTimeout(() => {
+      this.updateTextArea();
+    }, 0)
   }
 
   public trackByMessageId(index: number, message: ProjectClass.Local.Message): string {
@@ -580,7 +602,11 @@ export class ChatComponent implements OnInit, OnDestroy{
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
 
-      if (!(item.kind.includes("file") && (item.type.includes('image') || item.type.includes('video') || item.type.includes('json') || item.type.includes('word') || item.type.includes('pdf') || item.type.includes('text')))) {
+      if (item.kind.includes("string")) {
+        return;
+      }
+
+      if (!item.kind.includes("file")) {
         this.notificationService.addNotification({
           title: 'Erreur',
           severity: notificationSeverity.ERROR,
@@ -593,49 +619,10 @@ export class ChatComponent implements OnInit, OnDestroy{
       event.preventDefault();
       const file = item.getAsFile();
 
-      if (file?.size && file.size > MAX_FILE_SIZE) {
-        this.notificationService.addNotification({
-          title: 'Erreur',
-          severity: notificationSeverity.ERROR,
-          detail: `Taille de fichier dépassant les 10 Mo.`,
-          sticky: true,
-        });
-        return;
-      }
-        
       if (file) {
-        const isDuplicate = this.attachedFiles.some(attachedFile => 
-          attachedFile.file!.name === file.name &&
-          attachedFile.file!.size === file.size &&
-          attachedFile.file!.type === file.type
-        );
-
-        if (!isDuplicate) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            this.attachedFiles.push(new ProjectClass.Local.AttachedFile(
-              {
-                base64: e.target?.result as string,
-                file: file
-              }
-            ));
-          };
-          reader.readAsDataURL(file);
-        } else {
-          this.notificationService.addNotification({
-            title: 'Erreur',
-            severity: notificationSeverity.ERROR,
-            detail: `Le fichier a déjà été ajouté.`,
-            sticky: true,
-          })
-        }
+        this.verifyNewFile(file)
       } else {
-        this.notificationService.addNotification({
-          title: 'Erreur',
-          severity: notificationSeverity.ERROR,
-          detail: `Le type de fichier n\' est pas supporté : ${item.type}`,
-          sticky: true,
-        })
+        throw new Error("Une erreur s'est produite lors de la récupération du fichier.")
       }
     }
   }
@@ -652,17 +639,199 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   public getFileType(attachedFile : ProjectClass.Local.AttachedFile) : SUPPORTED_PREVIEW_FILE {
-    if (attachedFile.file?.type === "image/png" || attachedFile.file?.type === "image/jpeg" || attachedFile.file?.type === "image/webp" || attachedFile.file?.type === "image/gif") {
+    if (attachedFile.file?.type.includes("image")) {
       return this.supportedPreviewFile.IMG
-    } else if (attachedFile.file?.type === "video/mp4") {
+    } else if (attachedFile.file?.type.includes("video")) {
       return this.supportedPreviewFile.VIDEO
-    }      
+    } else if (attachedFile.file?.type.includes("audio")) {
+      return this.supportedPreviewFile.AUDIO
+    }
     return this.supportedPreviewFile.DOCUMENT
   }
 
-  public openFile(attachedFile : ProjectClass.Local.AttachedFile) : void {
+  public async openFile(attachedFile : ProjectClass.Local.AttachedFile) : Promise<void> {
     this.previewFileDialogVisibilty = true;
     this.previewedFile = attachedFile;
+
+    if (this.isJSON(attachedFile)) {
+      this.jsonContent = await this.getJSONContent(attachedFile.file!);
+    }
+
+    if (this.isText(attachedFile)) {
+      this.textContent = await this.getTextContent(attachedFile.file!);
+    }
+  }
+
+  public onDragEnter(event: DragEvent) : void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  public onDragOver(event: DragEvent) : void {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  public onDragLeave(event: DragEvent) : void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const target = event.target as HTMLElement;
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    
+    if (!relatedTarget || !target.contains(relatedTarget)) {
+      this.isDragging = false;
+    }
+  }
+
+  public onDrop(event: DragEvent) : void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.verifyNewFile(files.item(0)!);
+    }
+  }
+
+  public verifyNewFile(file : File) : void {
+    if (!(file.type.includes('image') || file.type.includes('video') || file.type.includes('json') || file.type.includes('word') || file.type.includes('pdf') || file.type.includes('text') || file.type.includes('audio'))) {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: `Type de fichier non supporté.`,
+        sticky: true,
+      });
+      return;
+    }
+
+    if (file?.size && file.size > MAX_FILE_SIZE) {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: `Taille de fichier dépassant les 10 Mo.`,
+        sticky: true,
+      });
+      return;
+    }
+        
+    const isDuplicate = this.attachedFiles.some(attachedFile => 
+      attachedFile.file!.name === file.name &&
+      attachedFile.file!.size === file.size &&
+      attachedFile.file!.type === file.type
+    );
+
+    if (!isDuplicate) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.attachedFiles.push(new ProjectClass.Local.AttachedFile(
+          {
+            base64: e.target?.result as string,
+            file: file
+          }
+        ));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: `Le fichier a déjà été ajouté.`,
+        sticky: true,
+      })
+    }
+  }
+
+  public async importFile() : Promise<void> {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/png,image/jpeg,image/gif,image/webp,video/mp4,application/json,application/msword,application/pdf,text/*,audio/*';
+    input.multiple = true;
+    
+    input.onchange = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        Array.from(target.files).forEach(file => {
+          this.verifyNewFile(file);
+        });
+      }
+    };
+  
+    input.click();
+  }
+
+  public closeList(elementId : string) : void {
+    const popover = document.getElementById(elementId);
+    
+    if (popover) {
+      popover.hidePopover()
+    }
+  }
+
+  public isPDF(attachedFile: ProjectClass.Local.AttachedFile) : boolean {
+    return attachedFile.file?.type.includes("pdf") || false;
+  }
+
+  public isJSON(attachedFile: ProjectClass.Local.AttachedFile) : boolean {
+    return attachedFile.file?.type.includes("json") || false;
+  }
+
+  public isText(attachedFile: ProjectClass.Local.AttachedFile) : boolean {
+    return attachedFile.file?.type.includes("text") || false;
+  }
+
+  public getSafeUrl(file: File): SafeResourceUrl {
+    const url = URL.createObjectURL(file);
+    const urlWithToolbar = `${url}#toolbar=1`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(urlWithToolbar);
+  }
+
+  public async getJSONContent(file: File): Promise<string> {
+    try {
+      const content = await file.text();
+      
+      if (typeof content === 'object') {
+        return JSON.stringify(content, null, 2);
+      }
+
+      const json = JSON.parse(content);
+      return JSON.stringify(json, null, 2);
+    } catch (error) {
+      console.error('Erreur de parsing JSON:', error);
+      return "";
+    }
+  }
+
+  public getTextContent(file: File): Promise<string> {
+    return file.text();
+  }
+
+  public formatFileSize(bytes: number): string {
+    if (!bytes || bytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  public openInNewTab(attachedFile: ProjectClass.Local.AttachedFile): void {
+    const file = attachedFile?.file;
+    if (!file) return;
+
+    // Créer une URL blob pour le fichier
+    const url = URL.createObjectURL(file);
+    
+    // Ouvrir dans un nouvel onglet
+    window.open(url, '_blank');
+    
+    // Nettoyer l'URL après un délai pour libérer la mémoire
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
   }
 
   ngOnDestroy() {

@@ -40,19 +40,6 @@
   }
 }
 
-.sendButton {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    fill: grey;
-
-    &:hover {
-        transform: scale(1.2);
-        fill: rgb(255, 255, 255);
-    }
-}
-
 .profilPicture {
   width: 35px;
   height: 35px;
@@ -348,8 +335,8 @@ textarea.scrollable {
 }
 
 .messageImg {
-    max-width: 400px; 
-    max-height: 400px; 
+    max-width: 125px; 
+    max-height: 125px; 
     border-radius: 8px; 
     cursor: pointer;
     transition: filter 0.3s ease;
@@ -362,4 +349,133 @@ textarea.scrollable {
     max-width: 75vw;
     max-height: 75vh;
     border-radius: 8px;
+}
+
+.textAreaWrapper {
+    position: relative;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.drop-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(87, 87, 87, 0.95);
+    border: 2px dashed #ffd700;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+    animation: fadeIn 0.2s ease;
+    width: calc(100% - 4px);
+    height: calc(100% - 8px);
+}
+
+.drop-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.messageButton{
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    fill: grey;
+    border-radius: 50%;
+
+    &.sendButton {
+        margin-right: 10px;
+    }
+    
+    &.newFileButton {
+        margin-left: 10px;
+    }
+
+    &:hover {
+        transform: scale(1.2);
+        fill: rgb(255, 255, 255);
+    }
+}
+
+.defaultPreviewFile {
+    height: 125px;
+    width: 125px;
+    background-color: #3c3c3c;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    transition: filter 0.3s ease;
+}
+
+.jsonPreview {
+    width: 100%;
+    height: 70vh;
+    overflow: auto;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: grey transparent;
+  
+    pre {
+        margin: 0;
+        color: #d4d4d4;
+        font-family: Genshin;
+        src: url(./../../assets/font/genshin_policy.ttf);
+        font-size: 14px;
+        line-height: 1.6;
+
+        code {
+          color: white;
+        }
+    }
+}
+
+.previewedPDF {
+  width: 75vw;
+  height: 75vh;
+  border-radius: 10px;
+  background-color: white;
+  border: none;
+}
+
+.textPreview {
+  width: 100%;
+  height: 70vh;
+  overflow: auto;
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  
+  pre {
+    margin: 0;
+    color: white;
+    font-family: Genshin;
+    src: url(./../../assets/font/genshin_policy.ttf);
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  
+  scrollbar-width: thin;
+  scrollbar-color: #575757 #1e1e1e;
 }
