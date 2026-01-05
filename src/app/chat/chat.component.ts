@@ -16,6 +16,7 @@ import { NotificationService, notificationSeverity } from '../../utilities/servi
 import { DatabaseService } from '../../utilities/services/database.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { from, Observable } from 'rxjs';
+import { FILE_PIPES } from '../../utilities/pipes/file.pipe';
 
 const DEFAULT_GROUP_NAME = "Général";
 const SCROLLBAR_THRESHOLD = 100;
@@ -47,7 +48,7 @@ export enum SUPPORTED_PREVIEW_FILE {
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, DialogComponent, FormsModule, TooltipComponent],
+  imports: [CommonModule, DialogComponent, FormsModule, TooltipComponent, FILE_PIPES],
   templateUrl: './chat.component.html',
   animations: animations,
   styleUrl: './chat.component.scss'
@@ -822,13 +823,10 @@ export class ChatComponent implements OnInit, OnDestroy{
     const file = attachedFile?.file;
     if (!file) return;
 
-    // Créer une URL blob pour le fichier
     const url = URL.createObjectURL(file);
     
-    // Ouvrir dans un nouvel onglet
     window.open(url, '_blank');
     
-    // Nettoyer l'URL après un délai pour libérer la mémoire
     setTimeout(() => {
       URL.revokeObjectURL(url);
     }, 1000);

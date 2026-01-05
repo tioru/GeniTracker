@@ -423,6 +423,7 @@ textarea.scrollable {
     border: 2px solid #ddd;
     cursor: pointer;
     transition: filter 0.3s ease;
+    overflow: hidden;
 }
 
 .jsonPreview {
@@ -478,4 +479,16 @@ textarea.scrollable {
   
   scrollbar-width: thin;
   scrollbar-color: #575757 #1e1e1e;
+}
+
+.fileName {
+    padding: 0px 20px;
+    font-size: 15px;
+    font-style: italic;
+    color: #ffd700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
+    width: 80%;
 }
