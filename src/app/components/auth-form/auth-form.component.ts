@@ -7,13 +7,14 @@ import { Observable, of } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseErrorService } from '../../../utilities/services/firebase-error.service';
+import { TimelinePointsComponent } from "../timeline-points/timeline-points.component";
 
 enum DialogTab {
   LOGIN,
   REGISTER,
   FORGET_PASSWORD,
-  SET_DISPLAY_NAME,
-  SET_PROFILE_PICTURE
+  SET_DISPLAY_NAME = 0,
+  SET_PROFILE_PICTURE = 1
 }
 
 enum PasswordField {
@@ -24,7 +25,7 @@ enum PasswordField {
 @Component({
   selector: 'app-auth-form',
   standalone: true,
-  imports: [CommonModule, DialogComponent, FormsModule],
+  imports: [CommonModule, DialogComponent, FormsModule, TimelinePointsComponent],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss'
 })
@@ -62,6 +63,8 @@ export class AuthFormComponent implements OnInit {
   public requestLoading : boolean = false;
 
   public profilePictureLink : string = "";
+
+  public currentProgression = 0;
 
   @Input() formVisibility : boolean = false;
 

@@ -121,7 +121,8 @@
 
 <dialog-component *ngIf="!displayNameDefined && (currentUser | async)" [style]="dialogStyle.B" [dialogVisibility]="true" [modal]="false">
     <div body [ngClass]="{'setDisplayName': selectedFirstConnexionDialogTab === dialogTab.SET_DISPLAY_NAME, 'setProfilePicture': selectedFirstConnexionDialogTab === dialogTab.SET_PROFILE_PICTURE}" class="flex aic column gap20 m20 wrapper" style="mask: none;">
-        <div class="form flex aic jcsa column fh" [ngStyle]="{'transform': selectedFirstConnexionDialogTab === dialogTab.SET_DISPLAY_NAME ? 'translateX(0)' : 'translateX(-100%)'}">
+        <timeline-points style="margin: 15px 0px;" [pointNumber]="2" [currentProgression]="selectedFirstConnexionDialogTab"></timeline-points>
+        <div class="form flex aic column fh gap30" style="top: 45px;" [ngStyle]="{'transform': selectedFirstConnexionDialogTab === dialogTab.SET_DISPLAY_NAME ? 'translateX(0)' : 'translateX(-100%)'}">
             <h3 style="color: white; margin: 0; text-align: center;">Veuillez saisir votre nom d'utilisateur</h3>
             <div style="width: fit-content; position: relative;">
                 <input class="input displayname" [(ngModel)]="displayName" (keyup)="checkDisplayName($event)" (keyup.enter)="checkDisplayName($event)">
@@ -135,7 +136,7 @@
                 </button>
             </div>
         </div>
-        <div class="form flex aic jcsa column fh" [ngStyle]="{'transform': selectedFirstConnexionDialogTab === dialogTab.SET_PROFILE_PICTURE ? 'translateX(0)' : 'translateX(100%)'}">
+        <div class="form flex aic column fh gap30" style="top: 45px;" [ngStyle]="{'transform': selectedFirstConnexionDialogTab === dialogTab.SET_PROFILE_PICTURE ? 'translateX(0)' : 'translateX(100%)'}">
             <h3 style="color: white; margin: 0; text-align: center;">Veuillez saisir le lien de votre image de profil</h3>
             <div class="imgProfilePreview">
                 <img *ngIf="profilePictureLink" [src]="profilePictureLink">

@@ -1,0 +1,8 @@
+<div class="flex">
+    <div class="flex" *ngFor="let item of pointNumberArray; index as i">
+        <div class="point" [class.completed]="i <= currentProgression - 1">
+        </div>
+        <div class="bar" *ngIf="i !== pointNumberArray.length - 1">
+        </div>
+    </div>
+</div>
