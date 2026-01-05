@@ -1,31 +1,17 @@
-.tooltip-container {
-  position: relative;
+.tooltip-trigger {
   display: inline-block;
 }
 
-.tooltip-trigger {
-  anchor-name: --tooltip-anchor;
-}
-
 .tooltip-content {
-  position: absolute;
   background-color: #333;
   color: #fff;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 14px;
   white-space: nowrap;
-  pointer-events: none;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0.2s ease;
-  z-index: 1000;
-  bottom: anchor(top);
-  left: anchor(center);
-  translate: -50% -6px;
-  position-anchor: --tooltip-anchor;
-  position-try: --tooltip-top, --tooltip-bottom, --tooltip-left, --tooltip-right;
-  isolation: isolate;
 }
 
 .tooltip-content::after {
@@ -34,31 +20,11 @@
   border: 6px solid transparent;
   top: 100%;
   left: 50%;
-  translate: -50% 0;
+  transform: translateX(-50%);
   border-top-color: #333;
 }
 
 .tooltip-content.visible {
   opacity: 1;
   visibility: visible;
-}
-
-@position-try --tooltip-top {
-  top: anchor(top);
-  left: anchor(center);
-}
-
-@position-try --tooltip-bottom {
-  top: anchor(bottom);
-  left: anchor(center);
-}
-
-@position-try --tooltip-left {
-  top: anchor(center);
-  left: anchor(left);
-}
-
-@position-try --tooltip-right {
-  top: anchor(center);
-  left: anchor(right);
 }
