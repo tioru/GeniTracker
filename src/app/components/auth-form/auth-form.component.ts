@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../dialog/dialog.component';
-import { NotificationService } from '../../../utilities/services/notification.service';
+import { NotificationService, notificationSeverity } from '../../../utilities/services/notification.service';
 import { UserService } from '../../../utilities/services/user.service';
 import { User } from '@angular/fire/auth';
 import { Observable, of } from 'rxjs';
@@ -84,25 +84,79 @@ export class AuthFormComponent implements OnInit {
     public firebaseErrorService: FirebaseErrorService
   ) {}
 
-  public register() {
+  public login() {
     this.loading = true;
-    this.userService.register(this.email, this.password).then((result) => {
+    this.userService.logIn(this.email, this.password).then(() => {
       this.loading = false;
-      if (result) {
-        this.email = "";
-        this.password="";
+      this.email = "";
+      this.password="";
+      if (this.userService.currentUserValue) {
+        this.notificationService.addNotification({
+          title: 'Connecté',
+          severity: notificationSeverity.OK,
+          detail: `Bienvenue ${this.userService.currentUserValue.displayName ? this.userService.currentUserValue.displayName : this.userService.currentUserValue.email}`,
+          sticky: false,
+          delay: 5000
+        });
       }
+    }).catch((error) => {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
     })
   }
 
-  public login() {
-    this.loading = true;
-    this.userService.logIn(this.email, this.password).then((result) => {
-      this.loading = false;
-      if (result) {
-        this.email = "";
-        this.password="";
+  public loginWithGoogle() : void {
+    this.googleLoading = true;
+    this.userService.loginWithGoogle().then(() => {
+      this.googleLoading = false;
+      this.email = "";
+      this.password="";
+      if (this.userService.currentUserValue) {
+        this.notificationService.addNotification({
+          title: 'Connecté',
+          severity: notificationSeverity.OK,
+          detail: `Bienvenue ${this.userService.currentUserValue.displayName}`,
+          sticky: false,
+          delay: 5000
+        });
       }
+    }).catch((error) => {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
+    })
+  }
+
+  public register() {
+    this.loading = true;
+    this.userService.register(this.email, this.password).then(() => {
+      this.email = "";
+      this.password="";
+      if (this.userService.currentUserValue) {
+        this.notificationService.addNotification({
+          title: 'Connecté',
+          severity: notificationSeverity.OK,
+          detail: `Bienvenue ${this.userService.currentUserValue.email}`,
+          sticky: false,
+          delay: 5000
+        });
+      }
+    }).catch((error) => {
+      this.notificationService.addNotification({
+        title: 'Erreur lors de l\'enregistrement',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
+    }).finally(() => {
+      this.loading = false;
     })
   }
 
@@ -141,22 +195,25 @@ export class AuthFormComponent implements OnInit {
     this.showRegisterPassword = false;
   }
 
-  public loginWithGoogle() : void {
-    this.googleLoading = true;
-    this.userService.loginWithGoogle().then((result) => {
-      this.googleLoading = false;
-      if (result) {
-        this.email = "";
-        this.password="";
-      }
-    })
-  }
-
   public sendPasswordResetEmail() : void {
     this.userService.sendPasswordResetEmail(this.email).then(() => {
       this.selectedDialogTab = this.dialogTab.LOGIN; 
       this.email = ''; 
-      this.password = ''
+      this.password = '';
+      this.notificationService.addNotification({
+        title: 'Connecté',
+        severity: notificationSeverity.OK,
+        detail: `Email de réinitialisation de mot de passe envoyé`,
+        sticky: false,
+        delay: 5000
+      });
+    }).catch((error) => {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
     })
   }
 

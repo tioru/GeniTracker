@@ -12,13 +12,17 @@ import { UserMapper } from '../mapper/user';
   providedIn: 'root'
 })
 export class UserService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  private database = inject(Database);
+  private readonly database = inject(Database);
 
-  constructor(private auth: Auth, public notificationService : NotificationService, public firebaseErrorService: FirebaseErrorService) {
+  constructor(
+    private readonly auth: Auth, 
+    public notificationService : NotificationService, 
+    public firebaseErrorService: FirebaseErrorService
+  ) {
     onAuthStateChanged(this.auth, (user) => {
       this.currentUserSubject.next(user);
     });
@@ -28,61 +32,34 @@ export class UserService {
     return this.currentUserSubject.value;
   }
 
-  public async logIn(email: string, password: string) : Promise<UserCredential | null> {
+  public async logIn(email: string, password: string) : Promise<void> {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-      this.notificationService.addNotification({
-        title: 'Connecté',
-        severity: notificationSeverity.OK,
-        detail: `Bienvenue ${userCredential.user.displayName ? userCredential.user.displayName : userCredential.user.email}`,
-        sticky: false,
-        delay: 5000
-      });
+      
       this.updateLastLoginDate(userCredential.user.uid);
-      return userCredential;
+      return;
     } catch (error) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-      return null;
+      throw new Error(error instanceof Error ? error.message : 'Login failed');
     }
   }
 
-  public async getIdToken(): Promise<string | null> {
-    const user = this.auth.currentUser;
-    if (user) {
-      return await user.getIdToken();
-    }
-    return null;
-  }
-
-  public async getAuthHeader(): Promise<{ Authorization: string } | {}> {
-    const token = await this.getIdToken();
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  }
-
-  public async register(email: string, password: string) : Promise<UserCredential | null> {
+  public async loginWithGoogle() : Promise<void> {
     try {
-      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password)
-      this.notificationService.addNotification({
-        title: 'Connecté',
-        severity: notificationSeverity.OK,
-        detail: `Bienvenue ${userCredential.user.email}`,
-        sticky: false,
-        delay: 5000
-      });
-      return userCredential;
+      const googleProvider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(this.auth, googleProvider);
+      this.updateLastLoginDate(userCredential.user.uid);
+      return;
     } catch (error) {
-      this.notificationService.addNotification({
-        title: 'Erreur lors de l\'enregistrement',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-      return null;
+      throw new Error(error instanceof Error ? error.message : 'Google Login failed');
+    }
+  }
+
+  public async register(email: string, password: string) : Promise<void> {
+    try {
+      await createUserWithEmailAndPassword(this.auth, email, password)
+      return;
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Registration failed');
     }
   }
 
@@ -93,73 +70,20 @@ export class UserService {
     }, 200);
   }
 
-  public async loginWithGoogle() : Promise<User | null> {
-    try {
-      const googleProvider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(this.auth, googleProvider);
-      this.notificationService.addNotification({
-        title: 'Connecté',
-        severity: notificationSeverity.OK,
-        detail: `Bienvenue ${userCredential.user.displayName}`,
-        sticky: false,
-        delay: 5000
-      });
-      this.updateLastLoginDate(userCredential.user.uid);
-      return userCredential.user;
-    } catch (error: any) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-    }
-    return null;
-  }
-
   public async sendPasswordResetEmail(email : string) : Promise<void> {
     try {
       await sendPasswordResetEmail(this.auth, email)
-      this.notificationService.addNotification({
-        title: 'Connecté',
-        severity: notificationSeverity.OK,
-        detail: `Email de réinitialisation de mot de passe envoyé`,
-        sticky: false,
-        delay: 5000
-      });
     } catch (error: any) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
+      throw new Error(error instanceof Error ? error.message : 'Email password reset send failed');
     }
   }
 
-  public async confirmPasswordReset(oobCode : string, newPassword: string): Promise<boolean> {
+  public async confirmPasswordReset(oobCode : string, newPassword: string): Promise<void> {
     try {
-      await confirmPasswordReset(this.auth, oobCode, newPassword)
-      this.notificationService.addNotification({
-        title: 'Modification réussie',
-        severity: notificationSeverity.OK,
-        detail: `Modification du mot de passe réussie`,
-        sticky: false,
-        delay: 5000
-      });
-    } catch (error: any) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-      
-      if (error?.code === 'auth/weak-password') {
-        return false;
-      }
+      await confirmPasswordReset(this.auth, oobCode, newPassword);
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Password reset failed');
     }
-    return true;
   }
 
   public async updateUserNameAndProfilePicture(newUserName : string, newProfilePictureLink: string) : Promise<boolean> {
