@@ -41,7 +41,6 @@ export class MessageService {
         }   
     }
     
-
     public async updateMessage(selectedGroupKey : string, updatedMessage : ProjectClass.Local.Message) : Promise<boolean> {
         try {
             if (!updatedMessage.id || !selectedGroupKey) {
@@ -124,16 +123,6 @@ export class MessageService {
         } catch (error) {
             console.error('Erreur lors du marquage du message comme vu:', error);
             return false;
-        }
-    }
-
-    public async createGroup(newGroup : ProjectClass.Local.GroupItem): Promise<void> {
-        try {
-            const groupRef = ref(this.database, 'groups')
-
-            await push(groupRef, this.groupMapper.mapLocalItem(newGroup))
-        } catch(error) {
-            throw new Error(`Error while creating new group: ${error}`);
         }
     }
 }

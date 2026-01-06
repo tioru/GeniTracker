@@ -8,6 +8,7 @@ import { User } from 'firebase/auth';
 import { AuthFormComponent } from "../../app/components/auth-form/auth-form.component";
 import { ChatComponent } from "../../app/chat/chat.component";
 import { ResetPasswordFormComponent } from '../../app/components/reset-password-form/reset-password-form.component';
+import { GroupService } from '../../utilities/services/group.service';
 
 const MODE_PARAMETER = 'mode';
 const OOBCODE_PARAMETER = 'oobCode';
@@ -37,10 +38,13 @@ export class TopbarComponent implements  OnInit {
   constructor(
     public router: Router,
     public userService : UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public groupService : GroupService
   ) {}
     
   ngOnInit(): void { 
+    this.groupService.startListening();
+
     this.currentUser = this.userService.currentUser$;
 
     this.route.queryParams.subscribe(params => {

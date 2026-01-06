@@ -1,8 +1,7 @@
 import { CommonModule, KeyValue } from '@angular/common';
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
-import { Database, onValue, ref } from '@angular/fire/database';
 import { ProjectClass } from '../../utilities/classes/class';
 import { GroupMapper } from '../../utilities/mapper/group';
 import { MessageMapper } from '../../utilities/mapper/message';
@@ -15,10 +14,10 @@ import { MessageService } from '../../utilities/services/message.service';
 import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
 import { DatabaseService } from '../../utilities/services/database.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { from, Observable } from 'rxjs';
+import { skip, Subject, takeUntil } from 'rxjs';
 import { FILE_PIPES } from '../../utilities/pipes/file.pipe';
+import { GroupService } from '../../utilities/services/group.service';
 
-const DEFAULT_GROUP_NAME = "Général";
 const SCROLLBAR_THRESHOLD = 100;
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -54,15 +53,7 @@ export enum SUPPORTED_PREVIEW_FILE {
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit, OnDestroy{
-  private database = inject(Database);
-  
-  private dbRef = ref(this.database, 'groups');
-
   public dialogStyle : typeof DialogStyle = DialogStyle;
-
-  public groups : { [key: string]: ProjectClass.Local.GroupItem } = {};
-
-  public selectedGroupKey : string = "";
 
   public newMessageContent : string = "";
 
@@ -118,14 +109,20 @@ export class ChatComponent implements OnInit, OnDestroy{
 
   public textContent: string | null = null;
 
+  private destroy$ = new Subject<void>();
+
   ngOnInit() {
-    this.chatListening();
-    this.userService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-      this.userService.getUserByUID(user?.uid!).then((customUser) => {
-        this.currentCustomUser = customUser;
-      });
-      this.chatListening();
+    this.initializeGroupListener();
+    this.userService.currentUser$.pipe(skip(1)).subscribe(() => {
+      let user = this.userService.currentUserValue;
+      if (user){
+        this.currentUser = user;
+        this.userService.getUserByUID(user.uid).then((customUser) => {
+          this.currentCustomUser = customUser;
+        });
+      }
+      // When user finish to login
+      this.initializeGroupListener();
     });
   }
 
@@ -137,48 +134,33 @@ export class ChatComponent implements OnInit, OnDestroy{
     public messageService : MessageService,
     public notificationService : NotificationService,
     public databaseService : DatabaseService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public groupService : GroupService
   ) {}
 
-  private chatListening() {
-    onValue(this.dbRef, (snapshot) => {
-      if (snapshot.exists()) {
-        this.groupMapper.mapRemoteDict(snapshot.val()).then((result) => {
-          this.groups = result;
-
-          if (this.isNearTheBottom()) {
-            this.goToBottom()
-          }
-
-          if (!this.selectedGroupKey) {
-            Object.keys(this.groups).forEach((groupKey) => {
-              if (this.groups[groupKey].name === DEFAULT_GROUP_NAME) {
-                this.selectedGroupKey = groupKey;
-              }
-            });
-          }
-
-          if (!this.selectedGroupKey) {
-            this.selectedGroupKey = Object.keys(this.groups)[0];
-          }
-
-          this.sortMessagesByDate();
-
-          if (this.intersectionObserver) {
-            this.intersectionObserver.disconnect();
-          }
-
-          this.initializeMessageObserver();
-          setTimeout(() => {
-            this.observeAllMessages();
-          }, 100);
-        });
+  private initializeGroupListener(): void {
+    this.groupService.groups$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            
+      if (this.isNearTheBottom()) {
+        this.goToBottom();
       }
+            
+      this.sortMessagesByDate();
+            
+      // Réinitialiser l'observer
+      if (this.intersectionObserver) {
+          this.intersectionObserver.disconnect();
+      }
+            
+      this.initializeMessageObserver();
+      setTimeout(() => {
+          this.observeAllMessages();
+      }, 100);
     });
-  };
+  }
 
   get groupsNames() : string[] {
-    return Object.entries(this.groups).sort((a, b) => {
+    return Object.entries(this.groupService.getGroups()).sort((a, b) => {
       const dateA = a[1].createdAt ? new Date(a[1].createdAt).getTime() : 0;
       const dateB = b[1].createdAt ? new Date(b[1].createdAt).getTime() : 0;
       return dateA - dateB;
@@ -191,7 +173,7 @@ export class ChatComponent implements OnInit, OnDestroy{
       this.intersectionObserver.disconnect();
     }
 
-    this.selectedGroupKey = groupKey;
+    this.groupService.setSelectedGroupKey(groupKey);
     this.sortMessagesByDate();
     this.goToBottom();
 
@@ -223,15 +205,19 @@ export class ChatComponent implements OnInit, OnDestroy{
       attachedFiles: this.attachedFiles
     })
 
-    this.messageService.sendMessage(message, this.selectedGroupKey).then(() => {
-      this.newMessageContent = "";
-      this.attachedFiles = [];
-      setTimeout(() => this.observeAllMessages(), 100);
-    });
+    const selectedGroupKey = this.groupService.getSelectedGroupKey();
+
+    if (selectedGroupKey) {
+      this.messageService.sendMessage(message, selectedGroupKey).then(() => {
+        this.newMessageContent = "";
+        this.attachedFiles = [];
+        setTimeout(() => this.observeAllMessages(), 100);
+      });
+    }
   }
 
   public getGroupKeyByName(groupName: string): string {
-    for (const [key, group] of Object.entries(this.groups)) {
+    for (const [key, group] of Object.entries(this.groupService.getGroups())) {
       if (group.name === groupName) {
         return key;
       }
@@ -240,26 +226,26 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   public getGroupBykey(key : string) : ProjectClass.Local.GroupItem {
-    return this.groups[key];
+    return this.groupService.getGroups()[key];
   }
 
   public getLastMessager(groupKey: string) : string {
-    if (Object.values(this.groups[groupKey].messages).length > 0) {
-      return Object.values(this.groups[groupKey].messages).sort((a, b) => {
+    if (Object.values(this.groupService.getGroups()[groupKey].messages).length > 0) {
+      return Object.values(this.groupService.getGroups()[groupKey].messages).sort((a, b) => {
         const dateA = a.date ? new Date(a.date).getTime() : 0;
         const dateB = b.date ? new Date(b.date).getTime() : 0;
         return dateA - dateB;
-        })[Object.values(this.groups[groupKey].messages).length - 1].user?.displayName!
+        })[Object.values(this.groupService.getGroups()[groupKey].messages).length - 1].user?.displayName!
     }
     return ""
   }
 
   public getTimeSinceLastMessage(groupKey: string) : string {
-    const lastMessage = Object.values(this.groups[groupKey].messages).sort((a, b) => {
+    const lastMessage = Object.values(this.groupService.getGroups()[groupKey].messages).sort((a, b) => {
         const dateA = a.date ? new Date(a.date).getTime() : 0;
         const dateB = b.date ? new Date(b.date).getTime() : 0;
         return dateA - dateB;
-    })[Object.values(this.groups[groupKey].messages).length - 1];
+    })[Object.values(this.groupService.getGroups()[groupKey].messages).length - 1];
     
     if (!lastMessage || !lastMessage.date) return "";
     
@@ -274,7 +260,7 @@ export class ChatComponent implements OnInit, OnDestroy{
 
     if (isValid) {
       this.newGroup.createdBy = this.currentCustomUser;
-      this.messageService.createGroup(this.newGroup).then(() => {
+      this.groupService.createGroup(this.newGroup).then(() => {
         this.newGroupDialogVisibility = false;
         this.selectedNewGroupDialogTab = NEW_GROUP_DIALOG_TAB.SET_DISPLAY_NAME;
         this.newGroup = new ProjectClass.Local.GroupItem();
@@ -284,11 +270,16 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   public getCurrentGroupMessages() : ProjectClass.Local.Message[] {
-    return Object.values(this.groups[this.selectedGroupKey].messages).sort((a, b) => {
-      const dateA = a.date ? new Date(a.date).getTime() : 0;
-      const dateB = b.date ? new Date(b.date).getTime() : 0;
-      return dateA - dateB;
-    });
+    const selectedGroupKey = this.groupService.getSelectedGroupKey();
+
+    if (selectedGroupKey) {
+      return Object.values(this.groupService.getGroups()[selectedGroupKey].messages).sort((a, b) => {
+        const dateA = a.date ? new Date(a.date).getTime() : 0;
+        const dateB = b.date ? new Date(b.date).getTime() : 0;
+        return dateA - dateB;
+      });
+    }
+    return [];
   }
 
   public getTimeSince(date: Date | string): string {
@@ -385,13 +376,15 @@ export class ChatComponent implements OnInit, OnDestroy{
       );
     }
 
-    console.log(this.selectedMessageToUpdate!.attachedFiles)
+    const selectedGroupKey = this.groupService.getSelectedGroupKey();
 
-    this.messageService.updateMessage(this.selectedGroupKey, this.selectedMessageToUpdate!).then((result) => {
-      if (result) {
-        this.exitUpdateMode();
-      }
-    })
+    if (selectedGroupKey) {
+      this.messageService.updateMessage(selectedGroupKey, this.selectedMessageToUpdate!).then((result) => {
+        if (result) {
+          this.exitUpdateMode();
+        }
+      })
+    }
   }
 
   public deleteMessage(message : ProjectClass.Local.Message) : void {
@@ -402,8 +395,11 @@ export class ChatComponent implements OnInit, OnDestroy{
         detail: `La suppression d'un message n'est possible que pour son créateur.`,
         sticky: true
       });
-    } else {      
-      this.messageService.deleteMessage(this.selectedGroupKey, message.id!)
+    } else {     
+      const selectedGroupKey = this.groupService.getSelectedGroupKey();
+      if (selectedGroupKey) {
+        this.messageService.deleteMessage(selectedGroupKey, message.id!)
+      }
     }
   }
 
@@ -467,12 +463,22 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   private markMessageAsSeen(messageId: string): void {
-    if (!this.currentCustomUser) return;
-
-    const message = this.getCurrentGroupMessages().find(message => message.id === messageId);
-    if (!message) return;
-
-    this.messageService.markMessageAsSeen(this.selectedGroupKey, messageId, this.currentCustomUser.uid!);
+    try {
+      const selectedGroupKey = this.groupService.getSelectedGroupKey();
+      if (this.currentCustomUser && this.currentCustomUser.uid && selectedGroupKey) {
+        const message = this.getCurrentGroupMessages().find(message => message.id === messageId);
+        if (message) {
+          this.messageService.markMessageAsSeen(selectedGroupKey, messageId, this.currentCustomUser.uid);
+        }
+      }
+    } catch(error) {
+      this.notificationService.addNotification({
+        title: 'Error',
+        severity: notificationSeverity.ERROR,
+        detail: `An error occured while trying to mark message ${messageId} as read.`,
+        sticky: true,
+      });
+    }
   }
 
   public isMessageSeenByCurrentUser(message: ProjectClass.Local.Message): boolean {
@@ -833,12 +839,14 @@ export class ChatComponent implements OnInit, OnDestroy{
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
     }
-    Object.keys(this.groups).forEach((groupKey) => {
-      Object.keys(this.groups[groupKey].messages).forEach((messageKey) => {
-        this.groups[groupKey].messages[messageKey].attachedFiles?.forEach(file => {
+    Object.keys(this.groupService.getGroups()).forEach((groupKey) => {
+      Object.keys(this.groupService.getGroups()[groupKey].messages).forEach((messageKey) => {
+        this.groupService.getGroups()[groupKey].messages[messageKey].attachedFiles?.forEach(file => {
           if (file.file) {
             URL.revokeObjectURL(URL.createObjectURL(file.file));
           }

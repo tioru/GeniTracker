@@ -1,7 +1,7 @@
-<dialog-component *ngIf="chatVisibility && groups" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()" (onVisible)="onChatVisible(); initPasteListener()">
+<dialog-component *ngIf="chatVisibility && groupService.getSelectedGroupKey() as selectedGroupKey" [borderWidth]="'0'" [draggable]="true" [style]="dialogStyle.B" [modal]="true" [dialogVisibility]="chatVisibility" [modal]="true" (onHide)="onCloseCallBack()" (onVisible)="onChatVisible(); initPasteListener()">
     <div body class="flex aic column">
         <div class="flex aic jcc column fw" style="height: 4vh">
-            <span style="color: white;">{{groups[selectedGroupKey].name}}</span>
+            <span style="color: white;">{{groupService.getGroups()[selectedGroupKey].name}}</span>
         </div>
         <div class="whiteBar"></div>
         <div class="flex groupsDisplay">
