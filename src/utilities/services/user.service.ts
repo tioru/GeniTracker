@@ -1,12 +1,28 @@
 import { inject, Injectable } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, onAuthStateChanged, UserCredential, createUserWithEmailAndPassword, User, signInWithPopup, sendPasswordResetEmail, confirmPasswordReset, updateEmail, updatePassword } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, User, signInWithPopup, sendPasswordResetEmail, confirmPasswordReset, updateEmail, updatePassword } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
-import { NotificationService, notificationSeverity } from './notification.service';
-import { FirebaseErrorService } from './firebase-error.service';
 import { GoogleAuthProvider, updateProfile } from 'firebase/auth';
 import { Database, get, ref, set, update } from '@angular/fire/database';
 import { ProjectClass } from '../classes/class';
 import { UserMapper } from '../mapper/user';
+
+const ERROR_LOGIN_FAILED = 'Login failed';
+const ERROR_GOOGLE_LOGIN_FAILED = 'Google Login failed';
+const ERROR_REGISTRATION_FAILED = 'Registration failed';
+const ERROR_PASSWORD_RESET_EMAIL_SEND_FAILED = 'Email password reset send failed';
+const ERROR_PASSWORD_RESET_FAILED = 'Password reset failed';
+const ERROR_PROFILE_UPDATE_FAILED = 'Profile update failed';
+const ERROR_USER_DUPLICATION_FAILED = 'User duplication failed';
+const ERROR_NO_USER_FOUND = 'No user found with UID ';
+const ERROR_USER_RETRIEVING_FAILED = 'User retrieving failed';
+const ERROR_LAST_LOGIN_DATE_UPDATE_FAILED = 'Last login date update failed';
+const ERROR_DUPLICATED_USER_NAME_UPDATE_FAILED = 'Duplicated user\'s name update failed';
+const ERROR_DUPLICATED_USER_PROFILE_PICTURE_UPDATE_FAILED = 'Duplicated user\'s profile picture update failed';
+const ERROR_PROFILE_NAME_UPDATE_FAILED = 'Profile name update failed';
+const ERROR_PROFILE_PICTURE_UPDATE_FAILED = 'Profile name update failed';
+const ERROR_EMAIL_UPDATE_FAILED = 'Email update failed';
+const ERROR_DUPLICATED_USER_EMAIL_UPDATE_FAILED = 'Duplicated user\'s email update failed';
+const ERROR_PASSWORD_UPDATE_FAILED = 'Password update failed';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +34,10 @@ export class UserService {
 
   private readonly database = inject(Database);
 
+  private readonly userRef = (uid: string) => ref(this.database, `users/${uid}`);
+
   constructor(
     private readonly auth: Auth, 
-    public notificationService : NotificationService, 
-    public firebaseErrorService: FirebaseErrorService
   ) {
     onAuthStateChanged(this.auth, (user) => {
       this.currentUserSubject.next(user);
@@ -35,11 +51,9 @@ export class UserService {
   public async logIn(email: string, password: string) : Promise<void> {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-      
-      this.updateLastLoginDate(userCredential.user.uid);
-      return;
+      await this.updateLastLoginDate(userCredential.user.uid);
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : 'Login failed');
+      throw new Error(error instanceof Error ? error.message : ERROR_LOGIN_FAILED);
     }
   }
 
@@ -47,19 +61,17 @@ export class UserService {
     try {
       const googleProvider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(this.auth, googleProvider);
-      this.updateLastLoginDate(userCredential.user.uid);
-      return;
+      await this.updateLastLoginDate(userCredential.user.uid);
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : 'Google Login failed');
+      throw new Error(error instanceof Error ? error.message : ERROR_GOOGLE_LOGIN_FAILED);
     }
   }
 
   public async register(email: string, password: string) : Promise<void> {
     try {
       await createUserWithEmailAndPassword(this.auth, email, password)
-      return;
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : 'Registration failed');
+      throw new Error(error instanceof Error ? error.message : ERROR_REGISTRATION_FAILED);
     }
   }
 
@@ -73,8 +85,8 @@ export class UserService {
   public async sendPasswordResetEmail(email : string) : Promise<void> {
     try {
       await sendPasswordResetEmail(this.auth, email)
-    } catch (error: any) {
-      throw new Error(error instanceof Error ? error.message : 'Email password reset send failed');
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : ERROR_PASSWORD_RESET_EMAIL_SEND_FAILED);
     }
   }
 
@@ -82,225 +94,164 @@ export class UserService {
     try {
       await confirmPasswordReset(this.auth, oobCode, newPassword);
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : 'Password reset failed');
+      throw new Error(error instanceof Error ? error.message : ERROR_PASSWORD_RESET_FAILED);
     }
   }
 
-  public async updateUserNameAndProfilePicture(newUserName : string, newProfilePictureLink: string) : Promise<boolean> {
+  public async updateUserNameAndProfilePicture(newUserName : string, newProfilePictureLink: string) : Promise<void> {
     try {
-      await updateProfile(this.auth.currentUser!, {
-        displayName: newUserName,
-        photoURL: newProfilePictureLink
-      });
-
-      this.notificationService.addNotification({
-        title: 'Modification réussie',
-        severity: notificationSeverity.OK,
-        detail: `Modification du nom d'utilisateur et de la photo de profil réussie`,
-        sticky: false,
-        delay: 5000
-      });
-    } catch (error: any) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-      return false;
+      if (this.auth.currentUser) {
+        await updateProfile(this.auth.currentUser, {
+          displayName: newUserName,
+          photoURL: newProfilePictureLink
+        });
+      } else {
+        throw new Error(ERROR_PROFILE_UPDATE_FAILED);
+      }
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : ERROR_PROFILE_UPDATE_FAILED);
     }
-    return true;
   }
 
   public async duplicateUser() : Promise<void> {
     try {
-      const userRef = ref(this.database, `users/${this.auth.currentUser?.uid}`);
-
-      const currentDate : Date = new Date() 
-        
-      await set(userRef, UserMapper.mapLocal(new ProjectClass.Local.User({
-        displayName: this.auth.currentUser?.displayName ? this.auth.currentUser.displayName : '',
-        email: this.auth.currentUser?.email ? this.auth.currentUser.email : '',
-        photoURL: this.auth.currentUser?.photoURL ? this.auth.currentUser.photoURL : '',
-        signUpDate: currentDate,
-        lastLoginDate: currentDate,
-      })));
+      if (this.auth.currentUser) {
+        const currentDate : Date = new Date();
+        await set(this.userRef(this.auth.currentUser.uid), UserMapper.mapLocal(new ProjectClass.Local.User({
+          displayName: this.auth.currentUser.displayName,
+          email: this.auth.currentUser.email,
+          photoURL: this.auth.currentUser.photoURL,
+          signUpDate: currentDate,
+          lastLoginDate: currentDate,
+        })));
+      } else {
+        throw new Error(ERROR_USER_DUPLICATION_FAILED);
+      }
     } catch (error) {
-      console.error("Error duplicating user data: ", error);
+      throw new Error(error instanceof Error ? error.message : ERROR_USER_DUPLICATION_FAILED);
     }
   }
 
-  public async getUserByUID(uid: string): Promise<ProjectClass.Local.User | null> {
+  public async getUserByUID(uid: string): Promise<ProjectClass.Local.User> {
     try {
-      const userRef = ref(this.database, `users/${uid}`);
-      const snapshot = await get(userRef);
-      
+      const snapshot = await get(this.userRef(uid));
       if (snapshot.exists()) {
         const userData = snapshot.val();
-        return UserMapper.mapRemote(userData, uid);
+        return UserMapper.mapRemote(userData);
       } else {
-        console.log(`Aucun utilisateur trouvé avec l'UID: ${uid}`);
-        return null;
+        throw new Error (ERROR_NO_USER_FOUND + uid);
       }
     } catch (error) {
-      console.error('Erreur lors de la récupération de l\'utilisateur:', error);
-      return null;
+      throw new Error(error instanceof Error ? error.message : ERROR_USER_RETRIEVING_FAILED);
     }
   }
 
   public async updateLastLoginDate(uid : string) : Promise<void> {
     try {
-      this.getUserByUID(uid).then((user) => {
-        if (user) {
-          user.lastLoginDate = new Date();
-          const userRef = ref(this.database, `users/${uid}`);
-          set(userRef, UserMapper.mapLocal(user)).catch((error) => {
-            console.error('Erreur lors de la mise à jour de la date de dernière connexion :', error);
-          });
-        }
-      });
+      const user = await this.getUserByUID(uid);
+      user.lastLoginDate = new Date();
+      await set(this.userRef(uid), UserMapper.mapLocal(user));
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de la date de dernière connexion :', error);
+      throw new Error(error instanceof Error ? error.message : ERROR_LAST_LOGIN_DATE_UPDATE_FAILED);
     }
   }
 
   public async updateDuplicatedUserName(newUserName : string) : Promise<void> {
     try {
-      const userRef = ref(this.database, `users/${this.auth.currentUser?.uid}`);
-        
-      await update(userRef, {
-        displayName: newUserName
-      });
+      if (this.auth.currentUser) {
+        await update(this.userRef(this.auth.currentUser.uid), {
+          displayName: newUserName
+        });
+      } else {
+        throw new Error(ERROR_DUPLICATED_USER_NAME_UPDATE_FAILED)
+      }
     } catch (error) {
-      console.error("Error duplicating user data: ", error);
+      throw new Error(error instanceof Error ? error.message : ERROR_DUPLICATED_USER_NAME_UPDATE_FAILED);
     }
   }
 
   public async updateDuplicatedUserProfilePicture(newProfilePictureLink : string) : Promise<void> {
     try {
-      const userRef = ref(this.database, `users/${this.auth.currentUser?.uid}`);
-        
-      await update(userRef, {
-        photoURL: newProfilePictureLink
-      });
+      if (this.auth.currentUser) {
+        await update(this.userRef(this.auth.currentUser.uid), {
+          photoURL: newProfilePictureLink
+        });
+      } else {
+        throw new Error(ERROR_DUPLICATED_USER_PROFILE_PICTURE_UPDATE_FAILED)
+      }
     } catch (error) {
-      console.error("Error duplicating user data: ", error);
+      throw new Error(error instanceof Error ? error.message : ERROR_DUPLICATED_USER_PROFILE_PICTURE_UPDATE_FAILED);
     }
   }
 
-  public async updateUserName(newUserName : string) : Promise<boolean> {
+  public async updateUserName(newUserName : string) : Promise<void> {
     try {
-      await updateProfile(this.auth.currentUser!, {
-        displayName: newUserName,
-        photoURL: this.currentUserValue?.photoURL
-      });
-
-      this.updateDuplicatedUserName(newUserName)
-
-      this.notificationService.addNotification({
-        title: 'Modification réussie',
-        severity: notificationSeverity.OK,
-        detail: `Modification du nom d'utilisateur réussie`,
-        sticky: false,
-        delay: 5000
-      });
-    } catch (error: any) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-      return false;
+      if (this.auth.currentUser && this.currentUserValue) {
+        await updateProfile(this.auth.currentUser, {
+          displayName: newUserName,
+          photoURL: this.currentUserValue.photoURL
+        });
+        await this.updateDuplicatedUserName(newUserName);
+      } else {
+        throw new Error(ERROR_PROFILE_NAME_UPDATE_FAILED);
+      }
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : ERROR_PROFILE_NAME_UPDATE_FAILED);
     }
-    return true;
   }
 
-  public async updateProfilePicture(newProfilePictureLink: string) : Promise<boolean> {
+  public async updateProfilePicture(newProfilePictureLink: string) : Promise<void> {
     try {
-      await updateProfile(this.auth.currentUser!, {
-        displayName: this.currentUserValue?.displayName,
-        photoURL: newProfilePictureLink
-      });
-
-      this.updateDuplicatedUserProfilePicture(newProfilePictureLink);
-
-      this.notificationService.addNotification({
-        title: 'Modification réussie',
-        severity: notificationSeverity.OK,
-        detail: `Modification de la photo de profil réussie`,
-        sticky: false,
-        delay: 5000
-      });
-    } catch (error: any) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-      return false;
+      if (this.auth.currentUser && this.currentUserValue) {
+        await updateProfile(this.auth.currentUser, {
+          displayName: this.currentUserValue.displayName,
+          photoURL: newProfilePictureLink
+        });
+        await this.updateDuplicatedUserProfilePicture(newProfilePictureLink);
+      } else {
+        throw new Error(ERROR_PROFILE_PICTURE_UPDATE_FAILED);
+      }
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : ERROR_PROFILE_PICTURE_UPDATE_FAILED);
     }
-    return true;
   }
 
-  public async updateEmail(newEmail : string) : Promise<boolean> {
+  public async updateEmail(newEmail : string) : Promise<void> {
     try {
-      await updateEmail(this.auth.currentUser!, newEmail)
-
-      this.updateDuplicatedUserMail(newEmail);
-
-      this.notificationService.addNotification({
-        title: 'Modification réussie',
-        severity: notificationSeverity.OK,
-        detail: `Modification de l'adresse mail réussie`,
-        sticky: false,
-        delay: 5000
-      });
-    } catch(error) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-      return false;
+      if (this.auth.currentUser) {
+        await updateEmail(this.auth.currentUser, newEmail);
+        await this.updateDuplicatedUserMail(newEmail);
+      } else {
+        throw new Error(ERROR_EMAIL_UPDATE_FAILED);
+      }
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : ERROR_EMAIL_UPDATE_FAILED);
     }
-    return true;
   }
 
   public async updateDuplicatedUserMail(newEmail : string) : Promise<void> {
     try {
-      const userRef = ref(this.database, `users/${this.auth.currentUser?.uid}`);
-        
-      await update(userRef, {
-        email: newEmail
-      });
+      if (this.auth.currentUser) {
+        await update(this.userRef(this.auth.currentUser.uid), {
+          email: newEmail
+        });
+      } else {
+        throw new Error(ERROR_DUPLICATED_USER_EMAIL_UPDATE_FAILED);
+      }
     } catch (error) {
-      console.error("Error duplicating user data: ", error);
+      throw new Error(error instanceof Error ? error.message : ERROR_DUPLICATED_USER_EMAIL_UPDATE_FAILED);
     }
   }
 
-  public async updatePassword(newpassword : string) : Promise<boolean> {
+  public async updatePassword(newpassword : string) : Promise<void> {
     try {
-      await updatePassword(this.auth.currentUser!, newpassword)
-
-      this.notificationService.addNotification({
-        title: 'Modification réussie',
-        severity: notificationSeverity.OK,
-        detail: `Modification du mot de passe réussie`,
-        sticky: false,
-        delay: 5000
-      });
+      if (this.auth.currentUser) {
+        await updatePassword(this.auth.currentUser, newpassword)
+      } else {
+        throw new Error(ERROR_PASSWORD_UPDATE_FAILED);
+      }
     } catch(error) {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
-      return false;
+      throw new Error(error instanceof Error ? error.message : ERROR_DUPLICATED_USER_EMAIL_UPDATE_FAILED);
     }
-    return true;
   }
 }

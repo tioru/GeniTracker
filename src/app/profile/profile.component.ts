@@ -10,6 +10,7 @@ import { DialogComponent, DialogStyle } from '../components/dialog/dialog.compon
 import { FormsModule } from '@angular/forms';
 import { TooltipComponent } from "../components/tooltip/tooltip.component";
 import { skip } from 'rxjs';
+import { FirebaseErrorService } from '../../utilities/services/firebase-error.service';
 
 export enum PROVIDER_DATA_TYPE {
   PASSWORD = "password",
@@ -62,7 +63,8 @@ export class ProfileComponent implements OnInit {
     public imageCacheService : ImageCacheService, 
     public userService : UserService, 
     public router: Router,
-    public notificationService : NotificationService
+    public notificationService : NotificationService,
+    private firebaseErrorService : FirebaseErrorService
   ) {}
 
   ngOnInit() {
@@ -116,10 +118,22 @@ export class ProfileComponent implements OnInit {
     }
 
     if (isValid && isSubmitEvent) {
-      this.userService.updateUserName(this.userDisplayName!).then((result) => {
-        if (result) {
-          this.updateFinished = true;
-        }
+      this.userService.updateUserName(this.userDisplayName!).then(() => {
+        this.notificationService.addNotification({
+          title: 'Modification réussie',
+          severity: notificationSeverity.OK,
+          detail: `Modification du nom d'utilisateur réussie`,
+          sticky: false,
+          delay: 5000
+        }); 
+        this.updateFinished = true;  
+      }).catch((error) => {
+        this.notificationService.addNotification({
+          title: 'Erreur',
+          severity: notificationSeverity.ERROR,
+          detail: this.firebaseErrorService.handleFirebaseError(error),
+          sticky: true
+        });
       })
     }
   }
@@ -137,10 +151,22 @@ export class ProfileComponent implements OnInit {
     }
 
     if (isValid && isSubmitEvent) {
-      this.userService.updateEmail(this.userMail!).then((result) => {
-        if (result) {
-          this.updateFinished = true;
-        }
+      this.userService.updateEmail(this.userMail!).then(() => {
+        this.notificationService.addNotification({
+          title: 'Modification réussie',
+          severity: notificationSeverity.OK,
+          detail: `Modification de l'adresse mail réussie`,
+          sticky: false,
+          delay: 5000
+        });
+        this.updateFinished = true;
+      }).catch((error) => {
+        this.notificationService.addNotification({
+          title: 'Erreur',
+          severity: notificationSeverity.ERROR,
+          detail: this.firebaseErrorService.handleFirebaseError(error),
+          sticky: true
+        });
       })
     }
   }
@@ -158,10 +184,22 @@ export class ProfileComponent implements OnInit {
     }
 
     if (isValid && isSubmitEvent) {
-      this.userService.updatePassword(this.userPassword).then((result) => {
-        if (result) {
-          this.updateFinished = true;
-        }
+      this.userService.updatePassword(this.userPassword).then(() => {
+        this.notificationService.addNotification({
+          title: 'Modification réussie',
+          severity: notificationSeverity.OK,
+          detail: `Modification du mot de passe réussie`,
+          sticky: false,
+          delay: 5000
+        });
+        this.updateFinished = true;
+      }).catch((error) => {
+        this.notificationService.addNotification({
+          title: 'Erreur',
+          severity: notificationSeverity.ERROR,
+          detail: this.firebaseErrorService.handleFirebaseError(error),
+          sticky: true
+        });
       })
     }
   }
@@ -180,10 +218,22 @@ export class ProfileComponent implements OnInit {
       }
 
       if (isValid && isSubmitEvent) {
-        this.userService.updateProfilePicture(this.userProfilePictureLink!).then((result) => {
-          if (result) {
-            this.updateFinished = true;
-          }
+        this.userService.updateProfilePicture(this.userProfilePictureLink!).then(() => {
+          this.notificationService.addNotification({
+            title: 'Modification réussie',
+            severity: notificationSeverity.OK,
+            detail: `Modification de la photo de profil réussie`,
+            sticky: false,
+            delay: 5000
+          });
+          this.updateFinished = true;
+        }).catch((error) => {
+          this.notificationService.addNotification({
+            title: 'Erreur',
+            severity: notificationSeverity.ERROR,
+            detail: this.firebaseErrorService.handleFirebaseError(error),
+            sticky: true
+          });
         })
       }
     }

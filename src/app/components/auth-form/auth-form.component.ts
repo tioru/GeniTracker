@@ -219,15 +219,28 @@ export class AuthFormComponent implements OnInit {
 
   public saveNewDisplayNameAndProfilePictureLink() : void {
     this.requestLoading = true;
-    this.userService.updateUserNameAndProfilePicture(this.displayName, this.profilePictureLink).then((result) => {
-      this.requestLoading = false;
-      if (result) {
+    this.userService.updateUserNameAndProfilePicture(this.displayName, this.profilePictureLink).then(() => {
         this.displayNameDefined = true;
         this.displayName = '';
         this.profilePictureLink = '';
-        this.userService.duplicateUser()
-      }
-    });
+        this.userService.duplicateUser();
+        this.notificationService.addNotification({
+          title: 'Modification réussie',
+          severity: notificationSeverity.OK,
+          detail: `Modification du nom d'utilisateur et de la photo de profil réussie`,
+          sticky: false,
+          delay: 5000
+        });
+    }).catch((error) => {
+      this.notificationService.addNotification({
+        title: 'Erreur',
+        severity: notificationSeverity.ERROR,
+        detail: this.firebaseErrorService.handleFirebaseError(error),
+        sticky: true
+      });
+    }).then(() => {
+      this.requestLoading = false;
+    })
   }
 
   public checkDisplayName(event: Event) {

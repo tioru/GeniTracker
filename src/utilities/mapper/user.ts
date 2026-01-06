@@ -13,13 +13,13 @@ export class UserMapper {
         const keys = Object.keys(rUsers);
 
         keys.forEach ((key) => {
-            lUsers[key] = this.mapRemote(rUsers[key], key);
+            lUsers[key] = this.mapRemote(rUsers[key]);
         })
         
         return lUsers;
     }
     
-    public static mapRemote(rUser : ProjectClass.Remote.User, uid : string) : ProjectClass.Local.User {
+    public static mapRemote(rUser : ProjectClass.Remote.User) : ProjectClass.Local.User {
         try  {
             return new ProjectClass.Local.User({
                 displayName : rUser.displayName,
@@ -27,7 +27,7 @@ export class UserMapper {
                 photoURL : rUser.photoURL,
                 signUpDate : new Date(rUser.signUpDate!),
                 lastLoginDate : new Date(rUser.lastLoginDate!),
-                uid : uid
+                uid : rUser.uid
             })
         } catch (error) {
             throw new Error("Error mapping Remote User to Local User: " + error);
@@ -53,7 +53,8 @@ export class UserMapper {
                 email: lUser.email,
                 photoURL: lUser.photoURL,
                 signUpDate: lUser.signUpDate!.toISOString(),
-                lastLoginDate: lUser.lastLoginDate!.toISOString()
+                lastLoginDate: lUser.lastLoginDate!.toISOString(),
+                uid: lUser.uid
             })
         } catch (error) {
             throw new Error("Error mapping Local User to Remote User: " + error);

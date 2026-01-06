@@ -4,6 +4,7 @@ export class RUserClass {
   photoURL : string | null = null;
   signUpDate : string | null = null;
   lastLoginDate : string | null = null;
+  uid : string | null = null;
 
   constructor(init?:Partial<RUserClass>) {
     Object.assign(this, init);
