@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { API } from '../../utilities/api/request';
 import { ProjectClass } from '../../utilities/classes/class';
 import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
@@ -10,7 +10,7 @@ import { NotificationService, notificationSeverity } from '../../utilities/servi
   templateUrl: './weapons.component.html',
   styleUrl: './weapons.component.scss'
 })
-export class WeaponsComponent {
+export class WeaponsComponent implements OnInit{
   public weaponsCard : {hover : boolean, weapon : ProjectClass.Local.WeaponListing}[] = [];
   public loadingWeapons : boolean = true;
 
@@ -36,7 +36,7 @@ export class WeaponsComponent {
     this.notificationService.addNotification({
       title: 'TEST',
       severity : notificationSeverity.ERROR,
-      detail : "detail de test" + this.counter,
+      detail : "detail de test" + this.counter + "et encore plus de texte pour voir la mise en forme avec un detail plutot grand laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       sticky: true,
       delay: 3000
     })
@@ -47,7 +47,7 @@ export class WeaponsComponent {
     this.notificationService.addNotification({
       title: 'TEST',
       severity : notificationSeverity.WARNING,
-      detail : "detail de test" + this.counter,
+      detail : "detail de test" + this.counter + "et encore plus de texte pour voir la mise en forme avec un detail plutot grand laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       sticky: false,
       delay: 3000
     })
@@ -58,7 +58,7 @@ export class WeaponsComponent {
     this.notificationService.addNotification({
       title: 'TEST',
       severity : notificationSeverity.INFO,
-      detail : "detail de test" + this.counter,
+      detail : "detail de test" + this.counter + "et encore plus de texte pour voir la mise en forme avec un detail plutot grand laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       sticky: false,
       delay: 3000
     })
@@ -69,9 +69,8 @@ export class WeaponsComponent {
     this.notificationService.addNotification({
       title: 'TEST',
       severity : notificationSeverity.OK,
-      detail : "detail de test" + this.counter,
-      sticky: false,
-      delay: 3000
+      detail : "detail de test" + this.counter + "et encore plus de texte pour voir la mise en forme avec un detail plutot grand laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa un petit peu",
+      sticky: true
     })
     this.counter += 1
   }

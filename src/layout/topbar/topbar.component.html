@@ -46,7 +46,7 @@
     </div>
     <div class="fh flex jce aic" style="flex: 1; margin-right: 10px;">
         <div class="fh flex aic jscb gap10">
-            @if(currentUser | async) {
+            @if(userService.currentUserValue) {
                 <button [class.disabled]="!groupService.getSelectedGroupKey()" class="topbar_item flex jcc aic" (click)="chatVisibility = !chatVisibility" style="padding: 15px 10px;">
                     <div class="flex aic gap10">
                         <div class="img_container flex">

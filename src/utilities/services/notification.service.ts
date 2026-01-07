@@ -11,7 +11,6 @@ export interface notificationModel{
 
 const DEFAULT_NOTIFICATION_DELAY_VALUE = 3000 // In milliseconds
 const DEFAULT_NOTIFICATION_STICKY_VALUE = false
-
 const FADE_OUT_DELAY_ANIMATION = 500 // In milliseconds
 
 export enum notificationSeverity {
@@ -25,7 +24,7 @@ export enum notificationSeverity {
   providedIn: 'root'
 })
 export class NotificationService {
-  private notificationsSubject: BehaviorSubject<Array<notificationModel>> = new BehaviorSubject<Array<notificationModel>>([]);
+  private readonly notificationsSubject: BehaviorSubject<Array<notificationModel>> = new BehaviorSubject<Array<notificationModel>>([]);
   public notifications$: Observable<Array<notificationModel>> = this.notificationsSubject.asObservable();
   
   constructor() {}

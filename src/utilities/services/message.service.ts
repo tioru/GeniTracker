@@ -11,7 +11,7 @@ import { DatabaseService } from "./database.service";
   providedIn: 'root'
 })
 export class MessageService {
-    private database = inject(Database);
+    private readonly database = inject(Database);
     
     constructor(
         public notificationService : NotificationService,

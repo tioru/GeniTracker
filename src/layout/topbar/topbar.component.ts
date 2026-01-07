@@ -22,9 +22,6 @@ const OOBCODE_PARAMETER = 'oobCode';
   styleUrl: './topbar.component.scss'
 })
 export class TopbarComponent implements  OnInit {
-
-  public currentUser: Observable<User | null> = of(null);
-
   public formVisibility : boolean = false;
 
   public chatVisibility : boolean = false;
@@ -42,11 +39,14 @@ export class TopbarComponent implements  OnInit {
     public groupService : GroupService
   ) {}
     
-  ngOnInit(): void { 
-    this.groupService.startListening();
-
-    this.currentUser = this.userService.currentUser$;
-
+  ngOnInit(): void {
+    this.userService.currentUser$.subscribe(() => {
+      if (this.userService.currentUserValue) {
+        this.groupService.startListening();
+      } else {
+        this.groupService.stopListening();
+      }
+    });
     this.route.queryParams.subscribe(params => {
       this.modeParam = params[MODE_PARAMETER];
       this.oobCodeParam = params[OOBCODE_PARAMETER];

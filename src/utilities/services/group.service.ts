@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, OnDestroy } from "@angular/core";
 import { Database, onValue, push, ref } from "@angular/fire/database";
 import { ProjectClass } from "../classes/class";
 import { GroupMapper } from "../mapper/group";
@@ -11,22 +11,28 @@ const ERROR_GROUP_CREATION_FAILED = 'Group creation failed';
 @Injectable({
   providedIn: 'root'
 })
-export class GroupService {
-    private database = inject(Database);
+export class GroupService implements OnDestroy {
+    private readonly database = inject(Database);
     private readonly groupRef = ref(this.database, 'groups');
 
-    private groupsSubject = new BehaviorSubject<{ [key: string]: ProjectClass.Local.GroupItem }>({});
+    private readonly groupsSubject = new BehaviorSubject<{ [key: string]: ProjectClass.Local.GroupItem }>({});
     public groups$ = this.groupsSubject.asObservable();
     
-    private selectedGroupKeySubject = new BehaviorSubject<string | null>(null);
+    private readonly selectedGroupKeySubject = new BehaviorSubject<string | null>(null);
     public selectedGroupKey$ = this.selectedGroupKeySubject.asObservable();
+
+    private unsubscribe? : () => void;
 
     constructor(
         public groupMapper : GroupMapper
     ) { }
 
     public startListening(): void {
-        onValue(this.groupRef, async (snapshot) => {
+        if (this.unsubscribe) {
+            return;
+        }
+
+        this.unsubscribe = onValue(this.groupRef, async (snapshot) => {
             if (snapshot.exists()) {
                 const groups = await this.groupMapper.mapRemoteDict(snapshot.val());
                 this.groupsSubject.next(groups);
@@ -72,5 +78,18 @@ export class GroupService {
         } catch(error) {
             throw new Error(error instanceof Error ? error.message : ERROR_GROUP_CREATION_FAILED);
         }
+    }
+
+    public stopListening() : void {
+        if (this.unsubscribe) {
+            this.unsubscribe();
+            this.unsubscribe = undefined;
+        }
+    }
+
+    ngOnDestroy() : void {
+        this.stopListening();
+        this.groupsSubject.complete();
+        this.selectedGroupKeySubject.complete();
     }
 }
