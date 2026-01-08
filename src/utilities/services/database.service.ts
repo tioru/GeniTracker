@@ -14,7 +14,6 @@ export class DatabaseService {
     this.client = new Client()
       .setEndpoint('https://cloud.appwrite.io/v1')
       .setProject(environment.writeappConfig.projectId)
-      .setKey(environment.writeappConfig.apiKey);
 
     this.storage = new Storage(this.client);
   }
@@ -26,13 +25,17 @@ export class DatabaseService {
   public async getFileFromID(fileId: string): Promise<ProjectClass.Remote.AttachedFile> {
     try {
       const fileMetadata = await this.storage.getFile(
-        environment.writeappConfig.bucketId,
-        fileId
+        {
+          bucketId: environment.writeappConfig.bucketId,
+          fileId: fileId
+        }
       );
 
       let fileArrayBuffer : any = await this.storage.getFileDownload(
-        environment.writeappConfig.bucketId,
-        fileId
+        {
+          bucketId : environment.writeappConfig.bucketId,
+          fileId : fileId
+        }
       );
 
       if (!(fileArrayBuffer instanceof ArrayBuffer) && !(fileArrayBuffer instanceof Blob) && typeof fileArrayBuffer === 'object') {
@@ -80,9 +83,11 @@ export class DatabaseService {
       }
 
       const uploadedFile: Models.File = await this.storage.createFile(
-        environment.writeappConfig.bucketId,
-        ID.unique(),
-        file.file
+        {
+          bucketId : environment.writeappConfig.bucketId,
+          fileId : ID.unique(),
+          file : file.file
+        }
       );
 
       return {
