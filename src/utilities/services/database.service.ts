@@ -24,32 +24,32 @@ export class DatabaseService {
 
   public async getFileFromID(fileId: string): Promise<ProjectClass.Remote.AttachedFile> {
     try {
-      const fileMetadata = await this.storage.getFile(
-        {
-          bucketId: environment.writeappConfig.bucketId,
-          fileId: fileId
-        }
-      );
-
-      let fileArrayBuffer : any = await this.storage.getFileDownload(
-        {
-          bucketId : environment.writeappConfig.bucketId,
-          fileId : fileId
-        }
-      );
-
-      if (!(fileArrayBuffer instanceof ArrayBuffer) && !(fileArrayBuffer instanceof Blob) && typeof fileArrayBuffer === 'object') {
-        fileArrayBuffer = new TextEncoder().encode(JSON.stringify(fileArrayBuffer));
+      const fileMetadata = await this.storage.getFile({
+        bucketId: environment.writeappConfig.bucketId,
+        fileId: fileId
+      });
+    
+      let fileDownloadLink = await this.storage.getFileDownload({
+        bucketId: environment.writeappConfig.bucketId,
+        fileId: fileId
+      });
+    
+      const response = await fetch(fileDownloadLink as string);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to download file: ${response.statusText}`);
       }
-
+    
+      const fileArrayBuffer = await response.arrayBuffer();
+    
       const fileBlob = new Blob([fileArrayBuffer], { 
         type: fileMetadata.mimeType 
       });
-
+    
       const file = new File([fileBlob], fileMetadata.name, { 
         type: fileMetadata.mimeType 
       });
-
+    
       const base64 = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -60,13 +60,13 @@ export class DatabaseService {
         reader.onerror = reject;
         reader.readAsDataURL(fileBlob);
       });
-
+    
       return new ProjectClass.Remote.AttachedFile({
         base64: base64,
         file: file,
         id: fileId
       });
-
+    
     } catch (error) {
       throw new Error(`Error while retrieving file : ${error}`);
     }
