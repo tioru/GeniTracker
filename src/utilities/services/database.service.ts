@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ProjectClass } from "../classes/class";
-import { Client, ID, Models, Storage } from "node-appwrite";
+import { Client, ID, Models, Storage } from "appwrite";
 import { environment } from "../../environments/environment";
 
 @Injectable({
