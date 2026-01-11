@@ -1,55 +1,66 @@
 <!--<div class="background-particles"></div>!-->
-<div class="fh fw flex aic jcc column gap50" style="overflow-x: hidden;">
-    <div class="fw flex aic jcc" style="height: fit-content;">
-        <div class="version-container black_div flex aic column">
-            <h2 style="text-align: center; user-select: none;">Version actuelle</h2>
-            @if(loadingVersions) {
-                <div class="spinner"></div>
-            } @else {
-                <div class="container flex aic jcc fade-mask">
-                    <div class="innerContainer carousel flex aic jcc">
-                        <div style="user-select: none"
-                            *ngFor="let version of versions;" 
-                            class="version-number interactive-element overflowHandler"
-                            [class.selected]="version.selected">
-                            {{version.version}}
+<div class="fh fw flex aic jcc" style="overflow-x: hidden;">
+    <div>
+
+    </div>
+    <div class="fw column flex aic jcc gap50" style="height: fit-content;">
+        <div class="flex aic jcc">
+            <div class="version-container black_div flex aic column">
+                <h2 style="text-align: center; user-select: none;">Version actuelle</h2>
+                @if(loadingVersions) {
+                    <div class="spinner"></div>
+                } @else {
+                    <div class="container flex aic jcc fade-mask">
+                        <div class="innerContainer carousel flex aic jcc">
+                            <div style="user-select: none"
+                                *ngFor="let version of versions;" 
+                                class="version-number interactive-element overflowHandler"
+                                [class.selected]="version.selected">
+                                {{version.version}}
+                            </div>
                         </div>
                     </div>
+                }
+                <div class="active_version_title_container flex aic jcc" style="margin: 25px 0; font-size: 0.9rem; color: var(--text-secondary); user-select: none;">
+                    <span class="activeVersionTitle">
+                        {{activeVersionTitle}}
+                    </span>
                 </div>
-            }
-            <div class="active_version_title_container" style="margin: 25px 0; font-size: 0.9rem; color: var(--text-secondary); user-select: none;">
-                <span>
-                    {{ activeVersionTitle }}
-                </span>
             </div>
+        </div>
+        <div class="fw fh flex aic jcc" style="overflow-y: hidden; max-height: fit-content;">
+            <div class="black_div flex aic jcc column p20 gap20" style="text-align: center;" [class.animate-in]="titleAnimating">
+                <div class="logo-container flex aic jcc gap20">
+                    <img src="assets/img/Paimon.png" height="130px">
+                    <h1 class="welcome-title">GeniTracker</h1>
+                </div>
+                <div>
+                    <h2 class="welcome-subtitle">Bienvenue voyageur</h2>
+                    <p style="color: var(--text-secondary); margin-top: 10px;">
+                        Suivez vos personnages, armes et événements Genshin Impact
+                    </p>
+                </div>
+                <div class="stats-container">
+                    <button class="button interactive-element" (click)="navigateTo('/characters')">
+                        <span class="stat-number">42</span>
+                        <div class="stat-label">Personnages</div>
+                    </button>
+                    <button class="button interactive-element" (click)="navigateTo('/weapons')">
+                        <span class="stat-number">156</span>
+                        <div class="stat-label">Armes</div>
+                    </button>
+                    <button class="button interactive-element" (click)="navigateTo('/events')">
+                        <span class="stat-number">7</span>
+                        <div class="stat-label">Événements actifs</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="black_div">
+            <span>INCOMING</span>
         </div>
     </div>
-    <div class="fw fh flex aic jcc" style="overflow-y: hidden; max-height: fit-content;">
-        <div class="black_div flex aic jcc column p20 gap20" style="text-align: center;" [class.animate-in]="titleAnimating">
-            <div class="logo-container flex aic jcc gap20">
-                <img src="assets/img/Paimon.png" height="130px">
-                <h1 class="welcome-title">GeniTracker</h1>
-            </div>
-            <div>
-                <h2 class="welcome-subtitle">Bienvenue voyageur</h2>
-                <p style="color: var(--text-secondary); margin-top: 10px;">
-                    Suivez vos personnages, armes et événements Genshin Impact
-                </p>
-            </div>
-            <div class="stats-container">
-                <button class="button interactive-element" (click)="navigateTo('/characters')">
-                    <span class="stat-number">42</span>
-                    <div class="stat-label">Personnages</div>
-                </button>
-                <button class="button interactive-element" (click)="navigateTo('/weapons')">
-                    <span class="stat-number">156</span>
-                    <div class="stat-label">Armes</div>
-                </button>
-                <button class="button interactive-element" (click)="navigateTo('/events')">
-                    <span class="stat-number">7</span>
-                    <div class="stat-label">Événements actifs</div>
-                </button>
-            </div>
-        </div>
+    <div>
+
     </div>
 </div>

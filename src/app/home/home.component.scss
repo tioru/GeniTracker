@@ -91,7 +91,7 @@
   padding: 10px 15px;
   border-radius: 8px;
   position: relative;
-  width: 85px;
+  width: 90px;
   text-align: center;
 
   &.selected {
@@ -292,4 +292,12 @@
 .overflowHandler {
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.activeVersionTitle {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  max-height: 5vh;
 }
