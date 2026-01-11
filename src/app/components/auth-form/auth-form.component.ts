@@ -7,7 +7,6 @@ import { Observable, of } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FirebaseErrorService } from '../../../utilities/services/firebase-error.service';
-import { TimelinePointsComponent } from "../timeline-points/timeline-points.component";
 
 enum DialogTab {
   LOGIN,
@@ -25,7 +24,7 @@ enum PasswordField {
 @Component({
   selector: 'app-auth-form',
   standalone: true,
-  imports: [CommonModule, DialogComponent, FormsModule, TimelinePointsComponent],
+  imports: [CommonModule, DialogComponent, FormsModule],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss'
 })
@@ -50,21 +49,13 @@ export class AuthFormComponent implements OnInit {
 
   public showLoginPassword : boolean = false;
 
-  public loading : boolean = false;
+  public basicLoginInProgress : boolean = false;
 
-  public googleLoading : boolean = false;
+  public googleLoginInProgress : boolean = false;
+
+  public forgetPasswordMailSendingInProgress : boolean = false;
 
   public authenticated : boolean = false;
-
-  public displayName : string = "";
-
-  public displayNameDefined : boolean = false;
-
-  public requestLoading : boolean = false;
-
-  public profilePictureLink : string = "";
-
-  public currentProgression = 0;
 
   @Input() formVisibility : boolean = false;
 
@@ -74,7 +65,6 @@ export class AuthFormComponent implements OnInit {
     this.currentUser = this.userService.currentUser$;
     this.currentUser.subscribe(user => {
       user ? this.authenticated = true : this.authenticated = false;
-      this.displayNameDefined = user?.displayName ? true : false;
     });
   }
 
@@ -85,9 +75,8 @@ export class AuthFormComponent implements OnInit {
   ) {}
 
   public login() {
-    this.loading = true;
+    this.basicLoginInProgress = true;
     this.userService.logIn(this.email, this.password).then(() => {
-      this.loading = false;
       this.email = "";
       this.password="";
       if (this.userService.currentUserValue) {
@@ -106,13 +95,14 @@ export class AuthFormComponent implements OnInit {
         detail: this.firebaseErrorService.handleFirebaseError(error),
         sticky: true
       });
+    }).finally(() => {
+      this.basicLoginInProgress = false;
     })
   }
 
   public loginWithGoogle() : void {
-    this.googleLoading = true;
+    this.googleLoginInProgress = true;
     this.userService.loginWithGoogle().then(() => {
-      this.googleLoading = false;
       this.email = "";
       this.password="";
       if (this.userService.currentUserValue) {
@@ -124,18 +114,20 @@ export class AuthFormComponent implements OnInit {
           delay: 5000
         });
       }
-    }).catch((error) => {
+    }).catch((error : any) => {
       this.notificationService.addNotification({
         title: 'Erreur',
         severity: notificationSeverity.ERROR,
         detail: this.firebaseErrorService.handleFirebaseError(error),
         sticky: true
       });
+    }).then(() => {
+      this.googleLoginInProgress = false;
     })
   }
 
   public register() {
-    this.loading = true;
+    this.basicLoginInProgress = true;
     this.userService.register(this.email, this.password).then(() => {
       this.email = "";
       this.password="";
@@ -156,7 +148,7 @@ export class AuthFormComponent implements OnInit {
         sticky: true
       });
     }).finally(() => {
-      this.loading = false;
+      this.basicLoginInProgress = false;
     })
   }
 
@@ -196,6 +188,7 @@ export class AuthFormComponent implements OnInit {
   }
 
   public sendPasswordResetEmail() : void {
+    this.forgetPasswordMailSendingInProgress = true;
     this.userService.sendPasswordResetEmail(this.email).then(() => {
       this.selectedDialogTab = this.dialogTab.LOGIN; 
       this.email = ''; 
@@ -214,49 +207,8 @@ export class AuthFormComponent implements OnInit {
         detail: this.firebaseErrorService.handleFirebaseError(error),
         sticky: true
       });
-    })
-  }
-
-  public saveNewDisplayNameAndProfilePictureLink() : void {
-    this.requestLoading = true;
-    this.userService.updateUserNameAndProfilePicture(this.displayName, this.profilePictureLink).then(() => {
-        this.displayNameDefined = true;
-        this.displayName = '';
-        this.profilePictureLink = '';
-        this.userService.duplicateUser();
-        this.notificationService.addNotification({
-          title: 'Modification réussie',
-          severity: notificationSeverity.OK,
-          detail: `Modification du nom d'utilisateur et de la photo de profil réussie`,
-          sticky: false,
-          delay: 5000
-        });
-    }).catch((error) => {
-      this.notificationService.addNotification({
-        title: 'Erreur',
-        severity: notificationSeverity.ERROR,
-        detail: this.firebaseErrorService.handleFirebaseError(error),
-        sticky: true
-      });
     }).then(() => {
-      this.requestLoading = false;
+      this.forgetPasswordMailSendingInProgress = false;
     })
-  }
-
-  public checkDisplayName(event: Event) {
-    const inputField = document.querySelector('.input.displayname') as HTMLInputElement;
-    const isValid = this.displayName.trim().length > 0;
-    const isSubmitEvent = (event instanceof KeyboardEvent && event.code === 'Enter') || 
-                          (event instanceof MouseEvent);
-
-    inputField.classList.toggle('error', !isValid);
-
-    if (!isValid && isSubmitEvent) {
-      // Wave animation to indicate error
-    }
-
-    if (isValid && isSubmitEvent) {
-      this.selectedFirstConnexionDialogTab = this.dialogTab.SET_PROFILE_PICTURE;
-    }
   }
 }

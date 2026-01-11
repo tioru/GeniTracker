@@ -5,6 +5,7 @@ import { GoogleAuthProvider, updateProfile } from 'firebase/auth';
 import { Database, get, ref, set, update } from '@angular/fire/database';
 import { ProjectClass } from '../classes/class';
 import { UserMapper } from '../mapper/user';
+import { FirebaseError } from 'firebase/app';
 
 const ERROR_LOGIN_FAILED = 'Login failed';
 const ERROR_GOOGLE_LOGIN_FAILED = 'Google Login failed';
@@ -13,7 +14,6 @@ const ERROR_PASSWORD_RESET_EMAIL_SEND_FAILED = 'Email password reset send failed
 const ERROR_PASSWORD_RESET_FAILED = 'Password reset failed';
 const ERROR_PROFILE_UPDATE_FAILED = 'Profile update failed';
 const ERROR_USER_DUPLICATION_FAILED = 'User duplication failed';
-const ERROR_NO_USER_FOUND = 'No user found with UID ';
 const ERROR_USER_RETRIEVING_FAILED = 'User retrieving failed';
 const ERROR_LAST_LOGIN_DATE_UPDATE_FAILED = 'Last login date update failed';
 const ERROR_DUPLICATED_USER_NAME_UPDATE_FAILED = 'Duplicated user\'s name update failed';
@@ -48,12 +48,16 @@ export class UserService {
     return this.currentUserSubject.value;
   }
 
+  public get meetsProfileRequirementsForChat() : boolean {
+    return this.currentUserSubject.value ? !!this.currentUserSubject.value.displayName && !!this.currentUserSubject.value.photoURL : false;
+  }
+
   public async logIn(email: string, password: string) : Promise<void> {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
       await this.updateLastLoginDate(userCredential.user.uid);
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_LOGIN_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_LOGIN_FAILED);
     }
   }
 
@@ -61,17 +65,24 @@ export class UserService {
     try {
       const googleProvider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(this.auth, googleProvider);
-      await this.updateLastLoginDate(userCredential.user.uid);
+      if (await this.getUserByUID(userCredential.user.uid)) {
+        await this.updateLastLoginDate(userCredential.user.uid);
+      } else {
+        await this.duplicateUser();
+        await this.updateLastLoginDate(userCredential.user.uid);
+      }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_GOOGLE_LOGIN_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_GOOGLE_LOGIN_FAILED);
     }
   }
 
   public async register(email: string, password: string) : Promise<void> {
     try {
-      await createUserWithEmailAndPassword(this.auth, email, password)
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      await this.duplicateUser();
+      await this.updateLastLoginDate(userCredential.user.uid);
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_REGISTRATION_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_REGISTRATION_FAILED);
     }
   }
 
@@ -86,7 +97,7 @@ export class UserService {
     try {
       await sendPasswordResetEmail(this.auth, email)
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_PASSWORD_RESET_EMAIL_SEND_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_PASSWORD_RESET_EMAIL_SEND_FAILED);
     }
   }
 
@@ -94,7 +105,7 @@ export class UserService {
     try {
       await confirmPasswordReset(this.auth, oobCode, newPassword);
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_PASSWORD_RESET_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_PASSWORD_RESET_FAILED);
     }
   }
 
@@ -109,7 +120,7 @@ export class UserService {
         throw new Error(ERROR_PROFILE_UPDATE_FAILED);
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_PROFILE_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_PROFILE_UPDATE_FAILED);
     }
   }
 
@@ -123,36 +134,39 @@ export class UserService {
           photoURL: this.auth.currentUser.photoURL,
           signUpDate: currentDate,
           lastLoginDate: currentDate,
+          uid: this.auth.currentUser.uid
         })));
       } else {
         throw new Error(ERROR_USER_DUPLICATION_FAILED);
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_USER_DUPLICATION_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_USER_DUPLICATION_FAILED);
     }
   }
 
-  public async getUserByUID(uid: string): Promise<ProjectClass.Local.User> {
+  public async getUserByUID(uid: string): Promise<ProjectClass.Local.User| null> {
     try {
       const snapshot = await get(this.userRef(uid));
       if (snapshot.exists()) {
         const userData = snapshot.val();
         return UserMapper.mapRemote(userData);
       } else {
-        throw new Error (ERROR_NO_USER_FOUND + uid);
+        return null;
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_USER_RETRIEVING_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_USER_RETRIEVING_FAILED);
     }
   }
 
-  public async updateLastLoginDate(uid : string) : Promise<void> {
+  public async updateLastLoginDate(uid: string): Promise<void> {
     try {
       const user = await this.getUserByUID(uid);
-      user.lastLoginDate = new Date();
-      await set(this.userRef(uid), UserMapper.mapLocal(user));
+      if (user) {
+        user.lastLoginDate = new Date();
+        await set(this.userRef(uid), UserMapper.mapLocal(user));
+      }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_LAST_LOGIN_DATE_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_LAST_LOGIN_DATE_UPDATE_FAILED);
     }
   }
 
@@ -166,7 +180,7 @@ export class UserService {
         throw new Error(ERROR_DUPLICATED_USER_NAME_UPDATE_FAILED)
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_DUPLICATED_USER_NAME_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_DUPLICATED_USER_NAME_UPDATE_FAILED);
     }
   }
 
@@ -180,7 +194,7 @@ export class UserService {
         throw new Error(ERROR_DUPLICATED_USER_PROFILE_PICTURE_UPDATE_FAILED)
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_DUPLICATED_USER_PROFILE_PICTURE_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_DUPLICATED_USER_PROFILE_PICTURE_UPDATE_FAILED);
     }
   }
 
@@ -196,7 +210,7 @@ export class UserService {
         throw new Error(ERROR_PROFILE_NAME_UPDATE_FAILED);
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_PROFILE_NAME_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_PROFILE_NAME_UPDATE_FAILED);
     }
   }
 
@@ -212,7 +226,7 @@ export class UserService {
         throw new Error(ERROR_PROFILE_PICTURE_UPDATE_FAILED);
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_PROFILE_PICTURE_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_PROFILE_PICTURE_UPDATE_FAILED);
     }
   }
 
@@ -225,7 +239,7 @@ export class UserService {
         throw new Error(ERROR_EMAIL_UPDATE_FAILED);
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_EMAIL_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_EMAIL_UPDATE_FAILED);
     }
   }
 
@@ -239,7 +253,7 @@ export class UserService {
         throw new Error(ERROR_DUPLICATED_USER_EMAIL_UPDATE_FAILED);
       }
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_DUPLICATED_USER_EMAIL_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_DUPLICATED_USER_EMAIL_UPDATE_FAILED);
     }
   }
 
@@ -251,7 +265,7 @@ export class UserService {
         throw new Error(ERROR_PASSWORD_UPDATE_FAILED);
       }
     } catch(error) {
-      throw new Error(error instanceof Error ? error.message : ERROR_DUPLICATED_USER_EMAIL_UPDATE_FAILED);
+      throw error instanceof FirebaseError ? error : new Error(ERROR_PASSWORD_UPDATE_FAILED);
     }
   }
 }

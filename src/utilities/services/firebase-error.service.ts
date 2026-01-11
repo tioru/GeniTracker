@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { FirebaseError } from '@angular/fire/app';
+import { AuthErrorCodes } from 'firebase/auth';
 
 export interface FirebaseErrorMessages {
   [key: string]: string;
@@ -10,16 +12,17 @@ export interface FirebaseErrorMessages {
 export class FirebaseErrorService {
   
   private readonly errorMessages: FirebaseErrorMessages = {
-    'auth/invalid-email': 'Adresse email invalide.',
-    'auth/email-already-in-use': 'Cette adresse email est déjà utilisée.',
-    'auth/missing-password': 'Veuillez saisir un mot de passe.',
-    'auth/weak-password': 'Le mot de passe doit contenir au moins 6 caractères.',
-    'auth/invalid-credential': 'Email/mot de passe incorrect.',
+    [AuthErrorCodes.INVALID_EMAIL] : 'Adresse email invalide.',
+    [AuthErrorCodes.EMAIL_EXISTS] : 'Cette adresse email est déjà utilisée.',
+    'auth/missing-password' : 'Veuillez saisir un mot de passe.',
+    [AuthErrorCodes.WEAK_PASSWORD] : 'Le mot de passe doit contenir au moins 6 caractères.',
+    [AuthErrorCodes.INVALID_LOGIN_CREDENTIALS] : 'Email/mot de passe incorrect.',
+    [AuthErrorCodes.POPUP_CLOSED_BY_USER] : 'La fenêtre de connexion a été fermée avant la fin de l\'authentification',
     
-    'auth/invalid-action-code': 'Code de réinitialisation invalide ou expiré.',
+    [AuthErrorCodes.INVALID_OOB_CODE] : 'Code de réinitialisation invalide ou expiré.',
     
     'PERMISSION_DENIED': 'Permissions insuffisantes.',
-    'CREDENTIAL_TOO_OLD_LOGIN_AGAIN': 'Votre session est trop ancienne afin de procéder à cette opération. Veuillez vous reconnecter et réessayer.',
+    [AuthErrorCodes.CREDENTIAL_TOO_OLD_LOGIN_AGAIN] : 'Votre session est trop ancienne afin de procéder à cette opération. Veuillez vous reconnecter et réessayer.',
     
     'default': 'Une erreur inattendue s\'est produite.'
   };
@@ -29,7 +32,7 @@ export class FirebaseErrorService {
   }
 
   public handleFirebaseError(error: any): string {
-    if (error?.code) {
+    if (error instanceof FirebaseError) {
       return this.getErrorMessage(error.code);
     }
     

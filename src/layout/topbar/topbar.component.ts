@@ -28,9 +28,9 @@ export class TopbarComponent implements  OnInit {
 
   public resetPasswordVisibility : boolean = false;
 
-  public modeParam: string | null = null;
+  public modeParam : string | null = null;
 
-  public oobCodeParam: string | null = null;
+  public oobCodeParam : string | null = null;
 
   constructor(
     public router: Router,
@@ -41,7 +41,7 @@ export class TopbarComponent implements  OnInit {
     
   ngOnInit(): void {
     this.userService.currentUser$.subscribe(() => {
-      if (this.userService.currentUserValue) {
+      if (this.userService.meetsProfileRequirementsForChat) {
         this.groupService.startListening();
       } else {
         this.groupService.stopListening();
