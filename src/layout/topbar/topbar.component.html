@@ -47,13 +47,22 @@
     <div class="fh flex jce aic" style="flex: 1; margin-right: 10px;">
         <div class="fh flex aic jscb gap10">
             @if(userService.currentUserValue) {
-                <button [class.disabled]="!groupService.getSelectedGroupKey() && userService.meetsProfileRequirementsForChat" class="topbar_item flex jcc aic" (click)="chatVisibility = !chatVisibility" style="padding: 15px 10px;">
-                    <div class="flex aic gap10">
-                        <div class="img_container flex">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="white" height="30px" viewBox="0 0 24 24"><path d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6M14,14H6V12H14M18,8H6V6H18" /></svg>
+                <tooltip-component>
+                    <div tooltipedElement>
+                        <button [class.disabled]="!groupService.getSelectedGroupKey() && userService.meetsProfileRequirementsForChat" class="topbar_item flex jcc aic" (click)="chatVisibility = !chatVisibility" style="padding: 10px 10px;">
+                            <div class="flex aic gap10">
+                                <div class="img_container flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" height="30px" viewBox="0 0 24 24"><path d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6M14,14H6V12H14M18,8H6V6H18" /></svg>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <div tooltipContent #tooltipContent>
+                        <div *ngIf="userService.meetsProfileRequirementsForChat">
+                            <span>Votre profil doit être compléter afin de pouvoir utiliser le chat</span>
                         </div>
                     </div>
-                </button>
+                </tooltip-component>
                 <button class="topbar_item openButton flex jcc aic" popovertarget="openList" style="padding: 15px 5px;">
                     <div class="flex aic gap10">
                         <div class="img_container">

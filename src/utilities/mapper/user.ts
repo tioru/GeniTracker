@@ -22,9 +22,9 @@ export class UserMapper {
     public static mapRemote(rUser : ProjectClass.Remote.User) : ProjectClass.Local.User {
         try  {
             return new ProjectClass.Local.User({
-                displayName : rUser.displayName,
+                displayName : !!rUser.displayName ? rUser.displayName : null,
                 email : rUser.email,
-                photoURL : rUser.photoURL,
+                photoURL : !!rUser.photoURL ? rUser.photoURL : null,
                 signUpDate : new Date(rUser.signUpDate!),
                 lastLoginDate : new Date(rUser.lastLoginDate!),
                 uid : rUser.uid
@@ -49,9 +49,9 @@ export class UserMapper {
     public static mapLocal(lUser : ProjectClass.Local.User) : ProjectClass.Remote.User {
         try  {
             return new ProjectClass.Remote.User({
-                displayName: lUser.displayName,
+                displayName: !!lUser.displayName ? lUser.displayName : "",
                 email: lUser.email,
-                photoURL: lUser.photoURL,
+                photoURL: !!lUser.photoURL ? lUser.photoURL : "",
                 signUpDate: lUser.signUpDate!.toISOString(),
                 lastLoginDate: lUser.lastLoginDate!.toISOString(),
                 uid: lUser.uid

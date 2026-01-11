@@ -499,9 +499,15 @@ textarea.scrollable {
     width: 80%;
 }
 
-
 .filesWrapper {
     overflow-x: auto;
     scrollbar-color: white rgb(63, 63, 63);
     scrollbar-width: thin;
+}
+
+.overflowHandler {
+    max-width: 15vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }

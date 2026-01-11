@@ -3,12 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { animations } from '../../app/animation';
 import { UserService } from '../../utilities/services/user.service';
-import { Observable, of } from 'rxjs';
-import { User } from 'firebase/auth';
 import { AuthFormComponent } from "../../app/components/auth-form/auth-form.component";
 import { ChatComponent } from "../../app/chat/chat.component";
 import { ResetPasswordFormComponent } from '../../app/components/reset-password-form/reset-password-form.component';
 import { GroupService } from '../../utilities/services/group.service';
+import { TooltipComponent } from "../../app/components/tooltip/tooltip.component";
 
 const MODE_PARAMETER = 'mode';
 const OOBCODE_PARAMETER = 'oobCode';
@@ -16,7 +15,7 @@ const OOBCODE_PARAMETER = 'oobCode';
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, AuthFormComponent, ChatComponent, ResetPasswordFormComponent],
+  imports: [CommonModule, AuthFormComponent, ChatComponent, ResetPasswordFormComponent, TooltipComponent],
   templateUrl: './topbar.component.html',
   animations: animations,
   styleUrl: './topbar.component.scss'

@@ -40,7 +40,6 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
     this.userService.currentUser$.subscribe(() => {
       if (!this.userService.currentUserValue) {
-        // Avoid the first emission from the initialization
         this.userService.currentUser$.pipe(skip(1)).subscribe(() => {
           if (!this.userService.currentUserValue) {
             this.router.navigateByUrl("/")
@@ -48,7 +47,8 @@ export class AdminComponent implements OnInit {
               title: 'Accès refusé',
               severity: notificationSeverity.WARNING,
               detail: 'La page que vous avez essayé d\'accéder requiert une connexion',
-              sticky: true
+              sticky: true,
+              delay: 5000
             })
           }
         })

@@ -4,10 +4,19 @@
             <div class="flex">
                 <div class="profilPictureWrapper" style="margin: 15px;">
                     <div class="profilPicture flex aic jcc">
-                        <img [class.loading]="profilPictureLoading" (load)="profilPictureLoading = false" [src]="imageCacheService.getImageUrl(userService.currentUserValue.photoURL || '')"/>
+                        @if (!!userService.currentUserValue.photoURL) {
+                            <img [class.loading]="profilPictureLoading" (load)="profilPictureLoading = false" [src]="imageCacheService.getImageUrl(userService.currentUserValue.photoURL)"/>
+                        } @else {
+                            <svg xmlns="http://www.w3.org/2000/svg" height="85%" width="85%" fill="white" viewBox="0 0 24 24"><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg>
+                        }
                     </div>
                 </div>
-                <h1 class="fw">{{ userService.currentUserValue.displayName }}</h1>
+                @if (!!userService.currentUserValue.displayName) {
+                    <h1 class="fw">{{ userService.currentUserValue.displayName }}</h1>
+                } @else {
+                    <h1 class="fw">Nom d'utilisateur</h1>
+                }
+                
                 <tooltip-component *ngIf="userService.currentUserValue" style="height: fit-content;">
                     <div tooltipedElement class="providerWrapper flex aic jcc">
                         @if(userService.currentUserValue.providerData[0].providerId === providerDataType.GOOGLE) {
@@ -16,7 +25,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 0 24 24" fill="white"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" /></svg>
                         }
                     </div>
-                    <div tooltipContent>
+                    <div tooltipContent #tooltipContent>
                         <div class="flex aic jcc column gap10">
                             @if(userService.currentUserValue!.providerData[0].providerId === providerDataType.GOOGLE) {
                                 <h4 style="font-weight: normal">Connecté via <strong>Google</strong></h4>

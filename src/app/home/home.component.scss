@@ -288,3 +288,8 @@
 .active_version_title_container {
   transition: all 0.35s ease;
 }
+
+.overflowHandler {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

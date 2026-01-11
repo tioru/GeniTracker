@@ -1,7 +1,7 @@
 export class RUserClass {
-  displayName : string | null = null;
+  displayName : string = "";
   email : string | null = null;
-  photoURL : string | null = null;
+  photoURL : string = "";
   signUpDate : string | null = null;
   lastLoginDate : string | null = null;
   uid : string | null = null;

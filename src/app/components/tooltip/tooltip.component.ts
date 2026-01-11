@@ -1,4 +1,4 @@
-import { Component, ElementRef, EmbeddedViewRef, Renderer2, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ContentChild, ElementRef, EmbeddedViewRef, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'tooltip-component',
@@ -10,6 +10,7 @@ import { Component, ElementRef, EmbeddedViewRef, Renderer2, TemplateRef, ViewChi
 export class TooltipComponent {
   @ViewChild('trigger', { static: true }) trigger!: ElementRef;
   @ViewChild('tooltipTemplate', { static: true }) tooltipTemplate!: TemplateRef<any>;
+  @ContentChild('tooltipContent') tooltipContent?: ElementRef;
 
   public tooltipStyle = {
     position: 'fixed',
@@ -19,7 +20,8 @@ export class TooltipComponent {
     zIndex: 10000
   };
 
-  public isVisible = true;
+  public isVisible : boolean = true;
+  public hasTooltipContent : boolean = false;
   private tooltipView? : EmbeddedViewRef<any>
 
   constructor(
@@ -27,22 +29,27 @@ export class TooltipComponent {
   ) {}
 
   public showTooltip() : void {
-    const rect = this.trigger.nativeElement.getBoundingClientRect();
+    if (this.tooltipContent) {
+      const element = this.tooltipContent.nativeElement;
+      if (element.children.length > 0) {
+        const rect = this.trigger.nativeElement.getBoundingClientRect();
 
-    this.tooltipStyle.top = rect.top - 8 + "px"
-    this.tooltipStyle.left = rect.left + rect.width / 2 + "px"
+        this.tooltipStyle.top = rect.top - 8 + "px"
+        this.tooltipStyle.left = rect.left + rect.width / 2 + "px"
 
-    this.isVisible = false;
-    this.tooltipView = this.tooltipTemplate.createEmbeddedView({});
-    this.tooltipView.detectChanges();
-    
-    const tooltipElement = this.tooltipView.rootNodes[0];
-    this.renderer.appendChild(document.body, tooltipElement);
-    
-    setTimeout(() => {
-      this.isVisible = true;
-      this.tooltipView?.detectChanges();
-    }, 10);
+        this.isVisible = false;
+        this.tooltipView = this.tooltipTemplate.createEmbeddedView({});
+        this.tooltipView.detectChanges();
+
+        const tooltipElement = this.tooltipView.rootNodes[0];
+        this.renderer.appendChild(document.body, tooltipElement);
+
+        setTimeout(() => {
+          this.isVisible = true;
+          this.tooltipView?.detectChanges();
+        }, 10);
+      };
+    }
   }
 
   public hideTooltip() : void {

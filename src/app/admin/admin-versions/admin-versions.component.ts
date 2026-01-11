@@ -9,11 +9,13 @@ import { NotificationService, notificationSeverity } from '../../../utilities/se
 import { animations } from '../../animation';
 import { FirebaseErrorService } from '../../../utilities/services/firebase-error.service';
 import { ImageCacheService } from '../../../utilities/services/image-cache.service';
+import { TooltipComponent } from "../../components/tooltip/tooltip.component";
+import { OverflowTooltipDirective } from '../../../utilities/directives/overflowTooltip';
 
 @Component({
   selector: 'app-admin-versions',
   standalone: true,
-  imports: [CommonModule, FormsModule, DialogComponent],
+  imports: [CommonModule, FormsModule, DialogComponent, TooltipComponent, OverflowTooltipDirective],
   templateUrl: './admin-versions.component.html',
   styleUrls: ['./admin-versions.component.scss'],
   animations: animations

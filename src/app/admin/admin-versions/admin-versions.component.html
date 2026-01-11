@@ -120,14 +120,32 @@
                 @if(editModeEnabled){
                     <input style="margin-left: 15px;" type="text" class="title-edit" [(ngModel)]="selectedVersion.title"/>
                 }@else {
-                    <h2 class="overflowHandler" style="margin-left: 15px; text-align: start;">{{selectedVersion.title}}</h2>
+                    <tooltip-component>
+                        <div tooltipedElement>
+                          <h2 class="overflowHandler" style="margin-left: 15px; text-align: start;" overflowTooltip #titleElement>
+                            {{selectedVersion.title}}
+                          </h2>
+                        </div>
+                        <div #tooltipContent tooltipContent>
+                            <span *ngIf="titleElement.hasAttribute('textOverflow')">{{selectedVersion.title}}</span>
+                        </div>
+                    </tooltip-component>
                 }
             </div>
             <div>
                 @if(editModeEnabled){
                     <input style="margin-right: 15px; text-align: right;" type="text" class="version-edit" [(ngModel)]="selectedVersion.version"/>
                 }@else {
-                    <h2 class="overflowHandler" style="margin-right: 15px; text-align: end;">{{selectedVersion.version}}</h2>
+                    <tooltip-component>
+                        <div tooltipedElement>
+                            <h2 class="overflowHandler" style="margin-right: 15px; text-align: end;" overflowTooltip #titleElement>
+                                {{selectedVersion.version}}
+                            </h2>
+                        </div>
+                        <div #tooltipContent tooltipContent>
+                            <span *ngIf="titleElement.hasAttribute('textOverflow')">{{selectedVersion.version}}</span>
+                        </div>
+                    </tooltip-component>
                 }
             </div>
         </div>

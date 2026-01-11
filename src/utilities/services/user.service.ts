@@ -163,7 +163,7 @@ export class UserService {
       const user = await this.getUserByUID(uid);
       if (user) {
         user.lastLoginDate = new Date();
-        await set(this.userRef(uid), UserMapper.mapLocal(user));
+        await update(this.userRef(uid), UserMapper.mapLocal(user));
       }
     } catch (error) {
       throw error instanceof FirebaseError ? error : new Error(ERROR_LAST_LOGIN_DATE_UPDATE_FAILED);

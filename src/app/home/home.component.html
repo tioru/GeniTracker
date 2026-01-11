@@ -10,7 +10,7 @@
                     <div class="innerContainer carousel flex aic jcc">
                         <div style="user-select: none"
                             *ngFor="let version of versions;" 
-                            class="version-number interactive-element"
+                            class="version-number interactive-element overflowHandler"
                             [class.selected]="version.selected">
                             {{version.version}}
                         </div>

@@ -77,7 +77,8 @@ export class ProfileComponent implements OnInit {
           title: 'Accès refusé',
           severity: notificationSeverity.WARNING,
           detail: 'La page que vous avez essayé d\'accéder requiert une connexion',
-          sticky: true
+          sticky: false,
+          delay: 5000
         })
       } else {
         this.defineCustomUser();
