@@ -6,7 +6,6 @@ main {
   height: vars.$height-after-topbar;
 
   .blurEffect {
-    height: vars.$height-after-topbar;
     backdrop-filter: blur(6px);
   }
 }

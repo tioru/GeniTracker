@@ -7,8 +7,8 @@ import { environment } from "../../environments/environment";
   providedIn: 'root'
 })
 export class DatabaseService {
-  private client: Client;
-  private storage: Storage;
+  private readonly client: Client;
+  private readonly storage: Storage;
 
   constructor() {
     this.client = new Client()

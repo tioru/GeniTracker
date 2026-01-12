@@ -1,11 +1,11 @@
 <!--<div class="background-particles"></div>!-->
 <div class="fh fw flex aic jcc" style="overflow-y: hidden;">
-    <div>
+    <div class="fh column flex aic jcc" style="flex: 1;">
 
     </div>
-    <div class="fw column flex aic jcc gap50" style="height: fit-content; overflow-y: hidden">
+    <div class="fh column flex aic jcc gap30" style="overflow-y: hidden; flex: 1; margin: 0px 15px;">
         <div class="flex aic jcc">
-            <div class="version-container black_div flex aic column">
+            <div class="version-container black_div flex aic column" style="height: 22vh;">
                 <h2 style="text-align: center; user-select: none;">Version actuelle</h2>
                 @if(loadingVersions) {
                     <div class="spinner"></div>
@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <div class="fw fh flex aic jcc" style="overflow-y: hidden; max-height: fit-content;">
+        <div class="fw fh flex aic jcc" style="overflow-y: hidden; max-height: fit-content; padding: 20px 0px;">
             <div class="black_div flex aic jcc column p20 gap20" style="text-align: center;" [class.animate-in]="titleAnimating">
                 <div class="logo-container flex aic jcc gap20">
                     <img src="assets/img/Paimon.png" height="130px">
@@ -57,10 +57,10 @@
             </div>
         </div>
         <div class="black_div">
-            <span>INCOMING</span>
+            <h2 style="text-align: center; user-select: none;">INCOMING</h2>
         </div>
     </div>
-    <div>
+    <div class="fh column flex aic jcc" style="flex: 1;">
 
     </div>
 </div>
