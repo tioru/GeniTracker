@@ -1,4 +1,4 @@
-import { LUserClass } from "../users/user";
+import { LUserClass } from "../user/user";
 import { LAttachedFile } from "./attachedFile";
 
 export class LMessageClass {

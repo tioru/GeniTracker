@@ -3,8 +3,6 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { FormsModule } from '@angular/forms';
 import { ProjectClass } from '../../utilities/classes/class';
-import { GroupMapper } from '../../utilities/mapper/group';
-import { MessageMapper } from '../../utilities/mapper/message';
 import { UserService } from '../../utilities/services/user.service';
 import { User } from '@angular/fire/auth';
 import { ImageCacheService } from '../../utilities/services/image-cache.service';
@@ -17,6 +15,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { skip, Subject, takeUntil } from 'rxjs';
 import { FILE_PIPES } from '../../utilities/pipes/file.pipe';
 import { GroupService } from '../../utilities/services/group.service';
+import { GroupMapper } from '../../utilities/mapper/chat/group';
+import { MessageMapper } from '../../utilities/mapper/chat/message';
 
 const SCROLLBAR_THRESHOLD = 100;
 const MAX_FILE_SIZE = 10 * 1024 * 1024;

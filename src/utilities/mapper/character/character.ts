@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { ProjectClass } from "../classes/class";
 import { SkillTalentsMapper } from "./skillTalents";
 import { PassiveTalentsMapper } from "./passiveTalents";
 import { ConstellationsMapper } from "./constellations";
 import { AscentionMaterialsMapper } from "./ascentionMaterials";
 import { VisionTypeMapper } from "./visionType";
+import { ProjectClass } from "../../classes/class";
 
 @Injectable({
   providedIn: 'root'

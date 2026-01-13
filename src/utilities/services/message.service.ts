@@ -2,10 +2,10 @@ import { inject, Injectable } from "@angular/core";
 import { Database, push, ref, remove, runTransaction, set, update } from "@angular/fire/database";
 import { NotificationService, notificationSeverity } from "./notification.service";
 import { ProjectClass } from "../classes/class";
-import { MessageMapper } from "../mapper/message";
 import { FirebaseErrorService } from "./firebase-error.service";
-import { GroupMapper } from "../mapper/group";
 import { DatabaseService } from "./database.service";
+import { GroupMapper } from "../mapper/chat/group";
+import { MessageMapper } from "../mapper/chat/message";
 
 @Injectable({
   providedIn: 'root'

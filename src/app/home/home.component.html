@@ -3,10 +3,10 @@
     <div class="fh column flex aic jcc" style="flex: 1;">
 
     </div>
-    <div class="fh column flex aic jcc gap30" style="overflow-y: hidden; flex: 1; margin: 0px 15px;">
+    <div class="fh column flex aic jcsa" style="overflow-y: hidden; flex: 1; margin: 0px 15px;">
         <div class="flex aic jcc">
             <div class="version-container black_div flex aic column">
-                <h4 style="text-align: center; user-select: none; margin: 15px 0">Version actuelle</h4>
+                <h3 style="text-align: center; user-select: none; margin: 15px 0">Version actuelle</h3>
                 @if(loadingVersions) {
                     <div class="spinner"></div>
                 } @else {
@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <div class="fw fh flex aic jcc" style="overflow-y: hidden; max-height: fit-content; padding: 20px 0px;">
+        <div class="fw fh flex aic jcc" style="overflow-y: hidden; max-height: fit-content;">
             <div class="black_div flex aic jcc column p20 gap20" style="text-align: center; width: 80%;" [class.animate-in]="titleAnimating">
                 <div class="logo-container flex aic jcc gap20">
                     <img src="assets/img/Paimon.png" height="100px">
@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="black_div">
-            <h2 style="text-align: center; user-select: none;">INCOMING</h2>
+            <h3 style="text-align: center; user-select: none; margin: 15px 0">Daily reset</h3>
             <app-count-down></app-count-down>
         </div>
     </div>

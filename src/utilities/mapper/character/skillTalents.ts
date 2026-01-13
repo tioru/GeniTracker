@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { ProjectClass } from "../classes/class";
 import { UpgradesMapper } from "./upgrades";
 import { AttributeScallingMapper } from "./attributeScalling";
+import { ProjectClass } from "../../classes/class";
 
 @Injectable({
   providedIn: 'root'

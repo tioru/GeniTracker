@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { animations } from '../animation';
 import { Database, onValue, ref } from '@angular/fire/database';
 import { ProjectClass } from '../../utilities/classes/class';
-import { VersionMapper } from '../../utilities/mapper/version';
 import { CountDownComponent } from "./count-down/count-down.component";
+import { VersionMapper } from '../../utilities/mapper/version/version';
 
 @Component({
   selector: 'app-home',

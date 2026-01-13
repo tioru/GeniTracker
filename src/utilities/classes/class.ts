@@ -1,42 +1,46 @@
-import { LAscentionMaterialsClass } from "./local/characters/ascensionMaterials";
-import { LAttributeScalingClass } from "./local/characters/attributeScaling";
-import { LCharacterClass } from "./local/characters/character";
-import { LCharacterArtsClass } from "./local/characters/characterArt";
-import { LCharacterArtsArray, LCharacterArtsTypeClass, LCharacterArtsTypeListEnum } from "./local/characters/characterArtsType";
-import { LCharacterListingClass } from "./local/characters/charactersListing";
-import { LConstellationClass } from "./local/characters/constellations";
-import { LPassiveTalentsClass } from "./local/characters/passiveTalents";
-import { LSkillTalentsClass } from "./local/characters/skillTalents";
-import { LUpgradeClass } from "./local/characters/upgrade";
-import { LVisionTypeClass, LVisionTypeListEnum } from "./local/characters/visionType";
+import { LAscentionMaterialsClass } from "./local/character/ascensionMaterials";
+import { LAttributeScalingClass } from "./local/character/attributeScaling";
+import { LCharacterClass } from "./local/character/character";
+import { LCharacterArtsClass } from "./local/character/characterArt";
+import { LCharacterArtsArray, LCharacterArtsTypeClass, LCharacterArtsTypeListEnum } from "./local/character/characterArtsType";
+import { LCharacterListingClass } from "./local/character/charactersListing";
+import { LConstellationClass } from "./local/character/constellations";
+import { LPassiveTalentsClass } from "./local/character/passiveTalents";
+import { LSkillTalentsClass } from "./local/character/skillTalents";
+import { LUpgradeClass } from "./local/character/upgrade";
+import { LVisionTypeClass, LVisionTypeListEnum } from "./local/character/visionType";
 import { LAttachedFile } from "./local/chat/attachedFile";
 import { LGroupClass } from "./local/chat/group";
 import { LGroupItem } from "./local/chat/groupItem";
 import { LMessageClass } from "./local/chat/message";
-import { LUserClass } from "./local/users/user";
-import { LVersionClass } from "./local/versions/version";
-import { LWeaponClass } from "./local/weapons/weapon";
-import { LWeaponListingClass } from "./local/weapons/weaponsListing";
-import { RAscentionMaterialsClass } from "./remote/characters/ascensionMaterials";
-import { RAttributeScalingClass } from "./remote/characters/attributeScaling";
+import { LDailyResetClass } from "./local/dailyReset/dailyReset";
+import { LDailyResetTimeClass } from "./local/dailyReset/dailyResetTime";
+import { LUserClass } from "./local/user/user";
+import { LVersionClass } from "./local/version/version";
+import { LWeaponClass } from "./local/weapon/weapon";
+import { LWeaponListingClass } from "./local/weapon/weaponsListing";
+import { RAscentionMaterialsClass } from "./remote/character/ascensionMaterials";
+import { RAttributeScalingClass } from "./remote/character/attributeScaling";
 
-import { RCharacterClass } from "./remote/characters/character";
-import { RCharacterArtsClass } from "./remote/characters/characterArt";
-import { RCharacterArtsArray, RCharacterArtsTypeClass, RCharacterArtsTypeListEnum } from "./remote/characters/characterArtsType";
-import { RCharacterListingClass } from "./remote/characters/charactersListing";
-import { RConstellationClass } from "./remote/characters/constellations";
-import { RPassiveTalentsClass } from "./remote/characters/passiveTalents";
-import { RSkillTalentsClass } from "./remote/characters/skillTalents";
-import { RUpgradeClass } from "./remote/characters/upgrade";
-import { RVisionTypeClass, RVisionTypeListEnum } from "./remote/characters/visionType";
+import { RCharacterClass } from "./remote/character/character";
+import { RCharacterArtsClass } from "./remote/character/characterArt";
+import { RCharacterArtsArray, RCharacterArtsTypeClass, RCharacterArtsTypeListEnum } from "./remote/character/characterArtsType";
+import { RCharacterListingClass } from "./remote/character/charactersListing";
+import { RConstellationClass } from "./remote/character/constellations";
+import { RPassiveTalentsClass } from "./remote/character/passiveTalents";
+import { RSkillTalentsClass } from "./remote/character/skillTalents";
+import { RUpgradeClass } from "./remote/character/upgrade";
+import { RVisionTypeClass, RVisionTypeListEnum } from "./remote/character/visionType";
 import { RAttachedFile } from "./remote/chat/attachedFile";
 import { RGroupClass } from "./remote/chat/group";
 import { RGroupItem } from "./remote/chat/groupItem";
 import { RMessageClass } from "./remote/chat/message";
-import { RUserClass } from "./remote/users/user";
-import { RVersionClass } from "./remote/versions/version";
-import { RWeaponClass } from "./remote/weapons/weapon";
-import { RWeaponListingClass } from "./remote/weapons/weaponsListing";
+import { RDailyResetClass } from "./remote/dailyReset/dailyReset";
+import { RDailyResetTimeClass } from "./remote/dailyReset/dailyResetTime";
+import { RUserClass } from "./remote/user/user";
+import { RVersionClass } from "./remote/version/version";
+import { RWeaponClass } from "./remote/weapon/weapon";
+import { RWeaponListingClass } from "./remote/weapon/weaponsListing";
 
 export namespace ProjectClass {
     export namespace Local {
@@ -62,6 +66,8 @@ export namespace ProjectClass {
         export class GroupItem extends LGroupItem {};
         export class User extends LUserClass{};
         export class AttachedFile extends LAttachedFile{};
+        export class DailyReset extends LDailyResetClass{};
+        export class DailyResetTime extends LDailyResetTimeClass{};
     }
 
     export namespace Remote {
@@ -87,5 +93,7 @@ export namespace ProjectClass {
         export class GroupItem extends RGroupItem {};
         export class User extends RUserClass {};
         export class AttachedFile extends RAttachedFile{};
+        export class DailyReset extends RDailyResetClass{};
+        export class DailyResetTime extends RDailyResetTimeClass{};
     }
 }

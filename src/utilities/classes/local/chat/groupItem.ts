@@ -1,4 +1,4 @@
-import { LUserClass } from "../users/user";
+import { LUserClass } from "../user/user";
 import { LMessageClass } from "./message";
 
 export class LGroupItem {

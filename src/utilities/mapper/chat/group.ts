@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { ProjectClass } from "../classes/class";
+import { ProjectClass } from "../../classes/class";
 import { MessageMapper } from "./message";
-import { UserService } from "../services/user.service";
+import { UserService } from "../../services/user.service";
 
 @Injectable({
   providedIn: 'root'

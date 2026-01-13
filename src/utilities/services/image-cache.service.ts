@@ -16,7 +16,7 @@ public imageObjectUrls = new Map<string, string>();
 
 private fileObjectUrls = new Map<File, string>();
 
-public loadImage(url: string) {
+  public loadImage(url: string) {
     return this.http.get(url, { responseType: 'blob' }).pipe(
       tap(blob => {
         const objectURL = URL.createObjectURL(blob);

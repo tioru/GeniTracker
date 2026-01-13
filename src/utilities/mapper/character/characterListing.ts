@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ProjectClass } from "../classes/class";
+import { ProjectClass } from "../../classes/class";
 import { VisionTypeMapper } from "./visionType";
 
 @Injectable({

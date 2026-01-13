@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
-import { ProjectClass } from "../classes/class";
-import { UserService } from "../services/user.service";
+import { UserService } from "../../services/user.service";
 import { AttachedFilesMapper } from "./attachedFiles";
-import { DatabaseService } from "../services/database.service";
+import { DatabaseService } from "../../services/database.service";
+import { ProjectClass } from "../../classes/class";
+
 
 @Injectable({
   providedIn: 'root'

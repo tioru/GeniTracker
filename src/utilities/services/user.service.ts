@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { GoogleAuthProvider, updateProfile } from 'firebase/auth';
 import { Database, get, ref, set, update } from '@angular/fire/database';
 import { ProjectClass } from '../classes/class';
-import { UserMapper } from '../mapper/user';
+import { UserMapper } from '../mapper/user/user';
 import { FirebaseError } from 'firebase/app';
 
 const ERROR_LOGIN_FAILED = 'Login failed';

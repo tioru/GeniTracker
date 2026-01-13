@@ -7,10 +7,10 @@ import { ProjectClass } from '../../utilities/classes/class';
 import { animations } from '../animation';
 import { DialogComponent, DialogStyle } from '../components/dialog/dialog.component';
 import { zip } from 'rxjs';
-import { CharacterMapper } from '../../utilities/mapper/character';
-import { CharacterArtsMapper } from '../../utilities/mapper/characterArts';
-import { CharacterListingMapper } from '../../utilities/mapper/characterListing';
+import { CharacterListingMapper } from '../../utilities/mapper/character/characterListing';
 import { Database, onValue, ref } from '@angular/fire/database';
+import { CharacterMapper } from '../../utilities/mapper/character/character';
+import { CharacterArtsMapper } from '../../utilities/mapper/character/characterArts';
 
 export enum characterFilter {
   ALPHABETIC = "Alphabétique",

@@ -1,8 +1,8 @@
 import { inject, Injectable, OnDestroy } from "@angular/core";
 import { Database, onValue, push, ref } from "@angular/fire/database";
 import { ProjectClass } from "../classes/class";
-import { GroupMapper } from "../mapper/group";
 import { BehaviorSubject } from "rxjs";
+import { GroupMapper } from "../mapper/chat/group";
 
 const DEFAULT_GROUP_NAME = "Général";
 
