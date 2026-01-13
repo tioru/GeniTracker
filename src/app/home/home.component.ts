@@ -5,11 +5,12 @@ import { animations } from '../animation';
 import { Database, onValue, ref } from '@angular/fire/database';
 import { ProjectClass } from '../../utilities/classes/class';
 import { VersionMapper } from '../../utilities/mapper/version';
+import { CountDownComponent } from "./count-down/count-down.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CountDownComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   animations: animations
@@ -31,7 +32,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   private x = 0;
 
   private particles: HTMLElement[] = [];
-  private animationFrame: number = 0;
+  private readonly animationFrame: number = 0;
 
   private itemWidth = 0;
   private itemSpacing = 0;
@@ -41,12 +42,14 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public loadingVersions : boolean = true;
 
-  private database = inject(Database);
+  private readonly database = inject(Database);
+
+
 
   constructor(
-    private elementRef: ElementRef,
-    private renderer: Renderer2,
-    private router: Router
+    private readonly elementRef: ElementRef,
+    private readonly renderer: Renderer2,
+    private readonly router: Router
   ) { }
 
   ngOnInit() {
