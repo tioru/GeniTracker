@@ -1,0 +1,18 @@
+<ng-container *ngIf="dailyResetService.getDailiesReset() as dailiesReset">
+    <div *ngFor="let dailyReset of dailiesReset">
+        <span>
+            {{dailyReset.zone}}
+        </span>
+        <span>
+            {{dailyReset.id}}
+        </span>
+        <div *ngIf="dailyReset.time">
+            <span>
+                {{dailyReset.time.hour}}
+            </span>
+            <span>
+                {{dailyReset.time.minute}}
+            </span>
+        </div>
+    </div>
+</ng-container>

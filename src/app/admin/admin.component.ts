@@ -6,19 +6,21 @@ import { UserService } from '../../utilities/services/user.service';
 import { Router } from '@angular/router';
 import { NotificationService, notificationSeverity } from '../../utilities/services/notification.service';
 import { skip } from 'rxjs';
+import { AdminDailyResetComponent } from "./admin-daily-reset/admin-daily-reset.component";
 
 enum AdminPanels {
   DASHBOARD = 'Panel d\'aministration',
   VERSIONS = 'Versions',
   CHARACTERS = 'Personnages',
   WEAPONS = 'Armes',
-  EVENTS = 'Événements'
+  EVENTS = 'Événements',
+  DAILY_RESET = 'Daily Reset'
 };
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, AdminVersionsComponent],
+  imports: [CommonModule, AdminVersionsComponent, AdminDailyResetComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
   animations: animations

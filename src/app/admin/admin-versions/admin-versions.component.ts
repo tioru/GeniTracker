@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Database, onValue, ref, set } from '@angular/fire/database';
 import { ProjectClass } from '../../../utilities/classes/class';
-import { VersionMapper } from '../../../utilities/mapper/version';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogComponent, DialogStyle } from '../../components/dialog/dialog.component';
@@ -11,6 +10,7 @@ import { FirebaseErrorService } from '../../../utilities/services/firebase-error
 import { ImageCacheService } from '../../../utilities/services/image-cache.service';
 import { TooltipComponent } from "../../components/tooltip/tooltip.component";
 import { OverflowTooltipDirective } from '../../../utilities/directives/overflowTooltip';
+import { VersionMapper } from '../../../utilities/mapper/version/version';
 
 @Component({
   selector: 'app-admin-versions',
