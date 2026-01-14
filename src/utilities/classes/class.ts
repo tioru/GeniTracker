@@ -14,7 +14,6 @@ import { LGroupClass } from "./local/chat/group";
 import { LGroupItem } from "./local/chat/groupItem";
 import { LMessageClass } from "./local/chat/message";
 import { LDailyResetClass } from "./local/dailyReset/dailyReset";
-import { LDailyResetTimeClass } from "./local/dailyReset/dailyResetTime";
 import { LUserClass } from "./local/user/user";
 import { LVersionClass } from "./local/version/version";
 import { LWeaponClass } from "./local/weapon/weapon";
@@ -36,7 +35,6 @@ import { RGroupClass } from "./remote/chat/group";
 import { RGroupItem } from "./remote/chat/groupItem";
 import { RMessageClass } from "./remote/chat/message";
 import { RDailyResetClass } from "./remote/dailyReset/dailyReset";
-import { RDailyResetTimeClass } from "./remote/dailyReset/dailyResetTime";
 import { RUserClass } from "./remote/user/user";
 import { RVersionClass } from "./remote/version/version";
 import { RWeaponClass } from "./remote/weapon/weapon";
@@ -67,7 +65,6 @@ export namespace ProjectClass {
         export class User extends LUserClass{};
         export class AttachedFile extends LAttachedFile{};
         export class DailyReset extends LDailyResetClass{};
-        export class DailyResetTime extends LDailyResetTimeClass{};
     }
 
     export namespace Remote {
@@ -94,6 +91,5 @@ export namespace ProjectClass {
         export class User extends RUserClass {};
         export class AttachedFile extends RAttachedFile{};
         export class DailyReset extends RDailyResetClass{};
-        export class DailyResetTime extends RDailyResetTimeClass{};
     }
 }

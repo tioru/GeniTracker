@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DailyResetService } from '../../../utilities/services/dailyReset.service';
 import { CommonModule } from '@angular/common';
 
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './admin-daily-reset.component.html',
   styleUrl: './admin-daily-reset.component.scss'
 })
-export class AdminDailyResetComponent {
+export class AdminDailyResetComponent implements OnInit {
   constructor(
     public dailyResetService : DailyResetService
   ) {}

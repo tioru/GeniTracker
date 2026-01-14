@@ -1,14 +1,11 @@
 import { Injectable } from "@angular/core";
 import { ProjectClass } from "../../classes/class";
-import { DailyResetTimeMapper } from "./dailyResetTime";
 
 @Injectable({
   providedIn: 'root'
 })
 export class DailyResetMapper {
-    constructor(
-        private dailyResetTimeMapper : DailyResetTimeMapper
-    ) {}
+    constructor() {}
 
     public mapRemoteArray(rDailiesReset : ProjectClass.Remote.DailyReset[]) : ProjectClass.Local.DailyReset[] {
         try {
@@ -22,7 +19,7 @@ export class DailyResetMapper {
         try {
             return new ProjectClass.Local.DailyReset({
                 id: rDailyReset.id,
-                time: rDailyReset.time ? this.dailyResetTimeMapper.mapRemote(rDailyReset.time) : null,
+                time: rDailyReset.time ? new Date(rDailyReset.time) : null,
                 zone: rDailyReset.zone
             })
         } catch (error) {
@@ -42,7 +39,7 @@ export class DailyResetMapper {
         try {
             return new ProjectClass.Remote.DailyReset({
                 id: rDailyReset.id,
-                time: rDailyReset.time ? this.dailyResetTimeMapper.mapLocal(rDailyReset.time) : null,
+                time: rDailyReset.time ? rDailyReset.time.toISOString() : null,
                 zone: rDailyReset.zone
             })
         } catch (error) {

@@ -1,0 +1,18 @@
+.dailyResetContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+}
+
+.dailyResetBox {
+    display: flex;
+    flex-direction: column;
+    background-color: #545454;
+    border: 1px solid white;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.informationContainer {
+    
+}
