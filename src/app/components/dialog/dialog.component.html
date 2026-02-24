@@ -1,4 +1,4 @@
-<div [@fadeDialog]="dialogVisibility" [class.backgroundMask]="backgroundMask" class="dialog-outside-container" (mousedown)="onOutsideMouseDown()" (mouseup)="onOutsideMouseUp()" *ngIf="resetFields">
+<div animate.enter="slideIn" animate.leave="slideOut" [class.backgroundMask]="backgroundMask" class="dialog-outside-container" (mousedown)="onOutsideMouseDown()" (mouseup)="onOutsideMouseUp()" *ngIf="resetFields">
     <div id="dialog-container" [style]="{'height': height, 'width': width, 'border-width': borderWidth}" class="dialog-container flex column" (mousedown)="$event.stopPropagation()">
         <div *ngIf="style === dialogStyle.HBF" class="header fw" [class]="style === dialogStyle.HBF ? 'top-element' : ''">
             <div *ngIf="draggable && style === dialogStyle.HBF" class="draggable-handle" (mousedown)="onDragStart($event)"></div>

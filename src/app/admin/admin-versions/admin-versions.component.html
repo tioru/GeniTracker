@@ -12,7 +12,7 @@
                     <div class="versions-grid">
                         <div *ngFor="let version of majorVersion.value" [ngClass]="{'on-version-creation': addVersionDialogVisibility}"  class="version-card" (click)="openVersion(version)">
                         <div class="fw img-container">
-                            <img [class.loading]="!version.imgLoaded" height="100%" width="100%" (load)="version.imgLoaded = true" [src]="imageCacheService.getImageUrl(version.imgUrl!)"/>
+                            <img #imgElement [class.loading]="!imgElement.complete" (load)="imgElement.complete" height="100%" width="100%" [src]="imageCacheService.getImageUrl(version.imgUrl!)"/>
                             <div *ngIf="!version.imgLoaded" class="spinner"></div>
                             <div class="version overflowHandler">
                                 <span>{{version.version}}</span>
