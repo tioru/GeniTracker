@@ -1,10 +1,21 @@
 @use './variables' as vars;
 
+@font-face {
+  font-family: 'Manrope';
+  src: url('/assets/font/manrope_policy.ttf') format('truetype');
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html, body {
   height: 100vh;
   margin: 0;
   padding: 0;
-  font-family: 'Genshin', sans-serif;
+  font-family: 'Manrope', sans-serif;
 }
 
 app-root {
@@ -128,136 +139,20 @@ app-root {
   }
 }
 
-notification-center {
-  position: absolute;
-  top: 65px;
-  right: 5px;
-  height: calc(vars.$height-after-topbar - 25px);
-  color: white;
-}
-
-app-topbar {
-  button {
-    border: 1px solid black;
-    border-radius: 6px;
-    background-color: black;
-    color: white;
-    padding: 0;
-    font-family: 'Genshin', sans-serif;
-  }
-}
-
-dialog-component {
-  position: fixed;
-  top: 0;
-  left: 0;
+app-root {
+  display: block;
   height: 100%;
-  width: 100%;
-  z-index: 1;
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  position: relative;
+  overflow: hidden;   // coupe les bords flous qui débordent
+  isolation: isolate; // le z-index négatif reste confiné au composant
 
-.button {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid #4a4a4a;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  transition: all 0.3s ease-in-out;
-  font-family: "Genshin", sans-serif;
-  color: white;
-  cursor: pointer;
-
-  &.disabled {
-    background: rgba(100, 100, 100, 0.2);
-    border: 1px solid #2a2a2a;
-    color: #6a6a6a;
-    cursor: not-allowed;
-    
-    &:hover {
-      background: rgba(100, 100, 100, 0.2);
-      transform: none;
-      box-shadow: none;
-    }
-
-    svg {
-      fill: #6a6a6a;
-    }
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;      // passe derrière le contenu
+    background: url('/assets/img/nation/Fontaine/10.jpg') center / cover no-repeat;
+    filter: brightness(.6);
+    transform: scale(1.05); // évite le liseré clair sur les bords
   }
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
-}
-
-.spinner {
-  width: 100px;
-  height: 100px;
-  border: 8px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #a1a1a1;
-  border-radius: 50%;
-  animation: spin 1s ease infinite;
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-}
-
-.input {
-  color: rgb(188, 188, 188);
-  padding: 10px 43px 10px 15px;
-  border: 2px solid #5f5f5f;
-  border-radius: 25px;
-  font-size: 20px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  background-color: #272727;
-  anchor-name: --input-field;
-
-  &.error {
-    border-color: #ff4d4d;
-  }
-}
-
-.clear_icon {
-  svg {
-    fill: grey;
-  }
-  &:hover {
-    svg {
-      fill: rgb(166, 166, 166);
-    }
-  }
-  position: absolute;
-  position-anchor: --input-field;
-  top: anchor(center);
-  right: 8px;
-  font-size: 18px;
-  background-color: transparent;
-  border: none;
-  line-height: 0;
-  cursor: pointer;
-  translate: 0 -50%;
-}
-
-.checkbox {
-  width: 20px;
-  height: 20px;
-  accent-color: #888888;
-  cursor: pointer;
-}
-
-svg {
-  line-height: 0;
-}
-
-body:has([popover]:not([style*="display: none"])) {
-  overflow: hidden;
 }
