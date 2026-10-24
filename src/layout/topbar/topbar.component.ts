@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { animations } from '../../app/animation';
 
 @Component({
@@ -7,6 +7,7 @@ import { animations } from '../../app/animation';
     imports: [],
     templateUrl: './topbar.component.html',
     animations: animations,
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './topbar.component.scss'
 })
 export class TopbarComponent implements  OnInit {
