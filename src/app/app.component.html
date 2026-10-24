@@ -7,16 +7,4 @@
             <router-outlet></router-outlet>
         </div>
     </main>
-    <div class="snow-container">
-        <div class="snowflake"
-            *ngFor="let flake of snowflakes"
-            [style.left.%]="flake.left"
-            [style.width.px]="flake.size"
-            [style.height.px]="flake.size"
-            [style.animationDuration]="flake.duration + 's'"
-            [style.animationDelay]="flake.delay + 's'"
-            [style.filter]="'blur(' + flake.blur + 'px)'">
-        </div>
-    </div>
 </div>
-<notification-center></notification-center>

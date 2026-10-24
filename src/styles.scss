@@ -1,10 +1,5 @@
 @use './variables' as vars;
 
-@font-face {
-  font-family: Genshin;
-  src: url(assets/font/genshin_policy.ttf);
-}
-
 html, body {
   height: 100vh;
   margin: 0;

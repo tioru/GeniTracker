@@ -1,9 +1,0 @@
-<div class="tooltip-trigger" #trigger (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-  <ng-content select="[tooltipedElement]"></ng-content>
-</div>
-
-<ng-template #tooltipTemplate>
-  <div class="tooltip-content" [class.visible]="isVisible" [style]="tooltipStyle">
-    <ng-content select="[tooltipContent]"></ng-content>
-  </div>
-</ng-template>
