@@ -50,3 +50,49 @@ nav {
 :host-context(.is-floating) .title {
     font-size: 25px;
 }
+
+.lang {
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, .28);
+    background-color: transparent;
+    text-transform: uppercase;
+    border-radius: 20px;
+    height: 40px;
+    padding: 0px 12px;
+    gap: 3px;
+    color: #fff;
+
+    &:hover {
+        border: 1px solid rgba(255, 255, 255, .6);
+    }
+
+    &:open {
+        border: 1px solid #9fe3ff;
+    }
+}
+
+.account {
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, .28);
+    background-color: transparent;
+    border-radius: 20px;
+    color: #fff;
+    height: 40px;
+    padding: 0px 16px 0px 4px;
+    gap: 10px;
+
+    &:hover {
+        border: 1px solid rgba(255, 255, 255, .6);
+    }
+}
+
+.imgcontainer {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}

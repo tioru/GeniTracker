@@ -12,6 +12,10 @@ import { animations } from '../../app/animation';
 })
 export class TopbarComponent implements  OnInit {
 
+  account : any = {}
+
+  selectedLang : string = 'FR'
+
   constructor() {}
 
   ngOnInit(): void {
