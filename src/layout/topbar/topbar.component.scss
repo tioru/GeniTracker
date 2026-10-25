@@ -59,11 +59,13 @@ nav {
     border-radius: 20px;
     height: 40px;
     padding: 0px 12px;
-    gap: 3px;
+    gap: 7px;
     color: #fff;
+    transition: background .2s ease-in-out, border-color .2s ease-in-out;
 
     &:hover {
-        border: 1px solid rgba(255, 255, 255, .6);
+        background: rgba(255, 255, 255, .14);
+        border-color: rgba(255, 255, 255, .6);
     }
 
     &:open {
@@ -80,9 +82,11 @@ nav {
     height: 40px;
     padding: 0px 16px 0px 4px;
     gap: 10px;
+    transition: background .2s ease-in-out, border-color .2s ease-in-out;
 
     &:hover {
-        border: 1px solid rgba(255, 255, 255, .6);
+        background: rgba(255, 255, 255, .14);
+        border-color: rgba(255, 255, 255, .6);
     }
 }
 
