@@ -1,5 +1,5 @@
-<div class="container flex column fh fw">
-    <div class="fw topbar">
+<div class="container flex column fh fw" (scroll)="onScroll($event)">
+    <div class="fw topbar" [class.is-floating]="isFloating()">
         <app-topbar></app-topbar>
     </div>
     <main class="fw fh">

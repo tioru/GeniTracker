@@ -1,8 +1,27 @@
 <div class="container">
-    <div class="title">
-        <h1>Genitrack</h1>
+    <div class="flex aic gap20">
+        <div class="title">
+            <span>Genitrack</span>
+        </div>
+        <nav>
+            <button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                Accueil
+            </button>
+            <button routerLink="/characters" routerLinkActive="active">
+                Personnages
+            </button>
+            <button routerLink="/weapons" routerLinkActive="active">
+                Armes
+            </button>
+            <button routerLink="/artifacts" routerLinkActive="active">
+                Artéfacts
+            </button>
+            <button routerLink="/materials" routerLinkActive="active">
+                Matériaux
+            </button>
+            <button routerLink="/foods" routerLinkActive="active">
+                Nourriture
+            </button>
+        </nav>
     </div>
-    <button>
-        
-    </button>
 </div>

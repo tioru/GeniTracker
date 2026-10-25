@@ -1,9 +1,52 @@
 .container {
-    background-color: transparent;
+  background-color: transparent;
 }
 
-span, h1 {
+nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-right: 24px;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+
+    button {
+        color: #fff;
+        cursor: pointer;
+        font-family: Manrope, sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        padding-bottom: 4px;
+        padding-right: 0px;
+        padding-left: 0px;
+        border: none;
+        border-bottom: 2px solid transparent;
+        opacity: .7;
+        background-color: transparent;
+        transition: opacity .2s ease-in-out, border-bottom .2s ease-in-out;
+        
+        &:hover {
+            opacity: 1;
+        }
+
+        &.active {
+            border-bottom-color: #9fe3ff;
+        }
+    }
+}
+
+.title {
+    font-size: 32px;
+    transition: font-size .35s ease;
+    margin: 15px 0;
     font-weight: 700;
-    font-size: 2rem;
     color: white;
+}
+
+:host-context(.is-floating) .title {
+    font-size: 25px;
 }

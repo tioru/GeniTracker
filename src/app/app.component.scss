@@ -1,3 +1,31 @@
 .container {
   padding: 0 20%;
+  overflow: auto;
+}
+
+.topbar {
+  position: sticky;
+  z-index: 10;
+  box-sizing: border-box;
+  -webkit-backdrop-filter: none;
+  top: 0;
+  padding: 6px 0 6px;
+  border-radius: 0;
+  align-items: flex-end;
+  background: rgba(10, 15, 24, 0);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .35);
+  backdrop-filter: none;
+  transition: top .35s ease, padding .35s ease, border-radius .35s ease,
+              background .35s ease, box-shadow .35s ease;
+}
+
+.topbar.is-floating {
+  top: 12px;
+  padding: 6px 20px;
+  border-radius: 20px;
+  align-items: center;
+  background: rgba(10, 15, 24, .62);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(255, 255, 255, .2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }

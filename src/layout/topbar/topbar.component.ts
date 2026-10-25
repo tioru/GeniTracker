@@ -1,10 +1,10 @@
-
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { animations } from '../../app/animation';
 
 @Component({
     selector: 'app-topbar',
-    imports: [],
+    imports: [RouterLink, RouterLinkActive],
     templateUrl: './topbar.component.html',
     animations: animations,
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -13,7 +13,7 @@ import { animations } from '../../app/animation';
 export class TopbarComponent implements  OnInit {
 
   constructor() {}
-    
+
   ngOnInit(): void {
   }
 }
