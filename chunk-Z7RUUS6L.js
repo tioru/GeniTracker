@@ -1,1 +1,0 @@
-import{Aa as a,Pa as n,Qa as o,Wa as r}from"./chunk-5FMPV56V.js";var c=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=a({type:t,selectors:[["app-characters"]],decls:2,vars:0,template:function(e,m){e&1&&(n(0,"p"),r(1,"characters works!"),o())},encapsulation:2})};export{c as CharactersComponent};
