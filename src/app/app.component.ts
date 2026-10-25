@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TopbarComponent } from '../layout/topbar/topbar.component';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, TopbarComponent, CommonModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [RouterOutlet, TopbarComponent],
+    templateUrl: './app.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {  
   constructor() { }
