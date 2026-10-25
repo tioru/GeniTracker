@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: 'Manrope';
-  src: url('/assets/font/manrope_policy.ttf') format('truetype');
+  src: url('./assets/font/manrope_policy.ttf') format('truetype');
   font-weight: 200 800;
   font-display: swap;
 }
@@ -151,7 +151,7 @@ app-root {
     position: absolute;
     inset: 0;
     z-index: -1;      // passe derrière le contenu
-    background: url('/assets/img/nation/Fontaine/10.jpg') center / cover no-repeat;
+    background: url('./assets/img/nation/Fontaine/10.jpg') center / cover no-repeat;
     filter: brightness(.6);
     transform: scale(1.05); // évite le liseré clair sur les bords
   }
