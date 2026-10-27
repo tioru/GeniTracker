@@ -1,1 +1,0 @@
-import{$a as r,Ca as a,Ta as n,Ua as o}from"./chunk-3EPSE2VB.js";var c=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=a({type:t,selectors:[["app-characters"]],decls:2,vars:0,template:function(e,m){e&1&&(n(0,"p"),r(1,"characters works!"),o())},encapsulation:2})};export{c as CharactersComponent};
