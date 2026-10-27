@@ -90,8 +90,98 @@ nav {
         border-color: rgba(255, 255, 255, .6);
     }
 
-    &:open {
-        border: 1px solid #9fe3ff;
+    anchor-name: --lang-button;
+
+    &:has(+ .langmenu:popover-open) {
+        border-color: #9fe3ff;
+    }
+}
+
+.langselector {
+    position: relative;
+}
+
+.langmenu {
+    position-anchor: --lang-button;
+    inset: auto;
+    top: calc(anchor(bottom) + 8px);
+    right: anchor(right);
+    opacity: 0;
+    transform: translateY(-6px) scale(.97);
+    transform-origin: top right;
+    transition: opacity .18s ease, transform .18s ease, display .18s allow-discrete, overlay .18s allow-discrete;
+
+    &:popover-open {
+        opacity: 1;
+        transform: none;
+
+        @starting-style {
+            opacity: 0;
+            transform: translateY(-6px) scale(.97);
+        }
+    }
+
+    min-width: 160px;
+    margin: 0;
+    color: #fff;
+    padding: 6px;
+    list-style: none;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: 14px;
+    background: rgba(10,15,24,.92);
+    backdrop-filter: blur(10px);
+
+    button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 8px 10px;
+        border: none;
+        border-radius: 8px;
+        background-color: transparent;
+        color: #fff;
+        cursor: pointer;
+        font-family: Manrope, sans-serif;
+        font-weight: 600;
+        text-align: left;
+        transition: background .2s ease-in-out;
+
+        &:hover {
+            background: rgba(255, 255, 255, .14);
+        }
+
+        &.active .code {
+            color: #9fe3ff;
+        }
+    }
+
+    .code {
+        width: 22px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+}
+
+@supports not selector(:popover-open) {
+    .langmenu {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        transition: opacity .18s ease, transform .18s ease;
+
+        &:not(.\:popover-open) {
+            display: none;
+        }
+
+        &.\:popover-open {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .lang:has(+ .\:popover-open) {
+        border-color: #9fe3ff;
     }
 }
 

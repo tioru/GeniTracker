@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "home": "Home",
+    "characters": "Characters",
+    "weapons": "Weapons",
+    "artifacts": "Artifacts",
+    "materials": "Materials",
+    "foods": "Food"
+  },
+  "account": {
+    "signIn": "Sign in"
+  },
+  "lang": {
+    "label": "Language",
+    "fr": "Français",
+    "en": "English"
+  }
+}

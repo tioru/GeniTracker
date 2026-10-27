@@ -1,20 +1,29 @@
-import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, isDevMode, provideZoneChangeDetection } from '@angular/core';
+import { provideTransloco } from '@jsverse/transloco';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { imageCacheInterceptor } from '../utilities/core/interceptors/image-cache.interceptor';
+import { availableLangs, getInitialLang, TranslocoHttpLoader } from '../utilities/core/i18n/transloco-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
-    provideHttpClient(withXhr()),
-    importProvidersFrom([BrowserAnimationsModule]),
-    provideHttpClient(withXhr(), 
+    provideHttpClient(withXhr(),
       withInterceptors([imageCacheInterceptor])
-    )
+    ),
+    provideTransloco({
+      config: {
+        availableLangs: availableLangs,
+        defaultLang: getInitialLang(),
+        fallbackLang: 'fr',
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: TranslocoHttpLoader
+    })
   ]
 };
