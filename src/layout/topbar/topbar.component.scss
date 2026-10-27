@@ -2,15 +2,31 @@
   background-color: transparent;
 }
 
+.navbuttons {
+    min-width: 0;
+    gap: 12px 24px;
+    flex: 1 1 auto;
+}
+
+.actionbuttons {
+    flex: 0 0 auto;
+
+    button {
+        flex: 0 0 auto;
+    }
+}
+
 nav {
     display: flex;
     align-items: center;
     gap: 18px;
     white-space: nowrap;
     overflow-x: auto;
+    min-width: 0px;
     scrollbar-width: none;
     padding-right: 24px;
     mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+    flex: 1 1 auto;
 
     button {
         color: #fff;
@@ -42,9 +58,10 @@ nav {
 .title {
     font-size: 32px;
     transition: font-size .35s ease;
-    margin: 15px 0;
+    margin: 10px 0;
     font-weight: 700;
     color: white;
+    flex: 0 0 auto;
 }
 
 :host-context(.is-floating) .title {
@@ -62,6 +79,11 @@ nav {
     gap: 7px;
     color: #fff;
     transition: background .2s ease-in-out, border-color .2s ease-in-out;
+
+    span {
+        font-weight: 800;
+        font-family: Manrope, sans-serif;
+    }
 
     &:hover {
         background: rgba(255, 255, 255, .14);
@@ -83,6 +105,11 @@ nav {
     padding: 0px 16px 0px 4px;
     gap: 10px;
     transition: background .2s ease-in-out, border-color .2s ease-in-out;
+
+    span {
+        font-weight: 800;
+        font-family: Manrope, sans-serif;
+    }
 
     &:hover {
         background: rgba(255, 255, 255, .14);
