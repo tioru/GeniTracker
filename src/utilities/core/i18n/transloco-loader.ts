@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Translation, TranslocoLoader } from '@jsverse/transloco';
 
-export const availableLangs = ['fr', 'en'];
+export const defaultLang = 'en';
+export const availableLangs = ['fr', defaultLang];
 export const langStorageKey = 'lang';
 
 export function getInitialLang(): string {
@@ -12,7 +13,7 @@ export function getInitialLang(): string {
       return stored;
     }
   } catch {}
-  return 'fr';
+  return defaultLang;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -6,7 +6,7 @@ import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 
 import { imageCacheInterceptor } from '../utilities/core/interceptors/image-cache.interceptor';
-import { availableLangs, getInitialLang, TranslocoHttpLoader } from '../utilities/core/i18n/transloco-loader';
+import { availableLangs, defaultLang, getInitialLang, TranslocoHttpLoader } from '../utilities/core/i18n/transloco-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +19,7 @@ export const appConfig: ApplicationConfig = {
       config: {
         availableLangs: availableLangs,
         defaultLang: getInitialLang(),
-        fallbackLang: 'fr',
+        fallbackLang: defaultLang,
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },
