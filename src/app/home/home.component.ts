@@ -1,12 +1,17 @@
 
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 
 @Component({
     selector: 'app-home',
-    imports: [],
+    imports: [TranslocoDirective],
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager
 })
 export class HomeComponent {
+
+    private transloco = inject(TranslocoService);
+
+    
 }
