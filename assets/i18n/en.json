@@ -14,5 +14,9 @@
     "label": "Language",
     "fr": "Français",
     "en": "English"
+  },
+  "home": {
+    "pres1": "Teyvat, in data",
+    "pres2": "Browse game data and track your progress."
   }
 }
