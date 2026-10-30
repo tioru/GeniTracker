@@ -1,0 +1,11 @@
+<a [routerLink]="tile().route ?? null" [class.soon]="!tile().route">
+    <img [src]="tile().img" alt="" loading="lazy">
+    <span class="num">{{ roman() }}</span>
+    <div class="foot">
+    <div>
+      <div class="label">{{ tile().label }}</div>
+      <div class="sub">{{ sub() || (tile().route ? '' : 'Bientôt disponible') }}</div>
+    </div>
+    <span class="arrow">→</span>
+  </div>
+</a>

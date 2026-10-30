@@ -2,8 +2,10 @@
     <section class="flex column fw fh">
         <span class="pres1">{{t('home.pres1')}}</span>
         <span class="pres2">{{t('home.pres2')}}</span>
-        <div class="cards">
-            
+        <div class="tiles">
+            @for (tile of tiles; track tile.key; let i = $index) {
+                <app-hub-tile [tile]="tile" [index]="i" [sub]="subs()[tile.key]" />
+            }
         </div>
     </section>
 </div>
