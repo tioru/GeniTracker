@@ -31,5 +31,13 @@
       "enemies": "Ennemis",
       "food": "Nourriture"
     }
+  },
+  "char": {
+    "pres1": "Personnages",
+    "pres2": "personnages",
+    "search": "Rechercher un personnage",
+    "noResults": "Aucun résultat",
+    "owned": "Possédés",
+    "reset": "Réinitialiser"
   }
 }

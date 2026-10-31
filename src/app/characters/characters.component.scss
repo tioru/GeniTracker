@@ -1,0 +1,150 @@
+.container {
+    overflow-x: visible;
+    scrollbar-width: thin;
+
+    >section {
+        padding-top: 28px
+    }
+}
+
+.pres1 {
+    font-weight: 700;
+    color: white;
+    font-size: clamp(44px, 8vw, 96px);
+    line-height: 0.95;
+    text-shadow: rgba(0, 0, 0, 0.4) 0px 4px 30px;
+}
+
+.pres2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: Manrope, sans-serif;
+}
+
+.pres1, .pres2 {
+  animation: rise .48s cubic-bezier(.2,.8,.2,1) backwards;
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pres1, .pres2 { animation: none; }
+}
+
+.filters {
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(18px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+
+    >input {
+        flex: 1 1 200px;
+        min-width: 0px;
+        height: 42px;
+        padding: 0px 16px;
+        border-radius: 21px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(0, 0, 0, 0.25);
+        color: rgb(255, 255, 255);
+        font-size: 14px;
+        outline: none;
+    }
+
+    button {
+        width: 40px;
+        height: 40px;
+        padding: 6px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        opacity: 0.45;
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        >img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+
+    .filter-icon {
+        width: 40px; height: 40px; padding: 6px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,.25);
+        background: transparent;
+        opacity: .45;
+        cursor: pointer;
+        transition: opacity .2s;
+
+        img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+        &:hover { 
+            opacity: 1; 
+        }
+
+        &.active {
+            opacity: 1;
+            border-color: rgb(213, 213, 213);
+            background: rgba(255,255,255,.08);
+        }
+    }
+
+    .owned, .reset {
+        width: auto;
+        height: 40px;
+        padding: 0px 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        color: rgb(255, 255, 255);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .four-star {
+        width: auto;
+        height: 40px;
+        padding: 0px 14px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        opacity: 0.45;
+        color: rgb(167, 127, 214);
+        cursor: pointer;
+        font-weight: 800;
+    }
+
+    .five-star {
+        width: auto;
+        height: 40px;
+        padding: 0px 14px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        opacity: 0.45;
+        color: rgb(217, 164, 65);
+        cursor: pointer;
+        font-weight: 800;
+    }
+}
+
+.weapon {
+    filter: brightness(2);
+}
+
+.elementList, .weaponList, .rarityList{
+    display: flex;
+    gap: 4px;
+}

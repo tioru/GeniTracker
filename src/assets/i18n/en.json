@@ -31,5 +31,13 @@
       "enemies": "Enemies",
       "food": "Food"
     }
+  },
+  "char": {
+    "pres1": "Characters",
+    "pres2": "characters",
+    "search": "Search a character",
+    "noResults": "No results",
+    "owned": "Owned",
+    "reset": "Reset"
   }
 }

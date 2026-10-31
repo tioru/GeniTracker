@@ -1,1 +1,46 @@
-<p>characters works!</p>
+<div class="container fh fw flex" *transloco="let t">
+    <section class="flex column fw fh">
+        <div class="flex fw jcsb aife">
+            <span class="pres1">{{t('char.pres1')}}</span>
+            <span class="pres2">{{charactersCount}} {{t('char.pres2')}}</span>
+        </div>
+        <div class="filters">
+            <input type="text" placeholder="{{t('char.search')}}" />
+            <div class="elementList">
+                @for (element of elementFilter; track $index) {
+                    <button [class.active]="filters.element === element.key" class="filter-icon" (click)="toggleFilter('element', element.key)">
+                        <img [src]="element.img" [alt]="element.key" />
+                    </button>
+                }
+            </div>
+            <div class="weaponList">
+                @for (weapon of weaponFilter; track $index) {
+                    <button [class.active]="filters.weapon === weapon.key" class="filter-icon" (click)="toggleFilter('weapon', weapon.key)">
+                        <img class="weapon" [src]="weapon.img" [alt]="weapon.key"/>
+                    </button>
+                }
+            </div>
+            <div class="rarityList">
+                <button [class.active]="filters.rarity === '5-star'" class="five-star filter-icon" (click)="toggleFilter('rarity', '5-star')">
+                    <span>5★</span>
+                </button>
+                <button [class.active]="filters.rarity === '4-star'" class="four-star filter-icon" (click)="toggleFilter('rarity', '4-star')">
+                    <span>4★</span>
+                </button>
+            </div>
+            <button [class.active]="filters.owned" class="owned filter-icon" (click)="toggleOwned()">
+                <span>
+                    {{t('char.owned')}}
+                </span>
+            </button>
+            @if (hasFilters) {
+                <button class="reset filter-icon" (click)="resetFilters()">
+                    <span>{{t('char.reset')}}</span>
+                </button>
+            }
+        </div>
+        <div class="list">
+
+        </div>
+    </section>
+</div>
