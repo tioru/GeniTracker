@@ -17,6 +17,27 @@
   },
   "home": {
     "pres1": "Teyvat, en données",
-    "pres2": "Consultez les données du jeu et suivez votre progression."
+    "pres2": "Consultez les données du jeu et suivez votre progression.",
+    "soon": "Bientôt disponible",
+    "tiles": {
+      "chars": "Personnages",
+      "weapons": "Armes",
+      "artifacts": "Artéfacts",
+      "banners": "Bannières",
+      "events": "Évènements",
+      "versions": "Versions",
+      "materials": "Matériaux",
+      "achievements": "Succès",
+      "enemies": "Ennemis",
+      "food": "Nourriture"
+    }
+  },
+  "char": {
+    "pres1": "Personnages",
+    "pres2": "personnages",
+    "search": "Rechercher un personnage",
+    "noResults": "Aucun résultat",
+    "owned": "Possédés",
+    "reset": "Réinitialiser"
   }
 }
