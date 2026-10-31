@@ -1,8 +1,10 @@
-<div class="container flex column fh fw" (scroll)="onScroll($event)">
-    <div class="fw topbar" [class.is-floating]="isFloating()">
-        <app-topbar></app-topbar>
+<div class="scroller" (scroll)="onScroll($event)">
+  <div class="page">
+    <div class="topbar" [class.is-floating]="isFloating()">
+      <app-topbar></app-topbar>
     </div>
-    <main class="fw fh">
-        <router-outlet></router-outlet>
+    <main>
+      <router-outlet></router-outlet>
     </main>
+  </div>
 </div>

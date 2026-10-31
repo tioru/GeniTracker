@@ -1,11 +1,16 @@
 .container {
   background-color: transparent;
+  align-items: flex-end;
+  gap: 12px 20px;
+  transition: align-items .35s;
 }
 
 .navbuttons {
     min-width: 0;
     gap: 12px 24px;
     flex: 1 1 auto;
+    align-items: flex-end;
+    justify-content: flex-start;
 }
 
 .actionbuttons {
@@ -56,16 +61,19 @@ nav {
 }
 
 .title {
-    font-size: 32px;
-    transition: font-size .35s ease;
-    margin: 10px 0;
-    font-weight: 700;
-    color: white;
     flex: 0 0 auto;
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: .04em;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0,0,0,.4);
+    transition: font-size .35s ease;
 }
 
 :host-context(.is-floating) .title {
-    font-size: 25px;
+    font-size: 24px;
 }
 
 .lang {
@@ -217,3 +225,6 @@ nav {
     justify-content: center;
     font-size: 15px;
 }
+
+:host-context(.is-floating) .container,
+:host-context(.is-floating) .navbuttons { align-items: center; }

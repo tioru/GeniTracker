@@ -20,7 +20,28 @@ html, body {
 
 app-root {
   display: block;
-  height: 100vh;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('./assets/img/nation/Fontaine/10.jpg') center / cover no-repeat;
+    filter: brightness(0.7);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(rgba(10,15,24,.35) 0%, rgba(10,15,24,.15) 40%, rgba(10,15,24,.85) 100%);
+  }
 }
 
 /*Easy SCSS*/
@@ -67,6 +88,9 @@ app-root {
 
 .aic {
   align-items: center;
+}
+.aife {
+  align-items: flex-end;
 }
 
 .tas {
@@ -136,23 +160,5 @@ app-root {
 @for $i from 1 through 5 {
   .gap#{$i * 10} {
     gap: #{$i * 10 + 'px'};
-  }
-}
-
-app-root {
-  display: block;
-  height: 100%;
-  position: relative;
-  overflow: hidden;   // coupe les bords flous qui débordent
-  isolation: isolate; // le z-index négatif reste confiné au composant
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;      // passe derrière le contenu
-    background: url('./assets/img/nation/Fontaine/10.jpg') center / cover no-repeat;
-    filter: brightness(.6);
-    transform: scale(1.05); // évite le liseré clair sur les bords
   }
 }

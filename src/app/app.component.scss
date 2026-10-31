@@ -1,12 +1,16 @@
-.container {
-  padding: 0 clamp(16px, 4vw, 48px);
-  overflow: auto;
+.scroller {
+  position: relative;
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
-
-main, .topbar {
-  width: 100%;
-  max-width: 1200px;
-  margin-inline: auto;
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 16px clamp(14px, 3vw, 36px) 80px;
+  box-sizing: border-box;
 }
 
 .topbar {
@@ -15,7 +19,7 @@ main, .topbar {
   box-sizing: border-box;
   -webkit-backdrop-filter: none;
   top: 0;
-  padding: 6px 0 6px;
+  padding: 6px 0 14px;
   border-radius: 0;
   align-items: flex-end;
   background: rgba(10, 15, 24, 0);
@@ -27,7 +31,7 @@ main, .topbar {
 
 .topbar.is-floating {
   top: 12px;
-  padding: 6px 20px;
+  padding: 12px 20px;
   border-radius: 20px;
   align-items: center;
   background: rgba(10, 15, 24, .62);
