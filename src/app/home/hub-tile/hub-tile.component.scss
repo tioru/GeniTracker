@@ -1,0 +1,111 @@
+:host { 
+    display: block; 
+    animation: rise .48s cubic-bezier(.2,.8,.2,1) backwards;
+    animation-delay: calc(var(--i) * 70ms + 140ms); 
+
+    &.xl {
+        grid-column: span 2; 
+        grid-row: span 2;
+
+        .label { 
+            font-size: 30px; 
+        }
+    }
+
+    &.wide {
+        grid-column: span 2;
+        
+        .label { 
+            font-size: 24px; 
+        }
+    }
+
+    &.tall { 
+        grid-row: span 2;
+
+        .label { 
+            font-size: 22px; 
+        }
+    }
+}
+
+a { 
+    position: relative; display: block; height: 100%; border-radius: 18px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.28); color: #fff; text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s; 
+
+    &.soon { cursor: default; }
+
+    &:hover { 
+        transform: translateY(-6px); 
+        box-shadow: 0 22px 44px rgba(0,0,0,.4); 
+        border-color: rgba(255,255,255,.9);
+
+        &>img {
+            transform: scale(1.08); 
+        }
+    }
+
+    &::after { 
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(0deg, rgba(10,15,24,.92), rgba(10,15,24,.1) 55%, transparent);
+        pointer-events: none;
+    }
+}
+
+img { 
+    position: absolute; 
+    inset: 0; 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: transform .7s cubic-bezier(.2,.8,.2,1); 
+}
+
+.num {
+    position: absolute; top: 12px; left: 12px; z-index: 1;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.4);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    font-size: 11px; font-weight: 700;
+}
+
+.foot {
+    position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 1;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 10px;
+  
+    >div { 
+        min-width: 0; 
+    }
+}
+
+.label {
+    font-family: Manrope, sans-serif; font-weight: 700;
+    letter-spacing: -.01em; line-height: 1.05; font-size: 19px;
+}
+
+.sub { 
+    margin-top: 4px; 
+    font-size: 12px; 
+    font-weight: 600; 
+    color: rgba(255,255,255,.78); 
+}
+
+@media (max-width: 520px) { 
+    :host(.xl), :host(.wide) { 
+        grid-column: span 2; 
+    } 
+    
+    :host(.tall) { 
+        grid-row: span 1; 
+    } 
+}
+
+@keyframes rise { 
+    from { 
+        opacity: 0; 
+        transform: translateY(16px); 
+    } 
+}
