@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { map, tap } from "rxjs";
+import { map } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +18,11 @@ private fileObjectUrls = new Map<File, string>();
 
   public loadImage(url: string) {
     return this.http.get(url, { responseType: 'blob' }).pipe(
-      tap(blob => {
+      map(blob => {
         const objectURL = URL.createObjectURL(blob);
         this.imageObjectUrls.set(url, objectURL);
-      }),
-      map(blob => URL.createObjectURL(blob))
+        return objectURL;
+      })
     );
   }
 

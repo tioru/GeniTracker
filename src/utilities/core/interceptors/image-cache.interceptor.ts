@@ -8,7 +8,7 @@ interface CacheEntry {
 }
 
 const cache = new Map<string, CacheEntry>();
-const CACHE_DURATION = 3600000; // 1 heure
+const CACHE_DURATION = 3600000;
 
 export const imageCacheInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.method !== 'GET' || !isImageRequest(req.url)) {
@@ -18,7 +18,6 @@ export const imageCacheInterceptor: HttpInterceptorFn = (req, next) => {
   const cached = cache.get(req.url);
   const now = Date.now();
 
-  // Vérifier si le cache est valide
   if (cached && (now - cached.timestamp) < CACHE_DURATION) {
     return of(cached.response.clone());
   }

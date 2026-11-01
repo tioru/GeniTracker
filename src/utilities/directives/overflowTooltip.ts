@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
   selector: '[overflowTooltip]',
@@ -13,13 +13,14 @@ export class OverflowTooltipDirective implements AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    window.addEventListener('resize', () => {
-        this.checkOverflow();
-    })
-
     setTimeout(() => {
       this.checkOverflow();
     }, 0);
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkOverflow();
   }
 
   @HostListener('mouseenter')
@@ -33,8 +34,10 @@ export class OverflowTooltipDirective implements AfterViewInit {
 
     if (this.hasOverflow) {
       element.setAttribute('textOverflow', 'true');
+      element.setAttribute('title', this.tooltipText ?? element.textContent?.trim() ?? '');
     } else {
       element.removeAttribute('textOverflow');
+      element.removeAttribute('title');
     }
   }
 }
