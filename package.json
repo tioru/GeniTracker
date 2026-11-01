@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "data:characters": "node scripts/export-characters.mjs"
   },
   "private": true,
   "dependencies": {
@@ -30,6 +31,7 @@
     "@types/jasmine": "~5.1.15",
     "@types/node": "^24.19.2",
     "angular-cli-ghpages": "^3.1.2",
+    "genshin-db": "^5.2.14",
     "istanbul-lib-instrument": "^6.0.3",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
@@ -38,5 +40,11 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.3.0",
     "typescript": "~6.0.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "lmdb@3.5.6": true,
+    "msgpackr-extract@3.0.4": true,
+    "@parcel/watcher@2.6.0": true
   }
 }
