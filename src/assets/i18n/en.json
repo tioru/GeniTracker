@@ -36,7 +36,7 @@
     "pres1": "Characters",
     "pres2": "characters",
     "search": "Search a character",
-    "noResults": "No results",
+    "noResults": "No character matches these filters.",
     "owned": "Owned",
     "reset": "Reset"
   }

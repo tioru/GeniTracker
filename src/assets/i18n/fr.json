@@ -36,7 +36,7 @@
     "pres1": "Personnages",
     "pres2": "personnages",
     "search": "Rechercher un personnage",
-    "noResults": "Aucun résultat",
+    "noResults": "Aucun personnage ne correspond à ces filtres.",
     "owned": "Possédés",
     "reset": "Réinitialiser"
   }
