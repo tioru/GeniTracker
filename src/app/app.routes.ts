@@ -9,5 +9,9 @@ export const routes: Routes = [
   {
     path: 'characters',
     loadComponent: () => import('./characters/characters.component').then((m) => m.CharactersComponent),
+  },
+  {
+    path: 'characters/:name',
+    loadComponent: () => import('./character/character.component').then((m) => m.CharacterComponent),
   }
 ]

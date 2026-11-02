@@ -6,6 +6,7 @@ import { CharactersService } from './characters.service';
 import { Character } from './character';
 import { OverflowTooltipDirective } from '../../utilities/directives/overflowTooltip';
 import { CachedSrcDirective } from '../../utilities/directives/cachedSrc';
+import { RouterLink } from '@angular/router';
 
 type ExclusiveFilter = 'element' | 'weapon' | 'rarity';
 
@@ -19,7 +20,7 @@ interface CharacterFilters {
 const NO_FILTERS: CharacterFilters = { element: null, weapon: null, rarity: null, owned: false };
 
 @Component({
-  imports: [TranslocoModule, OverflowTooltipDirective, CachedSrcDirective],
+  imports: [TranslocoModule, OverflowTooltipDirective, CachedSrcDirective, RouterLink],
   selector: 'app-characters',
   styleUrl: './characters.component.scss',
   templateUrl: './characters.component.html',

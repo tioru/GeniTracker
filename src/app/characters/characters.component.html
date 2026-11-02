@@ -41,7 +41,7 @@
         </div>
         <div class="list">
             @for (character of characters(); track character.id; let i = $index) {
-                <div class="card" [style.--i]="i">
+                <div class="card" [style.--i]="i" [routerLink]="['/characters', character.name.en]">
                     <div class="img-container" [class.five-star]="character.rarity === 5" [class.four-star]="character.rarity === 4" >
                         <img [cachedSrc]="character.icon" [alt]="displayName(character)" />
                         <button>{{true ? "✓" : '+'}}</button>
