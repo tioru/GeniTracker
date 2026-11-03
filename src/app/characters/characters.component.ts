@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ElementFilter, WeaponFilter } from './filters';
 import { CharactersService } from './characters.service';
-import { Character } from './character';
+import { Characters } from './characters';
 import { OverflowTooltipDirective } from '../../utilities/directives/overflowTooltip';
 import { CachedSrcDirective } from '../../utilities/directives/cachedSrc';
 import { RouterLink } from '@angular/router';
@@ -70,7 +70,7 @@ export class CharactersComponent {
     this.search.set('');
   }
 
-  displayName(character: Character): string {
+  displayName(character: Characters): string {
     return this.lang() === 'fr' ? character.name.fr : character.name.en;
   }
   

@@ -1,4 +1,4 @@
-export interface Character {
+export interface Characters {
   id: number;
   name: { en: string; fr: string };
   element: string | null;
