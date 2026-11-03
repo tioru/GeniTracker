@@ -1,0 +1,1 @@
+import{H as p,I as lf,i as C,o as Ey}from"./main-GRHKXXQV.js";var o=class t{http=p(lf);characters=Ey(this.http.get(`assets/data/characters.json`),{initialValue:[]});static ɵfac=function(c){return new(c||t)};static ɵprov=C({token:t,factory:t.ɵfac,providedIn:`root`})};export{o as t};

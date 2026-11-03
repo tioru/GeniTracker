@@ -1,1 +1,0 @@
-import{D as lc,E as jI,O as m$1,W as vc,k as mc,m as RE}from"./main-RK4ZIPRQ.js";var m=class t{transloco=m$1(RE);static ɵfac=function(e){return new(e||t)};static ɵcmp=lc({type:t,selectors:[[`app-character`]],decls:2,vars:0,template:function(e,s){e&1&&(mc(0,`p`),jI(1,`character works!`),vc())},encapsulation:2})};export{m as CharacterComponent};
