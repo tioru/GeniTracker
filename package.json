@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "data:characters": "node scripts/export-characters.mjs"
+    "data:characters": "node scripts/export-characters.mjs",
+    "data:character-details": "node scripts/export-character-details.mjs"
   },
   "private": true,
   "dependencies": {
