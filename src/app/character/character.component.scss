@@ -1,0 +1,53 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+    min-height: calc(-110px + 100vh);
+    padding-top: 20px;
+}
+
+.character-img {
+    position: relative;
+    flex: 1.3 1 420px;
+    align-self: stretch;
+    min-height: 380px;
+
+    img {
+        position: absolute;
+        inset: 0px;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center bottom;
+        filter: drop-shadow(rgba(0, 0, 0, 0.45) 0px 30px 50px);
+    }
+}
+
+.character-info {
+    flex: 1 1 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: clamp(20px, 3vw, 30px);
+    border-radius: 24px;
+    background: rgba(10, 15, 24, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(22px);
+}
+
+.character-skills {
+    margin-top: 24px;
+    border-radius: 24px;
+    background: rgba(10, 15, 24, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(22px);
+    overflow: hidden;
+}
+
+.character-ascension {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
