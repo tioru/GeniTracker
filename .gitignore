@@ -37,5 +37,6 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Character splash arts, downloaded by npm run data:character-details
+# Character images (~150 MB), downloaded by npm run data:character-details
 /src/assets/img/characters/splash/
+/src/assets/img/characters/portrait/

@@ -29,7 +29,19 @@ jobs:
         
     - name: Install dependencies
       run: npm ci
-      
+
+    # Character images are not versioned: restore the previous run's download, then
+    # fetch only the missing ones. A new key each run so newly added images are saved too.
+    - name: Cache character images
+      uses: actions/cache@v4
+      with:
+        path: src/assets/img/characters/portrait
+        key: character-images-${{ github.run_id }}
+        restore-keys: character-images-
+
+    - name: Export character details and images
+      run: npm run data:character-details
+
     - name: Configure Git
       run: |
         git config --global user.email "thomas@test.com"
