@@ -36,3 +36,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Character splash arts, downloaded by npm run data:character-details
+/src/assets/img/characters/splash/

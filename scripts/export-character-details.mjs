@@ -1,9 +1,9 @@
 // Writes one JSON file per character and per language with everything the detail page needs
 // (profile, stats by level, ascension costs, talents, constellations), and downloads the
-// talent and constellation icons. Like export-characters.mjs, genshin-db is only used here,
-// never by the Angular app.
+// talent and constellation icons, and the character portraits (character only, no background)
+// from genshin.jmp.blue. Like export-characters.mjs, genshin-db is only used here, never by the Angular app.
 // Run it after export-characters.mjs: npm run data:character-details
-// Icons already downloaded are kept; add --force-icons to download them all again.
+// Images already downloaded are kept; add --force-icons to download them all again.
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import genshindb from 'genshin-db';
 
@@ -11,8 +11,11 @@ const OUTPUT_DIR = 'src/assets/data/characters';
 const LANGUAGES = { en: 'English', fr: 'French' };
 
 const ICON_URL = 'https://enka.network/ui/';
-const ICON_DIR = 'src/assets/img/skills';
-const ICON_PATH = 'assets/img/skills/';
+// Portraits come from genshin.jmp.blue: genshin-db's gacha splash has a background.
+const JMP_API = 'https://genshin.jmp.blue/characters/';
+const PORTRAIT_DIR = 'characters/portrait';
+// genshin-db English name -> jmp.blue id, when the names don't match
+const JMP_ALIASES = { 'Raiden Shogun': 'raiden', 'Aether': 'traveler-anemo', 'Lumine': 'traveler-anemo' };
 const DOWNLOAD_BATCH = 8;
 const forceIcons = process.argv.includes('--force-icons');
 
@@ -28,11 +31,31 @@ const WEAPONS = {
   WEAPON_POLE: 'Polearm', WEAPON_SWORD_ONE_HAND: 'Sword',
 };
 
-const icons = new Set();
-const icon = fileName => {
+// local file name -> { dir, url }, filled while building the JSON, downloaded at the end
+const downloads = new Map();
+const image = (fileName, dir, url) => {
   if (!fileName) return null;
-  icons.add(fileName + '.png');
-  return ICON_PATH + fileName + '.png';
+  downloads.set(fileName, { dir: 'src/assets/img/' + dir, url });
+  return 'assets/img/' + dir + '/' + fileName;
+};
+const icon = fileName => fileName ? image(fileName + '.png', 'skills', ICON_URL + fileName + '.png') : null;
+
+const slug = s => (s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+let jmpIds = new Set();
+async function loadJmpIds() {
+  const response = await fetch(JMP_API);
+  if (!response.ok) throw new Error(`${JMP_API}: HTTP ${response.status}`);
+  jmpIds = new Set(await response.json());
+}
+function jmpId(enName) {
+  const id = JMP_ALIASES[enName] ?? slug(enName);
+  if (jmpIds.has(id)) return id;
+  const last = slug(enName.split(' ').pop());   // "Kamisato Ayaka" -> try "ayaka" as a last resort
+  return jmpIds.has(last) ? last : null;
+}
+const portraitOf = enName => {
+  const id = jmpId(enName);
+  return id ? image(id + '.png', PORTRAIT_DIR, JMP_API + id + '/portrait') : null;
 };
 
 // Keeps only id, name and count so the app can link each material to its own page
@@ -86,7 +109,7 @@ function constellations(c) {
   }).filter(Boolean);
 }
 
-function details(enName, language) {
+function details(enName, language, portrait) {
   const opts = { queryLanguages: ['English'], resultLanguage: language };
   const c = genshindb.characters(enName, opts);
   if (!c) return null;
@@ -105,6 +128,7 @@ function details(enName, language) {
     substat: c.substatText ?? c.substatType ?? '',
     voiceActors: c.cv ?? {},
     version: c.version ?? '',
+    images: { portrait },
     stats: stats(c),
     ascension: costs(c.costs, 'ascend'),
     talents: talents(genshindb.talents(enName, opts)),
@@ -112,19 +136,21 @@ function details(enName, language) {
   };
 }
 
-async function downloadIcon(fileName) {
-  const target = `${ICON_DIR}/${fileName}`;
+async function download(fileName) {
+  const { dir, url } = downloads.get(fileName);
+  const target = `${dir}/${fileName}`;
   if (!forceIcons && existsSync(target)) return false;
-  const response = await fetch(ICON_URL + fileName);
+  const response = await fetch(url);
   const type = response.headers.get('content-type') ?? '';
   if (!response.ok || !type.startsWith('image/')) {
-    throw new Error(`${ICON_URL + fileName}: HTTP ${response.status} (${type})`);
+    throw new Error(`${url}: HTTP ${response.status} (${type})`);
   }
   writeFileSync(target, Buffer.from(await response.arrayBuffer()));
   return true;
 }
 
 const names = genshindb.characters('names', { matchCategories: true, resultLanguage: 'English' });
+await loadJmpIds();
 
 // Start from empty folders so characters removed from the game don't leave stale files
 for (const lang of Object.keys(LANGUAGES)) {
@@ -132,32 +158,35 @@ for (const lang of Object.keys(LANGUAGES)) {
   mkdirSync(`${OUTPUT_DIR}/${lang}`, { recursive: true });
 }
 
-const incomplete = [];
+const incomplete = [], noImages = [];
 for (const enName of names) {
+  const portrait = portraitOf(enName);
   for (const [lang, language] of Object.entries(LANGUAGES)) {
-    const data = details(enName, language);
+    const data = details(enName, language, portrait);
     if (!data) continue;
     if (lang === 'en' && (!data.talents || !data.constellations.length)) incomplete.push(enName);
+    if (lang === 'en' && !portrait) noImages.push(enName);
     writeFileSync(`${OUTPUT_DIR}/${lang}/${data.id}.json`, JSON.stringify(data) + '\n');
   }
 }
 console.log(`${names.length} characters written to ${OUTPUT_DIR}/{${Object.keys(LANGUAGES).join(',')}}`);
 if (incomplete.length) console.warn(`No talents or constellations found for: ${incomplete.join(', ')}`);
+if (noImages.length) console.warn(`No genshin.jmp.blue portrait for: ${noImages.join(', ')} (add them to JMP_ALIASES)`);
 
-mkdirSync(ICON_DIR, { recursive: true });
-const list = [...icons];
+for (const { dir } of downloads.values()) mkdirSync(dir, { recursive: true });
+const list = [...downloads.keys()];
 let downloaded = 0;
 const failed = [];
 for (let i = 0; i < list.length; i += DOWNLOAD_BATCH) {
   const batch = list.slice(i, i + DOWNLOAD_BATCH);
-  const results = await Promise.allSettled(batch.map(downloadIcon));
+  const results = await Promise.allSettled(batch.map(download));
   results.forEach((result, j) => {
     if (result.status === 'rejected') failed.push(`${batch[j]}: ${result.reason.message}`);
     else if (result.value) downloaded++;
   });
 }
-console.log(`${downloaded} skill icons downloaded to ${ICON_DIR}, ${list.length - downloaded - failed.length} already there`);
+console.log(`${downloaded} images downloaded to src/assets/img, ${list.length - downloaded - failed.length} already there`);
 if (failed.length) {
-  console.error(`${failed.length} icons could not be downloaded:\n  ${failed.join('\n  ')}`);
+  console.error(`${failed.length} images could not be downloaded:\n  ${failed.join('\n  ')}`);
   process.exitCode = 1;
 }

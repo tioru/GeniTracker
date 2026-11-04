@@ -1,20 +1,26 @@
-<div class="container">
-    <div class="character-img">
-        <img [src]="">
-    </div>
-    <div class="character-info">
+@if (character.value(); as c) {
+    <div class="container">
+        <div class="character-img">
+            <img [src]="c.images.splash">
+        </div>
+        <div class="character-info">
 
-    </div>
-    <div class="character-skills">
+        </div>
+        <div class="character-skills">
 
-    </div>
-    <span>
+        </div>
+        <span>
 
-    </span>
-    <div class="character-ascension">
+        </span>
+        <div class="character-ascension">
 
-    </div>
-    <div>
+        </div>
+        <div>
 
+        </div>
     </div>
-</div>
+} @else if (character.isLoading()) {
+    <p>Chargement…</p>
+} @else if (character.error()) {
+    <p>Personnage introuvable</p>
+}
