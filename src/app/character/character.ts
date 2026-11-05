@@ -49,7 +49,7 @@ export interface Character {
   substat: string;
   voiceActors: Record<string, string>;
   version: string;
-  images: { splash: string | null };
+  images: { portrait: string | null };
   stats: CharacterStats[];
   ascension: LevelCost[];
   talents: Talents | null;

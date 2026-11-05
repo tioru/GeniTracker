@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { ElementFilter, WeaponFilter } from './filters';
+import { Elements, WeaponFilter } from './filters';
 import { CharactersService } from './characters.service';
 import { Characters } from './characters';
 import { OverflowTooltipDirective } from '../../utilities/directives/overflowTooltip';
@@ -30,7 +30,7 @@ export class CharactersComponent {
   private transloco = inject(TranslocoService);
   private charactersService = inject(CharactersService);
 
-  elementFilter = ElementFilter;
+  elements = Elements;
   weaponFilter = WeaponFilter;
 
   filters = signal<CharacterFilters>(NO_FILTERS);
@@ -75,7 +75,7 @@ export class CharactersComponent {
   }
   
   getElementUrl(element: string | null): string {
-    return element ? ElementFilter.find(e => e.key === element)?.img || '' : '';
+    return element ? Elements.find(e => e.key === element)?.img || '' : '';
   }
 
   private normalize = (s: string) =>

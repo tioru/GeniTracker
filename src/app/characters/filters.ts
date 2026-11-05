@@ -6,7 +6,7 @@ export interface Filter {
 
 const IMG = 'assets/img/';
 
-export const ElementFilter: Filter[] = [
+export const Elements: Filter[] = [
     { key: 'Anemo', color: 'rgb(0,182,167)' , img: IMG + 'elements/anemo.webp'},
     { key: 'Geo', color: 'rgb(255,205,0)', img: IMG + 'elements/geo.webp'},
     { key: 'Electro', color: 'rgb(124,0,182)', img: IMG + 'elements/electro.webp'},

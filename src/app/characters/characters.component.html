@@ -7,7 +7,7 @@
         <div class="filters">
             <input type="text" placeholder="{{t('char.search')}}" [value]="search()" (input)="search.set($any($event.target).value)"/>
             <div class="elementList">
-                @for (element of elementFilter; track $index) {
+                @for (element of elements; track $index) {
                     <button [class.active]="filters().element === element.key" class="filter-icon" (click)="toggleFilter('element', element.key)">
                         <img [src]="element.img" [alt]="element.key" />
                     </button>
@@ -46,9 +46,9 @@
                         <img [cachedSrc]="character.icon" [alt]="displayName(character)" />
                         <button>{{true ? "✓" : '+'}}</button>
                     </div>
-                    <div class="info-container" [style.background]="'linear-gradient(90deg, rgba(0,0,0,0) 0%, ' + elementFilter.find(e => e.key === character.element)?.color + ' 300%)'">
+                    <div class="info-container" [style.background]="'linear-gradient(90deg, rgba(0,0,0,0) 0%, ' + elements.find(e => e.key === character.element)?.color + ' 300%)'">
                         @if (character.element) {
-                            <img class="element" [src]="elementFilter.find(e => e.key === character.element)?.img" [alt]="character.element" />
+                            <img class="element" [src]="elements.find(e => e.key === character.element)?.img" [alt]="character.element" />
                         }
                         <div>
                             <div class="name-container" overflowTooltip>

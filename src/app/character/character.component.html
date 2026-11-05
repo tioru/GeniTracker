@@ -1,10 +1,24 @@
 @if (character.value(); as c) {
     <div class="container">
         <div class="character-img">
-            <img [src]="c.images.splash">
+            @if (c.images.portrait ?? entry()?.icon; as image) {
+                <img [src]="image" [alt]="c.name" />
+            }
         </div>
         <div class="character-info">
-
+            <div>
+                @if (element(); as element) {
+                    <img width="40px" height="40px" [src]="element.img" [alt]="element.key" />
+                }
+                <div class="character-type">
+                    <span>{{c.element}}</span>
+                    <span>.</span>
+                    <span>{{c.weapon}}</span>
+                </div>
+                <div class="rarity">
+                    <span class="rarity" [class.five-star]="c.rarity === 5" [class.four-star]="c.rarity === 4">{{ '★'.repeat(c.rarity) }}</span>
+                </div>
+            </div>
         </div>
         <div class="character-skills">
 

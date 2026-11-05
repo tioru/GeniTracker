@@ -1,9 +1,11 @@
 // Writes one JSON file per character and per language with everything the detail page needs
 // (profile, stats by level, ascension costs, talents, constellations), and downloads the
 // talent and constellation icons, and the character portraits (character only, no background)
-// from genshin.jmp.blue. Like export-characters.mjs, genshin-db is only used here, never by the Angular app.
+// from the genshindev/api GitHub repo. Like export-characters.mjs, genshin-db is only used here,
+// never by the Angular app.
 // Run it after export-characters.mjs: npm run data:character-details
 // Images already downloaded are kept; add --force-icons to download them all again.
+// The repo listing uses the GitHub API (60 requests/hour without token, 1 per run). Set GITHUB_TOKEN to raise it.
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import genshindb from 'genshin-db';
 
@@ -11,11 +13,12 @@ const OUTPUT_DIR = 'src/assets/data/characters';
 const LANGUAGES = { en: 'English', fr: 'French' };
 
 const ICON_URL = 'https://enka.network/ui/';
-// Portraits come from genshin.jmp.blue: genshin-db's gacha splash has a background.
-const JMP_API = 'https://genshin.jmp.blue/characters/';
+// Portraits come from the files behind genshin.jmp.blue: genshin-db's gacha splash has a background.
+const REPO_LIST = 'https://api.github.com/repos/genshindev/api/contents/assets/images/characters?ref=mistress';
+const REPO_RAW = 'https://raw.githubusercontent.com/genshindev/api/mistress/assets/images/characters/';
 const PORTRAIT_DIR = 'characters/portrait';
-// genshin-db English name -> jmp.blue id, when the names don't match
-const JMP_ALIASES = { 'Raiden Shogun': 'raiden', 'Aether': 'traveler-anemo', 'Lumine': 'traveler-anemo' };
+// genshin-db English name -> repo folder, when the names don't match
+const REPO_ALIASES = { 'Raiden Shogun': 'raiden', 'Aether': 'traveler-anemo', 'Lumine': 'traveler-anemo' };
 const DOWNLOAD_BATCH = 8;
 const forceIcons = process.argv.includes('--force-icons');
 
@@ -41,22 +44,48 @@ const image = (fileName, dir, url) => {
 const icon = fileName => fileName ? image(fileName + '.png', 'skills', ICON_URL + fileName + '.png') : null;
 
 const slug = s => (s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-let jmpIds = new Set();
-async function loadJmpIds() {
-  const response = await fetch(JMP_API);
-  if (!response.ok) throw new Error(`${JMP_API}: HTTP ${response.status}`);
-  jmpIds = new Set(await response.json());
+// null = GitHub unreachable: only portraits already on disk are used
+let repoIds = null;
+async function loadRepoIds() {
+  const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'geni-tracker' };
+  if (process.env.GITHUB_TOKEN) headers.Authorization = 'Bearer ' + process.env.GITHUB_TOKEN;
+  try {
+    const response = await fetch(REPO_LIST, { headers, signal: AbortSignal.timeout(15000) });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    repoIds = new Set((await response.json()).filter(e => e.type === 'dir').map(e => e.name));
+  } catch (e) {
+    console.warn(`GitHub unreachable (${e.message}): portraits are not downloaded, existing files are kept.`);
+  }
 }
-function jmpId(enName) {
-  const id = JMP_ALIASES[enName] ?? slug(enName);
-  if (jmpIds.has(id)) return id;
-  const last = slug(enName.split(' ').pop());   // "Kamisato Ayaka" -> try "ayaka" as a last resort
-  return jmpIds.has(last) ? last : null;
+
+// The repo files have no extension: the format is read from the first bytes
+const EXTS = ['png', 'webp', 'jpg'];
+const sniff = b => b[0] === 0x89 && b[1] === 0x50 ? 'png'
+  : b[0] === 0xff && b[1] === 0xd8 ? 'jpg'
+  : b.subarray(8, 12).toString() === 'WEBP' ? 'webp' : null;
+const portraitOnDisk = id => EXTS.map(ext => `${id}.${ext}`).find(f => existsSync(`src/assets/img/${PORTRAIT_DIR}/${f}`));
+
+function repoId(enName) {
+  const candidates = [REPO_ALIASES[enName] ?? slug(enName), slug(enName.split(' ').pop())];   // "Kamisato Ayaka" -> also try "ayaka"
+  return candidates.find(id => repoIds ? repoIds.has(id) : portraitOnDisk(id)) ?? null;
 }
-const portraitOf = enName => {
-  const id = jmpId(enName);
-  return id ? image(id + '.png', PORTRAIT_DIR, JMP_API + id + '/portrait') : null;
-};
+
+// Returns the app path of the portrait, or null
+async function downloadPortrait(id) {
+  const existing = portraitOnDisk(id);
+  if (existing && (!forceIcons || !repoIds)) return 'assets/img/' + PORTRAIT_DIR + '/' + existing;
+  if (!repoIds) return null;
+  const url = REPO_RAW + id + '/portrait';
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+  const buffer = Buffer.from(await response.arrayBuffer());
+  const ext = sniff(buffer);
+  if (!ext) throw new Error(`${url}: not an image`);
+  writeFileSync(`src/assets/img/${PORTRAIT_DIR}/${id}.${ext}`, buffer);
+  portraitsDownloaded++;
+  return 'assets/img/' + PORTRAIT_DIR + '/' + id + '.' + ext;
+}
+let portraitsDownloaded = 0;
 
 // Keeps only id, name and count so the app can link each material to its own page
 const materials = list => (list ?? []).map(({ id, name, count }) => ({ id, name, count }));
@@ -150,7 +179,23 @@ async function download(fileName) {
 }
 
 const names = genshindb.characters('names', { matchCategories: true, resultLanguage: 'English' });
-await loadJmpIds();
+await loadRepoIds();
+
+// Portraits first, so each JSON gets the real file extension
+mkdirSync(`src/assets/img/${PORTRAIT_DIR}`, { recursive: true });
+const portraitIds = new Map(names.map(n => [n, repoId(n)]));
+const uniqueIds = [...new Set(portraitIds.values())].filter(Boolean);
+const portraitPaths = new Map();
+const failed = [];
+for (let i = 0; i < uniqueIds.length; i += DOWNLOAD_BATCH) {
+  const batch = uniqueIds.slice(i, i + DOWNLOAD_BATCH);
+  const results = await Promise.allSettled(batch.map(downloadPortrait));
+  results.forEach((result, j) => {
+    if (result.status === 'rejected') failed.push(`${batch[j]}: ${result.reason.message}`);
+    else portraitPaths.set(batch[j], result.value);
+  });
+}
+console.log(`${portraitsDownloaded} portraits downloaded to src/assets/img/${PORTRAIT_DIR}, ${portraitPaths.size - portraitsDownloaded} already there`);
 
 // Start from empty folders so characters removed from the game don't leave stale files
 for (const lang of Object.keys(LANGUAGES)) {
@@ -160,7 +205,7 @@ for (const lang of Object.keys(LANGUAGES)) {
 
 const incomplete = [], noImages = [];
 for (const enName of names) {
-  const portrait = portraitOf(enName);
+  const portrait = portraitPaths.get(portraitIds.get(enName)) ?? null;
   for (const [lang, language] of Object.entries(LANGUAGES)) {
     const data = details(enName, language, portrait);
     if (!data) continue;
@@ -171,12 +216,14 @@ for (const enName of names) {
 }
 console.log(`${names.length} characters written to ${OUTPUT_DIR}/{${Object.keys(LANGUAGES).join(',')}}`);
 if (incomplete.length) console.warn(`No talents or constellations found for: ${incomplete.join(', ')}`);
-if (noImages.length) console.warn(`No genshin.jmp.blue portrait for: ${noImages.join(', ')} (add them to JMP_ALIASES)`);
+if (noImages.length) console.warn(repoIds
+  ? `No portrait in genshindev/api for: ${noImages.join(', ')} (add them to REPO_ALIASES)`
+  : `${noImages.length} characters without a portrait on disk, run the script again once GitHub is reachable.`);
 
 for (const { dir } of downloads.values()) mkdirSync(dir, { recursive: true });
 const list = [...downloads.keys()];
 let downloaded = 0;
-const failed = [];
+const portraitFailures = failed.length;
 for (let i = 0; i < list.length; i += DOWNLOAD_BATCH) {
   const batch = list.slice(i, i + DOWNLOAD_BATCH);
   const results = await Promise.allSettled(batch.map(download));
@@ -185,7 +232,7 @@ for (let i = 0; i < list.length; i += DOWNLOAD_BATCH) {
     else if (result.value) downloaded++;
   });
 }
-console.log(`${downloaded} images downloaded to src/assets/img, ${list.length - downloaded - failed.length} already there`);
+console.log(`${downloaded} skill icons downloaded to src/assets/img/skills, ${list.length - downloaded - (failed.length - portraitFailures)} already there`);
 if (failed.length) {
   console.error(`${failed.length} images could not be downloaded:\n  ${failed.join('\n  ')}`);
   process.exitCode = 1;
