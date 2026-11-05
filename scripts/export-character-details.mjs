@@ -1,24 +1,41 @@
 // Writes one JSON file per character and per language with everything the detail page needs
 // (profile, stats by level, ascension costs, talents, constellations), and downloads the
-// talent and constellation icons, and the character portraits (character only, no background)
-// from the genshindev/api GitHub repo. Like export-characters.mjs, genshin-db is only used here,
+// talent and constellation icons. Like export-characters.mjs, genshin-db is only used here,
 // never by the Angular app.
 // Run it after export-characters.mjs: npm run data:character-details
-// Images already downloaded are kept; add --force-icons to download them all again.
+//
+// Portraits (character only, no background) come from two sources, the larger image wins:
+//  - the genshindev/api GitHub repo, downloaded automatically and cached in scripts/portraits-repo/
+//  - the Genshin Impact Fandom wiki, downloaded by hand (the wiki blocks scripts) into
+//    scripts/portraits-wiki/ as "<English name>_Portrait.<ext>" (spaces or underscores both work)
+// The chosen image gets its white background removed when it has one, is resized to fit
+// PORTRAIT_MAX and saved as src/assets/img/characters/portrait/<id>.webp.
+//
+// Images already downloaded or generated are kept; add --force-icons to download and generate them all again.
 // The repo listing uses the GitHub API (60 requests/hour without token, 1 per run). Set GITHUB_TOKEN to raise it.
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import genshindb from 'genshin-db';
+import sharp from 'sharp';
+import { removeWhiteBackground } from './remove-white-background.mjs';
 
 const OUTPUT_DIR = 'src/assets/data/characters';
 const LANGUAGES = { en: 'English', fr: 'French' };
 
 const ICON_URL = 'https://enka.network/ui/';
-// Portraits come from the files behind genshin.jmp.blue: genshin-db's gacha splash has a background.
+// genshin-db's gacha splash has a background, so portraits come from the repo behind genshin.jmp.blue or the wiki
 const REPO_LIST = 'https://api.github.com/repos/genshindev/api/contents/assets/images/characters?ref=mistress';
 const REPO_RAW = 'https://raw.githubusercontent.com/genshindev/api/mistress/assets/images/characters/';
+const REPO_CACHE = 'scripts/portraits-repo';
+const WIKI_DIR = 'scripts/portraits-wiki';
 const PORTRAIT_DIR = 'characters/portrait';
+const PORTRAIT_MAX = { width: 1000, height: 1600 };
 // genshin-db English name -> repo folder, when the names don't match
 const REPO_ALIASES = { 'Raiden Shogun': 'raiden', 'Aether': 'traveler-anemo', 'Lumine': 'traveler-anemo' };
+// genshin-db English name -> wiki file name (without "_Portrait"), when the names don't match
+const WIKI_ALIASES = {};
+// Portrait id -> [x, y] points (in the resized portrait) of enclosed white areas that are part of
+// the character but would be taken for background, such as the white of an eye
+const KEEP_WHITE = { gorou: [[428, 421]] };
 const DOWNLOAD_BATCH = 8;
 const forceIcons = process.argv.includes('--force-icons');
 
@@ -63,17 +80,17 @@ const EXTS = ['png', 'webp', 'jpg'];
 const sniff = b => b[0] === 0x89 && b[1] === 0x50 ? 'png'
   : b[0] === 0xff && b[1] === 0xd8 ? 'jpg'
   : b.subarray(8, 12).toString() === 'WEBP' ? 'webp' : null;
-const portraitOnDisk = id => EXTS.map(ext => `${id}.${ext}`).find(f => existsSync(`src/assets/img/${PORTRAIT_DIR}/${f}`));
+const repoCached = id => EXTS.map(ext => `${REPO_CACHE}/${id}.${ext}`).find(existsSync) ?? null;
 
 function repoId(enName) {
   const candidates = [REPO_ALIASES[enName] ?? slug(enName), slug(enName.split(' ').pop())];   // "Kamisato Ayaka" -> also try "ayaka"
-  return candidates.find(id => repoIds ? repoIds.has(id) : portraitOnDisk(id)) ?? null;
+  return candidates.find(id => repoIds ? repoIds.has(id) : repoCached(id)) ?? null;
 }
 
-// Returns the app path of the portrait, or null
-async function downloadPortrait(id) {
-  const existing = portraitOnDisk(id);
-  if (existing && (!forceIcons || !repoIds)) return 'assets/img/' + PORTRAIT_DIR + '/' + existing;
+// Returns the cached repo file, downloading it when needed, or null
+async function repoPortrait(id) {
+  const cached = repoCached(id);
+  if (cached && (!forceIcons || !repoIds)) return cached;
   if (!repoIds) return null;
   const url = REPO_RAW + id + '/portrait';
   const response = await fetch(url);
@@ -81,11 +98,51 @@ async function downloadPortrait(id) {
   const buffer = Buffer.from(await response.arrayBuffer());
   const ext = sniff(buffer);
   if (!ext) throw new Error(`${url}: not an image`);
-  writeFileSync(`src/assets/img/${PORTRAIT_DIR}/${id}.${ext}`, buffer);
+  if (cached) rmSync(cached);
+  writeFileSync(`${REPO_CACHE}/${id}.${ext}`, buffer);
   portraitsDownloaded++;
-  return 'assets/img/' + PORTRAIT_DIR + '/' + id + '.' + ext;
+  return `${REPO_CACHE}/${id}.${ext}`;
 }
 let portraitsDownloaded = 0;
+
+// "Kamisato_Ayaka_Portrait.webp" -> "kamisato ayaka"
+const wikiKey = name => name.replace(/\.[a-z]+$/i, '').replaceAll('_', ' ').replace(/ portrait$/i, '').trim().toLowerCase();
+const wikiFiles = new Map(existsSync(WIKI_DIR)
+  ? readdirSync(WIKI_DIR).filter(f => /\.(png|webp|jpe?g)$/i.test(f)).map(f => [wikiKey(f), `${WIKI_DIR}/${f}`])
+  : []);
+
+// An image has a real cut-out when some of its pixels are fully transparent
+async function isCutOut(file) {
+  const { channels, isOpaque } = await sharp(file).stats();
+  return !isOpaque && channels.length === 4 && channels[3].min === 0;
+}
+
+async function pixels(file) {
+  const { width, height } = await sharp(file).metadata();
+  return width * height;
+}
+
+// Picks the larger source, writes <id>.webp and returns { path, source }
+async function buildPortrait(id, sources) {
+  const sized = await Promise.all(sources.map(async s => ({ ...s, pixels: await pixels(s.file) })));
+  const best = sized.toSorted((a, b) => b.pixels - a.pixels)[0];
+  const target = `src/assets/img/${PORTRAIT_DIR}/${id}.webp`;
+  const result = { path: `assets/img/${PORTRAIT_DIR}/${id}.webp`, source: best.source };
+  if (!forceIcons && existsSync(target) && statSync(target).mtimeMs >= statSync(best.file).mtimeMs) return result;
+
+  let image = sharp(best.file).resize({ ...PORTRAIT_MAX, fit: 'inside', withoutEnlargement: true });
+  if (!await isCutOut(best.file)) {
+    const { data, info } = await image.flatten({ background: '#ffffff' }).raw().toBuffer({ resolveWithObject: true });
+    const rgba = removeWhiteBackground(data, info.width, info.height, KEEP_WHITE[id]);
+    image = sharp(rgba, { raw: { width: info.width, height: info.height, channels: 4 } });
+    result.cutOut = true;
+  }
+  await image.webp({ quality: 90, alphaQuality: 100, effort: 5 }).toFile(target);
+  // Drop files left by older runs under another extension
+  for (const ext of EXTS.filter(e => e !== 'webp')) rmSync(`src/assets/img/${PORTRAIT_DIR}/${id}.${ext}`, { force: true });
+  result.generated = true;
+  return result;
+}
 
 // Keeps only id, name and count so the app can link each material to its own page
 const materials = list => (list ?? []).map(({ id, name, count }) => ({ id, name, count }));
@@ -181,21 +238,63 @@ async function download(fileName) {
 const names = genshindb.characters('names', { matchCategories: true, resultLanguage: 'English' });
 await loadRepoIds();
 
-// Portraits first, so each JSON gets the real file extension
+// Portraits first, so each JSON knows whether its character has one
 mkdirSync(`src/assets/img/${PORTRAIT_DIR}`, { recursive: true });
-const portraitIds = new Map(names.map(n => [n, repoId(n)]));
-const uniqueIds = [...new Set(portraitIds.values())].filter(Boolean);
+mkdirSync(REPO_CACHE, { recursive: true });
+// portrait id -> { repo, wiki } (Aether and Lumine share one)
+const portraitIds = new Map();
+const portraitSources = new Map();
+const usedWikiFiles = new Set();
+for (const enName of names) {
+  const repo = repoId(enName);
+  const wikiName = wikiKey(WIKI_ALIASES[enName] ?? enName);
+  const wiki = wikiFiles.get(wikiName);
+  if (!repo && !wiki) continue;
+  const id = repo ?? slug(enName);
+  portraitIds.set(enName, id);
+  const sources = portraitSources.get(id) ?? {};
+  if (repo) sources.repo = repo;
+  if (wiki) { sources.wiki = wiki; usedWikiFiles.add(wikiName); }
+  portraitSources.set(id, sources);
+}
+
 const portraitPaths = new Map();
 const failed = [];
-for (let i = 0; i < uniqueIds.length; i += DOWNLOAD_BATCH) {
-  const batch = uniqueIds.slice(i, i + DOWNLOAD_BATCH);
-  const results = await Promise.allSettled(batch.map(downloadPortrait));
+const portraitStats = { generated: 0, cutOut: 0, wiki: 0, repo: 0 };
+const ids = [...portraitSources.keys()];
+for (let i = 0; i < ids.length; i += DOWNLOAD_BATCH) {
+  const batch = ids.slice(i, i + DOWNLOAD_BATCH);
+  const results = await Promise.allSettled(batch.map(async id => {
+    const { repo, wiki } = portraitSources.get(id);
+    const sources = [];
+    if (wiki) sources.push({ source: 'wiki', file: wiki });
+    if (repo) {
+      try {
+        const file = await repoPortrait(repo);
+        if (file) sources.push({ source: 'repo', file });
+      } catch (e) {
+        // Some repo folders have no portrait: fine as long as the wiki has one
+        if (!sources.length) throw e;
+      }
+    }
+    return sources.length ? buildPortrait(id, sources) : null;
+  }));
   results.forEach((result, j) => {
     if (result.status === 'rejected') failed.push(`${batch[j]}: ${result.reason.message}`);
-    else portraitPaths.set(batch[j], result.value);
+    else if (result.value) {
+      const { path, source, generated, cutOut } = result.value;
+      portraitPaths.set(batch[j], path);
+      portraitStats[source]++;
+      if (generated) portraitStats.generated++;
+      if (cutOut) portraitStats.cutOut++;
+    }
   });
 }
-console.log(`${portraitsDownloaded} portraits downloaded to src/assets/img/${PORTRAIT_DIR}, ${portraitPaths.size - portraitsDownloaded} already there`);
+console.log(`${portraitPaths.size} portraits (${portraitStats.wiki} from the wiki, ${portraitStats.repo} from the repo): `
+  + `${portraitStats.generated} generated (${portraitStats.cutOut} with their white background removed), `
+  + `${portraitPaths.size - portraitStats.generated} already up to date, ${portraitsDownloaded} downloaded from the repo`);
+const unusedWiki = [...wikiFiles.keys()].filter(k => !usedWikiFiles.has(k));
+if (unusedWiki.length) console.warn(`Wiki portraits matching no genshin-db character: ${unusedWiki.map(k => wikiFiles.get(k).split('/').pop()).join(', ')} (add them to WIKI_ALIASES if the names differ)`);
 
 // Start from empty folders so characters removed from the game don't leave stale files
 for (const lang of Object.keys(LANGUAGES)) {
@@ -216,9 +315,8 @@ for (const enName of names) {
 }
 console.log(`${names.length} characters written to ${OUTPUT_DIR}/{${Object.keys(LANGUAGES).join(',')}}`);
 if (incomplete.length) console.warn(`No talents or constellations found for: ${incomplete.join(', ')}`);
-if (noImages.length) console.warn(repoIds
-  ? `No portrait in genshindev/api for: ${noImages.join(', ')} (add them to REPO_ALIASES)`
-  : `${noImages.length} characters without a portrait on disk, run the script again once GitHub is reachable.`);
+if (noImages.length) console.warn(`No portrait for: ${noImages.join(', ')} (add one to ${WIKI_DIR}, or an alias to REPO_ALIASES or WIKI_ALIASES)`
+  + (repoIds ? '' : '. GitHub was unreachable: only repo portraits already cached were used.'));
 
 for (const { dir } of downloads.values()) mkdirSync(dir, { recursive: true });
 const list = [...downloads.keys()];

@@ -37,6 +37,9 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Character images (~150 MB), downloaded by npm run data:character-details
+# Old splash images, no longer generated
 /src/assets/img/characters/splash/
-/src/assets/img/characters/portrait/
+# Portrait sources (~120 MB): wiki files downloaded by hand, repo files cached by
+# npm run data:character-details. Only the generated portraits are versioned.
+/scripts/portraits-wiki/
+/scripts/portraits-repo/
