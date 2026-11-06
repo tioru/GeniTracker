@@ -16,6 +16,20 @@ export const Elements: Filter[] = [
     { key: 'Cryo', color: 'rgb(0,238,255)', img: IMG + 'elements/cryo.webp'},
 ];
 
+const nation = (key: string): Filter => ({ key, img: IMG + 'nation/' + key + '/emblem.webp' });
+
+// Keys match the `nation` field of the character data
+export const Nations: Filter[] = [
+    nation('mondstadt'),
+    nation('liyue'),
+    nation('inazuma'),
+    nation('sumeru'),
+    nation('fontaine'),
+    nation('natlan'),
+    nation('nod-krai'),
+    nation('snezhnaya'),
+];
+
 export const WeaponFilter: Filter[] = [
     { key: 'Bow', img: IMG + 'weapons/bow.webp'},
     { key: 'Catalyst', img: IMG + 'weapons/catalyst.webp'},

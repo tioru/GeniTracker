@@ -32,12 +32,36 @@
       "food": "Food"
     }
   },
-  "char": {
+  "characters": {
     "pres1": "Characters",
     "pres2": "characters",
     "search": "Search a character",
     "noResults": "No character matches these filters.",
     "owned": "Owned",
     "reset": "Reset"
+  },
+  "character": {
+    "nation": "Nation",
+    "affiliation": "Affiliation",
+    "birthday": "Birthday",
+    "release": "Release",
+    "signatureWeapon": "Signature weapon",
+    "signatureDish": "Signature dish"
+  },
+  "nations": {
+    "mondstadt": "Mondstadt",
+    "liyue": "Liyue",
+    "inazuma": "Inazuma",
+    "sumeru": "Sumeru",
+    "fontaine": "Fontaine",
+    "natlan": "Natlan",
+    "nod-krai": "Nod-Krai",
+    "snezhnaya": "Snezhnaya"
+  },
+  "dishTypes": {
+    "attack": "ATK boost",
+    "defense": "DEF boost",
+    "heal": "Recovery",
+    "adventure": "Adventure"
   }
 }

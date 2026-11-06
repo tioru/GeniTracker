@@ -1,5 +1,5 @@
 @if (character.value(); as c) {
-    <div class="container">
+    <div class="container" *transloco="let t">
         <div class="character-img">
             @if (c.images.portrait ?? entry()?.icon; as image) {
                 <img [src]="image" [alt]="c.name" />
@@ -10,15 +10,109 @@
                 @if (element(); as element) {
                     <img width="40px" height="40px" [src]="element.img" [alt]="element.key" />
                 }
-                <div class="character-type">
-                    <span>{{c.element}}</span>
-                    <span>.</span>
-                    <span>{{c.weapon}}</span>
-                </div>
-                <div class="rarity">
-                    <span class="rarity" [class.five-star]="c.rarity === 5" [class.four-star]="c.rarity === 4">{{ '★'.repeat(c.rarity) }}</span>
+                <div>
+                    <div [class]="c.element?.toLowerCase()" class="character-type">
+                        <span>{{c.element}}</span>
+                        <span> · </span>
+                        <span>{{c.weapon}}</span>
+                    </div>
+                    <div class="rarity">
+                        <span class="rarity" [class.five-star]="c.rarity === 5" [class.four-star]="c.rarity === 4">{{ '★'.repeat(c.rarity) }}</span>
+                    </div>
                 </div>
             </div>
+            <div>
+                <span class="character-name">{{c.name}}</span>
+                <div class="character-title">
+                    <span>{{c.title}}</span>
+                </div>
+            </div>
+            <div class="character-description">
+                <span>{{c.description}}</span>
+            </div>
+            <div class="character-info-cards">
+                <div class="info-card">
+                    <div class="card-title">
+                        <span>{{t('character.nation')}}</span>
+                    </div>
+                    <div class="nation-info">
+                        @if (nation(); as nation) {
+                            <img class="nation-icon" [src]="nation.img" [alt]="t('nations.' + nation.key)" />
+                            <span>{{ t('nations.' + nation.key) }}</span>
+                        } @else {
+                            <span>—</span>
+                        }
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="card-title">
+                        <span>{{t('character.affiliation')}}</span>
+                    </div>
+                    <div class="affiliation-info">
+                        <span>{{c.affiliation}}</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="card-title">
+                        <span>{{t('character.birthday')}}</span>
+                    </div>
+                    <div class="birthday-info">
+                        @if (birthday(); as date) {
+                            <span>{{ birthday() | intlDate: lang() : { month: 'long', day: 'numeric' } }}</span>
+                        }
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="card-title">
+                        <span>{{t('character.release')}}</span>
+                    </div>
+                    <div class="release-info">
+                        <span>{{ c.releaseDate | intlDate: lang() : { dateStyle: 'long' } }}</span>
+                    </div>
+                </div>
+            </div>
+            @if (c.signatureWeapon; as weapon) {
+                <div class="signature-weapon">
+                    <div class="weapon-img" [class.five-star]="weapon.rarity === 5" [class.four-star]="weapon.rarity === 4">
+                        @if (weapon.icon) {
+                            <img [src]="weapon.icon" [alt]="weapon.name" />
+                        }
+                    </div>
+                    <div class="weapon-info">
+                        <div [class]="c.element?.toLowerCase()" class="signature-weapon-title">
+                            <span>{{t('character.signatureWeapon')}}</span>
+                        </div>
+                        <div class="signature-weapon-name">
+                            <span>{{weapon.name}}</span>
+                        </div>
+                        <div>
+                            <span class="rarity" [class.five-star]="weapon.rarity === 5" [class.four-star]="weapon.rarity === 4">{{ '★'.repeat(weapon.rarity) }}</span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (c.specialDish; as dish) {
+                <div class="signature-dish">
+                    <div class="dish-img" [class.five-star]="dish.rarity === 5" [class.four-star]="dish.rarity === 4" [class.three-star]="dish.rarity === 3" [class.two-star]="dish.rarity === 2" [class.one-star]="dish.rarity === 1">
+                        @if (dish.icon) {
+                            <img [src]="dish.icon" [alt]="dish.name" />
+                        }
+                    </div>
+                    <div class="dish-info">
+                        <div [class]="c.element?.toLowerCase()" class="signature-dish-title">
+                            <span>{{t('character.signatureDish')}}</span>
+                        </div>
+                        <div class="signature-dish-name">
+                            <span>{{dish.name}}</span>
+                        </div>
+                        @if (dish.type) {
+                            <div class="signature-dish-boost" [class]="dish.type" [title]="dish.effect">
+                                <span>{{ t('dishTypes.' + dish.type) }}</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
         </div>
         <div class="character-skills">
 
