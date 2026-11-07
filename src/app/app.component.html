@@ -1,3 +1,8 @@
+<div class="backdrop" aria-hidden="true">
+  @for (layer of bg.layers(); track layer.id) {
+    <img [src]="layer.src" alt="" (animationend)="bg.settle(layer.id)" />
+  }
+</div>
 <div class="scroller" (scroll)="onScroll($event)">
   <div class="page">
     <div class="topbar" [class.is-floating]="isFloating()">

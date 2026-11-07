@@ -24,24 +24,6 @@ app-root {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: url('./assets/img/nation/fontaine/10.jpg') center / cover no-repeat;
-    filter: brightness(0.7);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: linear-gradient(rgba(10,15,24,.35) 0%, rgba(10,15,24,.15) 40%, rgba(10,15,24,.85) 100%);
-  }
 }
 
 /*Easy SCSS*/
