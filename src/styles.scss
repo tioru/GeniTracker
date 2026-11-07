@@ -11,6 +11,11 @@
   box-sizing: border-box;
 }
 
+// An <img> without a source would show the browser's empty image frame
+img:not([src]), img[src=''] {
+  visibility: hidden;
+}
+
 html, body {
   height: 100vh;
   margin: 0;

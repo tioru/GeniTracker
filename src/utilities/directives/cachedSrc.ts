@@ -1,13 +1,21 @@
-import { DestroyRef, Directive, effect, ElementRef, inject, input } from '@angular/core';
+import { DestroyRef, Directive, effect, ElementRef, inject, input, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ImageCacheService } from '../services/image-cache.service';
 
 @Directive({
   selector: 'img[cachedSrc]',
-  standalone: true
+  standalone: true,
+  host: {
+    // Hidden until the image is decoded, so the browser never shows its empty/broken image frame
+    '[style.visibility]': 'loaded() ? null : "hidden"',
+    '(load)': 'loaded.set(true)',
+    '(error)': 'loaded.set(true)',
+  },
 })
 export class CachedSrcDirective {
   cachedSrc = input.required<string>();
+
+  protected loaded = signal(false);
 
   private img = inject<ElementRef<HTMLImageElement>>(ElementRef).nativeElement;
   private imageCache = inject(ImageCacheService);
@@ -22,6 +30,7 @@ export class CachedSrcDirective {
 
   private show(url: string) {
     this.stop();
+    this.loaded.set(false);
 
     const cached = this.imageCache.imageObjectUrls.get(url);
     if (cached) {
