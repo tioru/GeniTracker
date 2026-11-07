@@ -1,12 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { Elements, WeaponFilter } from './filters';
 import { CharactersService } from './characters.service';
 import { Characters } from './characters';
 import { OverflowTooltipDirective } from '../../utilities/directives/overflowTooltip';
 import { CachedSrcDirective } from '../../utilities/directives/cachedSrc';
 import { RouterLink } from '@angular/router';
+import { Elements, Weapons } from '../../utilities/game-data';
 
 type ExclusiveFilter = 'element' | 'weapon' | 'rarity';
 
@@ -31,7 +31,7 @@ export class CharactersComponent {
   private charactersService = inject(CharactersService);
 
   elements = Elements;
-  weaponFilter = WeaponFilter;
+  weapons = Weapons;
 
   filters = signal<CharacterFilters>(NO_FILTERS);
 

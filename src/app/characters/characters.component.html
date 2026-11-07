@@ -14,7 +14,7 @@
                 }
             </div>
             <div class="weaponList">
-                @for (weapon of weaponFilter; track $index) {
+                @for (weapon of weapons; track $index) {
                     <button [class.active]="filters().weapon === weapon.key" class="filter-icon" (click)="toggleFilter('weapon', weapon.key)">
                         <img class="weapon" [src]="weapon.img" [alt]="weapon.key"/>
                     </button>

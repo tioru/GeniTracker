@@ -5,11 +5,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { httpResource } from '@angular/common/http';
-import { Character } from './character';
+import { Character } from '../../utilities/models/character';
 import { CachedSrcDirective } from '../../utilities/directives/cachedSrc';
-import { Elements, Nations } from '../characters/filters';
-import { DatePipe } from '@angular/common';
 import { IntlDatePipe } from '../../utilities/pipes/date.pipe';
+import { Elements, Nations } from '../../utilities/game-data';
 
 @Component({
   imports: [CachedSrcDirective, TranslocoDirective, IntlDatePipe],
