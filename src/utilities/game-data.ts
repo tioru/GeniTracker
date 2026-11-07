@@ -6,7 +6,15 @@ interface Category {
     img: string;
 }
 
-const nation = (key: string): Category => ({ key, img: IMG + 'nation/' + key + '/emblem.webp' });
+interface Nation extends Category {
+    backgrounds: string[];
+}
+
+const nation = (key: string, count = 0): Nation => ({
+    key,
+    img: IMG + 'nation/' + key + '/emblem.webp',
+    backgrounds: Array.from({ length: count }, (_, i) => `${IMG}nation/${key}/${i + 1}.jpg`),
+});
 
 export const Elements: Category[] = [
     { key: 'Anemo', color: 'rgb(0,182,167)' , img: IMG + 'elements/anemo.webp'},
@@ -21,14 +29,14 @@ export const Elements: Category[] = [
 
 
 
-export const Nations: Category[] = [
-    nation('mondstadt'),
-    nation('liyue'),
-    nation('inazuma'),
-    nation('sumeru'),
-    nation('fontaine'),
-    nation('natlan'),
-    nation('nod-krai'),
+export const Nations: Nation[] = [
+    nation('mondstadt', 4),
+    nation('liyue', 5),
+    nation('inazuma', 8),
+    nation('sumeru', 8),
+    nation('fontaine', 11),
+    nation('natlan', 9),
+    nation('nod-krai', 4),
     nation('snezhnaya'),
 ];
 

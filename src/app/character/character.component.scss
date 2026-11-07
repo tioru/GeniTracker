@@ -7,6 +7,15 @@
     padding-top: 20px;
 }
 
+.character {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+    min-height: calc(100vh - 110px);
+    padding-top: 20px;
+}
+
 .character-img {
     position: relative;
     flex: 1.3 1 420px;
@@ -21,6 +30,66 @@
         object-fit: contain;
         object-position: center bottom;
         filter: drop-shadow(rgba(0, 0, 0, 0.45) 0px 30px 50px);
+    }
+}
+
+.backgrounds {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
+    img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.04);
+        opacity: 0;
+        transition: opacity 1.8s ease;
+
+        &.active { opacity: 1; }
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(rgba(10, 15, 24, .35) 0%, rgba(10, 15, 24, .15) 40%, rgba(10, 15, 24, .85) 100%);
+    }
+}
+
+.background-selector {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    display: flex;
+    gap: 6px;
+}
+
+.background-selector-button {
+    height: 6px;
+    width: 8px;
+    border-radius: 3px;
+    background: rgba(145, 145, 145, 0.5);
+    cursor: pointer;
+    transition: width 0.3s;
+    border: none;
+    padding: 0;
+
+    &.active {
+        width: 22px;
+        border-radius: 3px;
+        
+        &.anemo   { background: #73d7cf; }
+        &.geo     { background: #ffe473; }
+        &.electro { background: #b773d7; }
+        &.dendro  { background: #73d778; }
+        &.hydro   { background: #73a6d7; }
+        &.pyro    { background: #d77373; }
+        &.cryo    { background: #73f6ff; }
+        &.unknown { background: rgba(255, 255, 255, 0.75); }
     }
 }
 
@@ -71,6 +140,7 @@
   &.hydro   { color: #73a6d7; }
   &.pyro    { color: #d77373; }
   &.cryo    { color: #73f6ff; }
+  &.unknown { color: rgba(255, 255, 255, 0.75); }
 }
 
 .five-star { color: rgb(217, 164, 65) }
@@ -165,7 +235,7 @@
     transition: background 0.2s;
 }
 
-.weapon-img, .dish-img {
+.weapon-img, .dish-img, .artefact-img {
     flex: 0 0 auto;
     width: 52px;
     height: 52px;
@@ -186,12 +256,12 @@
         background: linear-gradient(160deg, rgb(43, 90, 138) 0%, rgb(69, 154, 210) 100%);
     }
 
-    .two-star {
+    &.two-star {
         background: linear-gradient(160deg, rgb(43, 138, 90) 0%, rgb(69, 210, 154) 100%);
     }
 
-    .one-star {
-        background: linear-gradient(160deg, rgb(138, 43, 90) 0%, rgb(210, 69, 154) 100%);
+    &.one-star {
+        background: linear-gradient(160deg, rgb(88, 92, 98) 0%, rgb(150, 155, 162) 100%);
     }
 
     >img {
@@ -214,6 +284,7 @@
     &.hydro   { color: #73a6d7; }
     &.pyro    { color: #d77373; }
     &.cryo    { color: #73f6ff; }
+    &.unknown { color: rgba(255, 255, 255, 0.75); }
 }
 
 .signature-weapon-name, .signature-dish-name {
@@ -228,4 +299,257 @@
 .signature-dish-boost {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.75);
+}
+
+.unknown-weapon, .unknown-dish {
+    font-size: 25px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.artefacts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.artefact-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+
+    &.anemo   { color: #73d7cf; }
+    &.geo     { color: #ffe473; }
+    &.electro { color: #b773d7; }
+    &.dendro  { color: #73d778; }
+    &.hydro   { color: #73a6d7; }
+    &.pyro    { color: #d77373; }
+    &.cryo    { color: #73f6ff; }
+    &.unknown { color: rgba(255, 255, 255, 0.75); }
+}
+
+.best-artefact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 8px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.best-artefact-title {
+    flex: 0 0 auto;
+    width: 92px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    padding-left: 6px;
+}
+
+.artefact-info {
+    flex: 1 1 180px;
+    min-width: 0px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 10px 4px 4px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.artefact-img {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.five-star {
+        background: linear-gradient(160deg, rgb(138, 90, 43) 0%, rgb(210, 154, 69) 100%);
+    }
+
+    &.four-star {
+        background: linear-gradient(160deg, rgb(90, 43, 138) 0%, rgb(154, 69, 210) 100%);
+    }
+}
+
+.artefact {
+    min-width: 0px;
+}
+
+.artefact-name {
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artefact-number {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.character-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.current-character-constellation {
+    height: 46px;
+    padding: 0px 18px;
+    border-radius: 23px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.constellation-title {
+    color: rgb(255, 255, 255);
+    font-family: Manrope, sans-serif;
+}
+
+.constellation-number {
+    font-weight: bolder;
+
+    &.anemo   { color: #73d7cf; }
+    &.geo     { color: #ffe473; }
+    &.electro { color: #b773d7; }
+    &.dendro  { color: #73d778; }
+    &.hydro   { color: #73a6d7; }
+    &.pyro    { color: #d77373; }
+    &.cryo    { color: #73f6ff; }
+    &.unknown { color: rgba(255, 255, 255, 0.75); }
+}
+
+.owned-character {
+    flex: 1 1 auto;
+    height: 46px;
+    padding: 0px 20px;
+    border-radius: 23px;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 14px;
+    background: transparent;
+    font-family: Manrope, sans-serif;
+
+    &.owned {
+        color: rgb(0, 0, 0);
+        &.anemo { 
+            background-color: #73d7cf;
+            border: 1px solid #73d7cf; 
+        }
+        &.geo { 
+            background-color: #ffe473; 
+            border: 1px solid #ffe473; 
+        }
+        &.electro { 
+            background-color: #b773d7; 
+            border: 1px solid #b773d7; 
+        }
+        &.dendro { 
+            background-color: #73d778; 
+            border: 1px solid #73d778; 
+        }
+        &.hydro { 
+            background-color: #73a6d7; 
+            border: 1px solid #73a6d7; 
+        }
+        &.pyro { 
+            background-color: #d77373; 
+            border: 1px solid #d77373; 
+        }
+        &.cryo { 
+            background-color: #73f6ff; 
+            border: 1px solid #73f6ff; 
+        }
+        &.unknown { 
+            background-color: rgba(255, 255, 255, 0.75); 
+            border: 1px solid rgba(255, 255, 255, 0.75); 
+        }
+    }
+}
+
+.skills-selector {
+    display: flex;
+    gap: 6px;
+    padding: 10px;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+
+    >button {
+        flex: 0 0 auto;
+        height: 40px;
+        padding: 0px 18px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 14px;
+
+        border: 1px solid transparent;
+        background: transparent;
+        color: rgb(255, 255, 255);
+        opacity: 0.55;
+
+        &.selected {
+            background: rgba(255, 255, 255, 0.14);
+            opacity: 1;
+
+            &.anemo   { border: 1px solid #73d7cf; }
+            &.geo     { border: 1px solid #ffe473; }
+            &.electro { border: 1px solid #b773d7; }
+            &.dendro  { border: 1px solid #73d778; }
+            &.hydro   { border: 1px solid #73a6d7; }
+            &.pyro    { border: 1px solid #d77373; }
+            &.cryo    { border: 1px solid #73f6ff; }
+            &.unknown { border: 1px solid rgba(255, 255, 255, 0.75);}
+        }
+        
+    }
+}
+
+.skills {
+    padding: clamp(16px, 3vw, 26px);
+}
+
+.level-selector {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+
+    >span{
+        font-weight: 700;
+        color: rgb(255, 255, 255);
+    }
+
+    >input {
+        appearance: auto;
+        cursor: default;
+        color: light-dark(rgb(16, 16, 16), rgb(255, 255, 255));
+        margin: 2px;
+        flex: 1 1 200px;
+        max-width: 320px;
+
+        &.anemo   { accent-color: #73d7cf; }
+        &.geo     { accent-color: #ffe473; }
+        &.electro { accent-color: #b773d7; }
+        &.dendro  { accent-color: #73d778; }
+        &.hydro   { accent-color: #73a6d7; }
+        &.pyro    { accent-color: #d77373; }
+        &.cryo    { accent-color: #73f6ff; }
+        &.unknown { accent-color: rgba(255, 255, 255, 0.75); }
+    }
 }

@@ -46,7 +46,16 @@
     "birthday": "Birthday",
     "release": "Release",
     "signatureWeapon": "Signature weapon",
-    "signatureDish": "Signature dish"
+    "signatureDish": "Signature dish",
+    "artefacts" : "Recommended artifact sets",
+    "best-artefact" : "Best choice",
+    "owned": "Owned",
+    "notowned": "Not owned",
+    "constellation": "Constellation",
+    "talents": "Talents",
+    "passives" : "Passives",
+    "constellations": "Constellations",
+    "level" : "Level"
   },
   "nations": {
     "mondstadt": "Mondstadt",
@@ -63,5 +72,22 @@
     "defense": "DEF boost",
     "heal": "Recovery",
     "adventure": "Adventure"
+  },
+  "weapons": {
+    "Bow": "Bow", 
+    "Catalyst": "Catalyst", 
+    "Claymore": "Claymore", 
+    "Polearm": "Polearm", 
+    "Sword": "Sword"
+  },
+  "elements": {
+    "Anemo": "Anemo", 
+    "Geo": "Geo", 
+    "Electro": "Electro", 
+    "Dendro": "Dendro", 
+    "Hydro": "Hydro", 
+    "Pyro": "Pyro", 
+    "Cryo": "Cryo",
+    "unknown": "Unknown"
   }
 }

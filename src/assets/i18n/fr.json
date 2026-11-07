@@ -46,7 +46,16 @@
     "birthday": "Anniversaire",
     "release": "Sortie",
     "signatureWeapon": "Arme signature",
-    "signatureDish": "Plat signature"
+    "signatureDish": "Plat signature",
+    "artefacts" : "Sets d'artéfacts recommandés",
+    "best-artefact" : "Meilleur choix",
+    "owned": "Possédé",
+    "notowned": "Non possédé",
+    "constellation": "Constellation",
+    "talents": "Talents normaux",
+    "passives" : "Compétence",
+    "constellations": "Constellations",
+    "level" : "Niveau"
   },
   "nations": {
     "mondstadt": "Mondstadt",
@@ -63,5 +72,22 @@
     "defense": "Bonus de DÉF",
     "heal": "Récupération",
     "adventure": "Exploration"
+  },
+  "weapons": {
+    "Bow": "Arc", 
+    "Catalyst": "Catalyseur", 
+    "Claymore": "Épée à deux mains", 
+    "Polearm": "Arme d'hast", 
+    "Sword": "Épée à une main"
+  },
+  "elements": {
+    "Anemo": "Anémo", 
+    "Geo": "Géo", 
+    "Electro": "Électro", 
+    "Dendro": "Dendro", 
+    "Hydro": "Hydro", 
+    "Pyro": "Pyro", 
+    "Cryo": "Cryo",
+    "unknown": "Inconnu"
   }
 }
