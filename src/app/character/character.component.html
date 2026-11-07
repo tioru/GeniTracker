@@ -1,9 +1,13 @@
-@if (character.value(); as c) {
+@if (current(); as c) {
     <section class="character-page" *transloco="let t">
         <div class="character">
             <div class="character-img">
-                @if (c.images.portrait ?? entry()?.icon; as image) {
-                    <img [cachedSrc]="image" [alt]="c.name" />
+                @if (portrait(); as image) {
+                    <img [cachedSrc]="image" [alt]="c.name" [class.loaded]="portraitLoaded()"
+                         (load)="portraitLoaded.set(true)" (error)="portraitLoaded.set(true)" />
+                    @if (!portraitLoaded()) {
+                        <div class="portrait-spinner" role="status" [attr.aria-label]="c.name"></div>
+                    }
                 }
                 <div class="background-selector">
                     @for (src of backgrounds(); track src; let i = $index) {
@@ -194,23 +198,61 @@
         </div>
         <div class="character-skills">
             <div class="skills-selector">
-                <button [class.selected]="true" [class]="c.element?.toLowerCase() || 'unknown'">
-                    <span>{{t("character.talents")}}</span>
-                </button>
-                <button [class.selected]="false" [class]="c.element?.toLowerCase() || 'unknown'">
-                    <span>{{t("character.passives")}}</span>
-                </button>
-                <button [class.selected]="false" [class]="c.element?.toLowerCase() || 'unknown'">
-                    <span>{{t("character.constellations")}}</span>
-                </button>
+                @for (tab of skillTabs; track tab) {
+                    <button type="button" [class]="elementClass()" [class.selected]="selectedSkill() === tab" (click)="selectedSkill.set(tab)">
+                        <span>{{ t('character.' + tab) }}</span>
+                    </button>
+                }
             </div>
             <div class="skills">
-                <div class="level-selector">
-                    <span>
-                        {{t("character.level")}} 1
-                    </span>
-                    <input [class]="c.element?.toLowerCase() || 'unknown'" type="range" min="1" max="15" value="1" />
-                </div>
+                @switch (selectedSkill()) {
+                    @case ('talents') {
+                        <div class="level-selector">
+                            <span>
+                                {{t("character.level")}} {{selectedLevel()}}
+                            </span>
+                            <input [class]="elementClass()" type="range" min="1" max="15" [(ngModel)]="selectedLevel"/>
+                        </div>
+                        <div class="talents-skill-card-container">
+                            @for (skill of activeSkills(); track skill.type) {
+                                <div class="talents-skill-card">
+                                    <div class="talents-skill-title">
+                                        @if (skill.talent.icon; as icon) {
+                                            <img [cachedSrc]="icon" [alt]="skill.talent.name" />
+                                        }
+                                        <div>
+                                            <div class="type" [class]="elementClass()">
+                                                <span>{{ t('character.' + skill.type) }}</span>
+                                            </div>
+                                            <div class="name">
+                                                <span>{{ skill.talent.name }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @let stats = statsShown().has(skill.type);
+                                    <div class="selector">
+                                        <button type="button" [class]="elementClass()" [class.selected]="!stats" (click)="showStats(skill.type, false)">{{ t('character.description') }}</button>
+                                        <button type="button" [class]="elementClass()" [class.selected]="stats" (click)="showStats(skill.type, true)">{{ t('character.stats') }}</button>
+                                    </div>
+                                    @if (stats) {
+                                        @for (stat of skill.stats; track $index) {
+                                            <div class="talents-skill-stat">
+                                                <span class="name">{{ stat.name }}</span>
+                                                <span class="value">{{ stat.value }}</span>
+                                            </div>
+                                        }
+                                    } @else {
+                                        <span class="description">{{ skill.talent.description }}</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    @case ('passives') {
+                    }
+                    @case ('constellations') {
+                    }
+                }
             </div>
         </div>
         <span>

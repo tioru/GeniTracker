@@ -1,18 +1,24 @@
-import { Component, computed, DestroyRef, effect, inject, linkedSignal, untracked } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, linkedSignal, untracked, signal } from '@angular/core';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { CharactersService } from '../characters/characters.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { httpResource } from '@angular/common/http';
-import { Character } from '../../utilities/models/character';
+import { Character, Talent } from '../../utilities/models/character';
 import { CachedSrcDirective } from '../../utilities/directives/cachedSrc';
 import { IntlDatePipe } from '../../utilities/pipes/date.pipe';
 import { BackgroundService } from '../../utilities/services/background.service';
 import { Elements, Nations } from '../../utilities/game-data';
+import { FormsModule } from '@angular/forms';
+import { talentStats } from '../../utilities/talent-stats';
+
+export type SkillTab = 'talents' | 'passives' | 'constellations';
+export type ActiveSkillType = 'normalAttack' | 'skill' | 'burst' | 'alternateSprint';
+const ACTIVE_SKILLS: ActiveSkillType[] = ['normalAttack', 'skill', 'burst', 'alternateSprint'];
 
 @Component({
-  imports: [CachedSrcDirective, TranslocoDirective, IntlDatePipe],
+  imports: [CachedSrcDirective, TranslocoDirective, IntlDatePipe, FormsModule],
   selector: 'app-character',
   styleUrl: './character.component.scss',
   templateUrl: './character.component.html',
@@ -32,13 +38,23 @@ export class CharacterComponent {
     return id ? `assets/data/characters/${this.lang()}/${id}.json` : undefined;
   });
 
+  public current = linkedSignal<Character | null | undefined, Character | undefined>({
+    source: () => this.character.hasValue() ? this.character.value() : this.character.error() ? null : undefined,
+    computation: (value, previous) => value === undefined ? previous?.value : value ?? undefined,
+  });
+
   // undefined for the Traveler and Manekin(a), who have no element
-  public element = computed(() => Elements.find(e => e.key === this.character.value()?.element));
+  public element = computed(() => Elements.find(e => e.key === this.current()?.element));
 
   // undefined for characters with no nation (Traveler, Aloy, Nicole, Skirk…)
-  public nation = computed(() => Nations.find(n => n.key === this.character.value()?.nation));
+  public nation = computed(() => Nations.find(n => n.key === this.current()?.nation));
 
-  public elementClass = computed(() => this.character.value()?.element?.toLowerCase() ?? 'unknown');
+  public portrait = computed(() => this.current()?.images.portrait ?? this.entry()?.icon);
+
+  // Reset whenever another portrait is shown, set by the <img> (load) event
+  public portraitLoaded = linkedSignal({ source: this.portrait, computation: () => false });
+
+  public elementClass = computed(() => this.current()?.element?.toLowerCase() ?? 'unknown');
 
   public backgrounds = computed(() => this.nation()?.backgrounds ?? []);
   
@@ -46,7 +62,7 @@ export class CharacterComponent {
   public slide = linkedSignal({ source: this.backgrounds, computation: () => 0 });
 
   public birthday = computed(() => {
-    const [month, day] = (this.character.value()?.birthday ?? '').split('/').map(Number);
+    const [month, day] = (this.current()?.birthday ?? '').split('/').map(Number);
     return month && day ? new Date(2000, month - 1, day) : null;
   });
 
@@ -68,4 +84,29 @@ export class CharacterComponent {
 
     inject(DestroyRef).onDestroy(() => this.bg.show());
   }
+
+  public readonly skillTabs: SkillTab[] = ['talents', 'passives', 'constellations'];
+  public selectedSkill = signal<SkillTab>('talents');
+  public selectedLevel = signal(1);
+
+  // Skills whose card shows the stats instead of the description
+  public statsShown = signal(new Set<ActiveSkillType>());
+
+  public showStats(type: ActiveSkillType, show: boolean) {
+    this.statsShown.update(set => {
+      const next = new Set(set);   // a new Set, so the signal sees the change
+      show ? next.add(type) : next.delete(type);
+      return next;
+    });
+  }
+
+  public activeSkills = computed(() => {
+    const talents = this.current()?.talents;
+    const level = this.selectedLevel();
+    const lang = this.lang();
+    return ACTIVE_SKILLS
+      .map(type => ({ type, talent: talents?.[type] }))
+      .filter((s): s is { type: ActiveSkillType; talent: Talent } => !!s.talent)
+      .map(s => ({ ...s, stats: talentStats(s.talent, level, lang) }));
+  });
 }

@@ -55,7 +55,13 @@
     "talents": "Talents",
     "passives" : "Passives",
     "constellations": "Constellations",
-    "level" : "Level"
+    "level" : "Level",
+    "normalAttack": "Normal Attack",
+    "skill": "Elemental Skill",
+    "burst": "Elemental Burst",
+    "alternateSprint": "Alternate Sprint",
+    "description": "Description",
+    "stats": "Stats"
   },
   "nations": {
     "mondstadt": "Mondstadt",

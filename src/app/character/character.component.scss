@@ -30,7 +30,30 @@
         object-fit: contain;
         object-position: center bottom;
         filter: drop-shadow(rgba(0, 0, 0, 0.45) 0px 30px 50px);
+        opacity: 0;
+        transition: opacity .4s ease;
+
+        &.loaded {
+            opacity: 1;
+        }
     }
+}
+
+.portrait-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    margin: -24px 0 0 -24px;
+    border: 4px solid rgba(255, 255, 255, .2);
+    border-top-color: rgba(255, 255, 255, .85);
+    border-radius: 50%;
+    animation: portrait-spin .8s linear infinite;
+}
+
+@keyframes portrait-spin {
+    to { transform: rotate(360deg); }
 }
 
 .backgrounds {
@@ -551,5 +574,116 @@
         &.pyro    { accent-color: #d77373; }
         &.cryo    { accent-color: #73f6ff; }
         &.unknown { accent-color: rgba(255, 255, 255, 0.75); }
+    }
+}
+
+.talents-skill-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.talents-skill-card {
+    padding: 18px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    >.selector {
+        display: flex;
+        gap: 4px;
+        padding: 3px;
+        border-radius: 16px;
+        background: rgba(0, 0, 0, 0.25);
+        align-self: flex-start;
+
+        >button {
+            background: none;
+            font: inherit;
+            padding: 5px 12px;
+            border-radius: 13px;
+            border: 1px solid transparent;
+            opacity: 0.55;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgb(255, 255, 255);
+
+            &.selected {
+                opacity: 1;
+                &.anemo   { border: 1px solid #73d7cf; }
+                &.geo     { border: 1px solid #ffe473; }
+                &.electro { border: 1px solid #b773d7; }
+                &.dendro  { border: 1px solid #73d778; }
+                &.hydro   { border: 1px solid #73a6d7; }
+                &.pyro    { border: 1px solid #d77373; }
+                &.cryo    { border: 1px solid #73f6ff; }
+                &.unknown { border: 1px solid rgba(255, 255, 255, 0.75);}
+            }
+        }
+    }
+
+    .description {
+        margin: 0px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.88);
+    }
+}
+
+.talents-skill-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    >img {
+        width: 46px;
+        height: 46px;
+        padding: 5px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .type {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        
+        &.anemo   { color: #73d7cf; }
+        &.geo     { color: #ffe473; }
+        &.electro { color: #b773d7; }
+        &.dendro  { color: #73d778; }
+        &.hydro   { color: #73a6d7; }
+        &.pyro    { color: #d77373; }
+        &.cryo    { color: #73f6ff; }
+        &.unknown { color: rgba(255, 255, 255, 0.75); }
+    }
+
+    .name {
+        color: rgb(255, 255, 255);
+        font-size: 17px;
+        font-weight: 700;
+    }
+}
+
+.talents-skill-stat {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .name {
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    .value {
+        font-weight: bolder;
+        font-variant-numeric: tabular-nums;
+        color: rgb(255, 255, 255);
     }
 }
