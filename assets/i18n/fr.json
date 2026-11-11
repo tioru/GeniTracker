@@ -61,7 +61,11 @@
     "burst": "Déchaînement élémentaire",
     "alternateSprint": "Sprint alternatif",
     "description": "Description",
-    "stats": "Statistiques"
+    "stats": "Statistiques",
+    "unlockedAtAscension": "Débloqué à l'ascension {{ asc }}",
+    "unlockedByDefault": "Débloqué automatiquement",
+    "values": "Valeurs",
+    "gap": "Écart"
   },
   "nations": {
     "mondstadt": "Mondstadt",
