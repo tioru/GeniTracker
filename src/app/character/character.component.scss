@@ -546,6 +546,13 @@
     padding: clamp(16px, 3vw, 26px);
 }
 
+.separator {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-start;
+}
+
 .level-selector {
     display: flex;
     align-items: center;
@@ -578,112 +585,127 @@
 }
 
 .talents-skill-card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 12px;
+    flex: 1 1 260px;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    >button {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgb(255, 255, 255);
+        text-align: left;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+        font-family: Manrope, sans-serif;
+
+        >img {
+            flex: 0 0 auto;
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .type {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+
+            &.anemo   { color: #73d7cf; }
+            &.geo     { color: #ffe473; }
+            &.electro { color: #b773d7; }
+            &.dendro  { color: #73d778; }
+            &.hydro   { color: #73a6d7; }
+            &.pyro    { color: #d77373; }
+            &.cryo    { color: #73f6ff; }
+            &.unknown { color: rgba(255, 255, 255, 0.75); }
+        }
+
+        .name {
+            font-size: 15px;
+            font-weight: 700;
+            padding-top: 3px;
+        }
+
+        &.selected {
+            background: rgba(255, 255, 255, 0.1);
+            &.anemo   { border: 1px solid #73d7cf; }
+            &.geo     { border: 1px solid #ffe473; }
+            &.electro { border: 1px solid #b773d7; }
+            &.dendro  { border: 1px solid #73d778; }
+            &.hydro   { border: 1px solid #73a6d7; }
+            &.pyro    { border: 1px solid #d77373; }
+            &.cryo    { border: 1px solid #73f6ff; }
+            &.unknown { border: 1px solid rgba(255, 255, 255, 0.75);}
+        }
+    }
 }
 
-.talents-skill-card {
-    padding: 18px;
+.talents-skill-card-effect {
+    flex: 999 1 420px;
+    min-width: 0px;
+    padding: 22px 24px;
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.07);
     display: flex;
     flex-direction: column;
-    gap: 12px;
-
-    >.selector {
-        display: flex;
-        gap: 4px;
-        padding: 3px;
-        border-radius: 16px;
-        background: rgba(0, 0, 0, 0.25);
-        align-self: flex-start;
-
-        >button {
-            background: none;
-            font: inherit;
-            padding: 5px 12px;
-            border-radius: 13px;
-            border: 1px solid transparent;
-            opacity: 0.55;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 700;
-            color: rgb(255, 255, 255);
-
-            &.selected {
-                opacity: 1;
-                &.anemo   { border: 1px solid #73d7cf; }
-                &.geo     { border: 1px solid #ffe473; }
-                &.electro { border: 1px solid #b773d7; }
-                &.dendro  { border: 1px solid #73d778; }
-                &.hydro   { border: 1px solid #73a6d7; }
-                &.pyro    { border: 1px solid #d77373; }
-                &.cryo    { border: 1px solid #73f6ff; }
-                &.unknown { border: 1px solid rgba(255, 255, 255, 0.75);}
-            }
-        }
-    }
-
-    .description {
-        margin: 0px;
-        font-size: 14px;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.88);
-    }
+    gap: 18px;
 }
 
-.talents-skill-title {
+.talents-skill-card-title {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
 
     >img {
-        width: 46px;
-        height: 46px;
-        padding: 5px;
+        flex: 0 0 auto;
+        width: 52px;
+        height: 52px;
+        padding: 8px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.12);
     }
 
-    .type {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        
-        &.anemo   { color: #73d7cf; }
-        &.geo     { color: #ffe473; }
-        &.electro { color: #b773d7; }
-        &.dendro  { color: #73d778; }
-        &.hydro   { color: #73a6d7; }
-        &.pyro    { color: #d77373; }
-        &.cryo    { color: #73f6ff; }
-        &.unknown { color: rgba(255, 255, 255, 0.75); }
-    }
+    >div {
+        min-width: 0px;
 
-    .name {
-        color: rgb(255, 255, 255);
-        font-size: 17px;
-        font-weight: 700;
+        .skill-type {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+
+            &.anemo   { color: #73d7cf; }
+            &.geo     { color: #ffe473; }
+            &.electro { color: #b773d7; }
+            &.dendro  { color: #73d778; }
+            &.hydro   { color: #73a6d7; }
+            &.pyro    { color: #d77373; }
+            &.cryo    { color: #73f6ff; }
+            &.unknown { color: rgba(255, 255, 255, 0.75); }
+        }
+
+        .skill-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+        }
     }
 }
 
-.talents-skill-stat {
+.talents-skill-card-stats {
     display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 7px 0px;
-    font-size: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-    .name {
-        color: rgba(255, 255, 255, 0.75);
-    }
-
-    .value {
-        font-weight: bolder;
-        font-variant-numeric: tabular-nums;
-        color: rgb(255, 255, 255);
-    }
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-start;
 }

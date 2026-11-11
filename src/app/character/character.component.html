@@ -207,16 +207,10 @@
             <div class="skills">
                 @switch (selectedSkill()) {
                     @case ('talents') {
-                        <div class="level-selector">
-                            <span>
-                                {{t("character.level")}} {{selectedLevel()}}
-                            </span>
-                            <input [class]="elementClass()" type="range" min="1" max="15" [(ngModel)]="selectedLevel"/>
-                        </div>
-                        <div class="talents-skill-card-container">
-                            @for (skill of activeSkills(); track skill.type) {
-                                <div class="talents-skill-card">
-                                    <div class="talents-skill-title">
+                        <div class="separator">
+                            <div class="talents-skill-card-container">
+                                @for (skill of activeSkills(); track skill.type) {
+                                    <button type="button" [class]="elementClass()" class="talents-skill-card" [class.selected]="skill.type === selectedActiveSkill()?.type" (click)="selectedSubSkill.set(skill.type)">
                                         @if (skill.talent.icon; as icon) {
                                             <img [cachedSrc]="icon" [alt]="skill.talent.name" />
                                         }
@@ -228,22 +222,32 @@
                                                 <span>{{ skill.talent.name }}</span>
                                             </div>
                                         </div>
+                                    </button>
+                                }
+                            </div>
+                            @if (selectedActiveSkill(); as skill) {
+                                <div class="talents-skill-card-effect">
+                                    <div class="talents-skill-card-title">
+                                        @if (skill.talent.icon; as icon) {
+                                            <img [cachedSrc]="icon" [alt]="skill.talent.name" />
+                                        }
+                                        <div>
+                                            <div class="skill-type" [class]="elementClass()">
+                                                <span>{{ t('character.' + skill.type) }}</span>
+                                            </div>
+                                            <div class="skill-name">
+                                                <span>{{ skill.talent.name }}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    @let stats = statsShown().has(skill.type);
-                                    <div class="selector">
-                                        <button type="button" [class]="elementClass()" [class.selected]="!stats" (click)="showStats(skill.type, false)">{{ t('character.description') }}</button>
-                                        <button type="button" [class]="elementClass()" [class.selected]="stats" (click)="showStats(skill.type, true)">{{ t('character.stats') }}</button>
-                                    </div>
-                                    @if (stats) {
+                                    <div class="talents-skill-card-stats">
                                         @for (stat of skill.stats; track $index) {
                                             <div class="talents-skill-stat">
                                                 <span class="name">{{ stat.name }}</span>
                                                 <span class="value">{{ stat.value }}</span>
                                             </div>
                                         }
-                                    } @else {
-                                        <span class="description">{{ skill.talent.description }}</span>
-                                    }
+                                    </div>
                                 </div>
                             }
                         </div>

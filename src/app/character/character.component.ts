@@ -87,18 +87,8 @@ export class CharacterComponent {
 
   public readonly skillTabs: SkillTab[] = ['talents', 'passives', 'constellations'];
   public selectedSkill = signal<SkillTab>('talents');
+  public selectedSubSkill = signal<ActiveSkillType>('normalAttack');
   public selectedLevel = signal(1);
-
-  // Skills whose card shows the stats instead of the description
-  public statsShown = signal(new Set<ActiveSkillType>());
-
-  public showStats(type: ActiveSkillType, show: boolean) {
-    this.statsShown.update(set => {
-      const next = new Set(set);   // a new Set, so the signal sees the change
-      show ? next.add(type) : next.delete(type);
-      return next;
-    });
-  }
 
   public activeSkills = computed(() => {
     const talents = this.current()?.talents;
@@ -109,4 +99,10 @@ export class CharacterComponent {
       .filter((s): s is { type: ActiveSkillType; talent: Talent } => !!s.talent)
       .map(s => ({ ...s, stats: talentStats(s.talent, level, lang) }));
   });
+
+  // The skill shown in the detail panel; falls back to the first one when the selected type
+  // doesn't exist for this character (e.g. alternateSprint)
+  public selectedActiveSkill = computed(() =>
+    this.activeSkills().find(s => s.type === this.selectedSubSkill()) ?? this.activeSkills()[0]
+  );
 }
