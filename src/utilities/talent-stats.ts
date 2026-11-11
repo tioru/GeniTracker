@@ -3,6 +3,7 @@ import { Talent } from './models/character';
 export interface TalentStat {
   name: string;
   value: string;
+  constant: boolean;
 }
 
 // Placeholder formats found in genshin-db labels: F1P, F2P, P (percent with 1, 2 or 0 decimals),
@@ -26,13 +27,19 @@ function formatValue(value: number, format: string, lang: string): string {
  */
 export function talentStats(talent: Talent, level: number, lang: string): TalentStat[] {
   return talent.labels.map(label => {
-    const [name, template = ''] = label.split('|');
-    const value = template.replace(/\{(param\d+):([^}]+)\}/g, (_, param: string, format: string) => {
+    const [name, tpl] = label.split('|');
+    const value = tpl.replace(/\{(param\d+):([^}]+)\}/g, (_, param: string, format: string) => {
       const values = talent.parameters[param];
       if (!values?.length) return '—';
       // Some talents don't scale with the level and only have one value
       return formatValue(values[Math.min(level, values.length) - 1], format, lang);
     });
-    return { name, value };
+    return { name, value, constant: isConstant(tpl, talent.parameters) };
   });
 }
+
+// True when every parameter used by the label has the same value at levels 1 to 10
+const isConstant = (tpl: string, parameters: Record<string, number[]>) =>
+  [...tpl.matchAll(/\{(param\d+):/g)]
+    .map(m => parameters[m[1]] ?? [])
+    .every(values => values.slice(0, 10).every(v => v === values[0]));

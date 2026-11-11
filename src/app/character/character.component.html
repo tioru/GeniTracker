@@ -229,24 +229,58 @@
                                 <div class="talents-skill-card-effect">
                                     <div class="talents-skill-card-title">
                                         @if (skill.talent.icon; as icon) {
-                                            <img [cachedSrc]="icon" [alt]="skill.talent.name" />
+                                            <img [cachedSrc]="icon" alt="" />
                                         }
                                         <div>
                                             <div class="skill-type" [class]="elementClass()">
                                                 <span>{{ t('character.' + skill.type) }}</span>
                                             </div>
                                             <div class="skill-name">
-                                                <span>{{ skill.talent.name }}</span>
+                                                <span >{{ skill.talent.name }}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="talents-skill-card-stats">
-                                        @for (stat of skill.stats; track $index) {
-                                            <div class="talents-skill-stat">
-                                                <span class="name">{{ stat.name }}</span>
-                                                <span class="value">{{ stat.value }}</span>
+                                        <app-talent-description class="description" [text]="skill.talent.description" />
+                                        <aside>
+                                            <div class="level-display">
+                                                <span>{{ t('character.level') }}</span>
+                                                <div>
+                                                    <button type="button" class="less" aria-label="-" [disabled]="selectedLevel() === 1" (click)="setLevel(selectedLevel() - 1)">−</button>
+                                                    <span class="current-level">{{ selectedLevel() }} / {{ maxLevel }}</span>
+                                                    <button type="button" class="more" aria-label="+" [disabled]="selectedLevel() === maxLevel" (click)="setLevel(selectedLevel() + 1)">+</button>
+                                                </div>
+                                            </div>                                        
+                                            <div class="level-selector">
+                                                @for (level of levels; track level) {
+                                                    <button type="button" [class]="elementClass()"
+                                                            [class.selected]="selectedLevel() === level"
+                                                            (click)="setLevel(level)">{{ level }}</button>
+                                                }
                                             </div>
-                                        }
+                                            <div class="stats-display">
+                                                @for (stat of skill.stats; track $index) {
+                                                    <div>
+                                                        <div class="attribute">
+                                                            <span>{{ stat.name }}</span>
+                                                        </div>
+                                                        <div class="value">
+                                                            <span >{{ stat.value }}</span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            @if (skill.infos.length) {
+                                                <div class="costs-display">
+                                                    @for (info of skill.infos; track $index) {
+                                                        <div>
+                                                            <span class="attribute">{{ info.name }}</span>
+                                                            <span class="value">{{ info.value }}</span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </aside>
                                     </div>
                                 </div>
                             }

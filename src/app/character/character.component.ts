@@ -12,13 +12,14 @@ import { BackgroundService } from '../../utilities/services/background.service';
 import { Elements, Nations } from '../../utilities/game-data';
 import { FormsModule } from '@angular/forms';
 import { talentStats } from '../../utilities/talent-stats';
+import { TalentDescriptionComponent } from '../shared/talent-description/talent-description.component';
 
 export type SkillTab = 'talents' | 'passives' | 'constellations';
 export type ActiveSkillType = 'normalAttack' | 'skill' | 'burst' | 'alternateSprint';
 const ACTIVE_SKILLS: ActiveSkillType[] = ['normalAttack', 'skill', 'burst', 'alternateSprint'];
 
 @Component({
-  imports: [CachedSrcDirective, TranslocoDirective, IntlDatePipe, FormsModule],
+  imports: [CachedSrcDirective, TranslocoDirective, IntlDatePipe, FormsModule, TalentDescriptionComponent],
   selector: 'app-character',
   styleUrl: './character.component.scss',
   templateUrl: './character.component.html',
@@ -97,12 +98,31 @@ export class CharacterComponent {
     return ACTIVE_SKILLS
       .map(type => ({ type, talent: talents?.[type] }))
       .filter((s): s is { type: ActiveSkillType; talent: Talent } => !!s.talent)
-      .map(s => ({ ...s, stats: talentStats(s.talent, level, lang) }));
+      .map(s => {
+        const stats = talentStats(s.talent, level, lang);
+        return {
+          ...s,
+          stats: stats.filter(x => !x.constant),   // values that change with the level
+          infos: stats.filter(x => x.constant),    // stamina cost, CD, energy…
+        };
+      });
   });
 
   // The skill shown in the detail panel; falls back to the first one when the selected type
   // doesn't exist for this character (e.g. alternateSprint)
   public selectedActiveSkill = computed(() =>
     this.activeSkills().find(s => s.type === this.selectedSubSkill()) ?? this.activeSkills()[0]
+  );
+
+  public readonly maxLevel = 10;
+  public readonly levels = Array.from({ length: this.maxLevel }, (_, i) => i + 1);
+
+  public setLevel(level: number): void {
+    this.selectedLevel.set(Math.min(this.maxLevel, Math.max(1, level)));
+  }
+
+  // Materials needed to go from (level - 1) to level; none at level 1
+  public levelCosts = computed(() =>
+    this.current()?.talents?.costs.find(c => c.level === this.selectedLevel())?.items ?? []
   );
 }
