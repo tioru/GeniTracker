@@ -245,6 +245,10 @@
                                         <aside>
                                             <div class="level-display">
                                                 <span>{{ t('character.level') }}</span>
+                                                <div class="value-mode" role="group">
+                                                    <button type="button" [class.selected]="!showDelta()" (click)="showDelta.set(false)">{{ t('character.values') }}</button>
+                                                    <button type="button" [class.selected]="showDelta()" [disabled]="selectedLevel() === 1" (click)="showDelta.set(true)">{{ t('character.gap') }}</button>
+                                                </div>
                                                 <div>
                                                     <button type="button" class="less" aria-label="-" [disabled]="selectedLevel() === 1" (click)="setLevel(selectedLevel() - 1)">−</button>
                                                     <span class="current-level">{{ selectedLevel() }} / {{ maxLevel }}</span>
@@ -253,19 +257,26 @@
                                             </div>                                        
                                             <div class="level-selector">
                                                 @for (level of levels; track level) {
-                                                    <button type="button" [class]="elementClass()"
-                                                            [class.selected]="selectedLevel() === level"
-                                                            (click)="setLevel(level)">{{ level }}</button>
+                                                    <button type="button" [class]="elementClass()" [class.selected]="selectedLevel() === level" (click)="setLevel(level)">{{ level }}</button>
                                                 }
                                             </div>
                                             <div class="stats-display">
                                                 @for (stat of skill.stats; track $index) {
                                                     <div>
-                                                        <div class="attribute">
-                                                            <span>{{ stat.name }}</span>
+                                                        <div class="stat-head">
+                                                            <span class="attribute">{{ stat.name }}</span>
+                                                            @if (stat.mult) { <span class="mult">{{ stat.mult }}</span> }
                                                         </div>
-                                                        <div class="value">
-                                                            <span >{{ stat.value }}</span>
+                                                        <div class="terms">
+                                                            @for (term of stat.terms; track $index) {
+                                                                <span class="term">
+                                                                    @if (term.sep) { <span class="plus">{{ term.sep }}</span> }
+                                                                    <strong [class]="showDelta() && term.delta ? elementClass() + ' is-delta' : ''">
+                                                                        {{ showDelta() && term.delta ? term.delta : term.num }}
+                                                                    </strong>
+                                                                    @if (term.unit) { <span class="unit">{{ term.unit }}</span> }
+                                                                </span>
+                                                            }
                                                         </div>
                                                     </div>
                                                 }
@@ -287,6 +298,30 @@
                         </div>
                     }
                     @case ('passives') {
+                        <div class="passives-skill-card-container">
+                            @for (passive of c.talents?.passives; track $index; let i = $index) {
+                                <div class="passive-skill-card">
+                                    @if (passive.icon; as icon) {
+                                        <img [cachedSrc]="icon" [alt]="passive.name" />
+                                    }
+                                    <div>
+                                        <div class="passive-title">
+                                            <span>{{passive.name}}</span>
+                                        </div>
+                                        <div [class]="elementClass()" class="passive-unlock">
+                                            @if (passiveUnlock(i); as asc) {
+                                              <span>{{ t('character.unlockedAtAscension', { asc }) }}</span>
+                                            } @else {
+                                              <span>{{ t('character.unlockedByDefault') }}</span>
+                                            }
+                                        </div>
+                                        <span class="passive-description">
+                                            <app-talent-description class="description" [text]="passive.description" />
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     }
                     @case ('constellations') {
                     }

@@ -9,6 +9,7 @@
             @case ('element') { <span class="el" [class]="t.el">{{ t.text }}</span> }
             @case ('number') { <strong>{{ t.text }}</strong> }
             @case ('quote') { <em>{{ t.text }}</em> }
+            @case ('bold') { <strong class="bold">{{ t.text }}</strong> }
             @default { {{ t.text }} }
           }
         }

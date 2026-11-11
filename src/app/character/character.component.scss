@@ -519,11 +519,11 @@
         cursor: pointer;
         font-weight: 700;
         font-size: 14px;
-
         border: 1px solid transparent;
         background: transparent;
         color: rgb(255, 255, 255);
         opacity: 0.55;
+        transition: background 0.2s ease, opacity 0.2s ease;
 
         &.selected {
             background: rgba(255, 255, 255, 0.14);
@@ -539,6 +539,10 @@
             &.unknown { border: 1px solid rgba(255, 255, 255, 0.75);}
         }
         
+        &:hover {
+            background: rgba(255, 255, 255, 0.14);
+            opacity: 0.8;
+        }
     }
 }
 
@@ -571,8 +575,13 @@
         color: rgb(255, 255, 255);
         text-align: left;
         cursor: pointer;
-        transition: background 0.2s, border-color 0.2s;
+        opacity: 0.55;
         font-family: Manrope, sans-serif;
+        transition: background 0.2s ease, opacity 0.2s ease;
+
+        &:hover {
+            opacity: 0.8;
+        }
 
         >img {
             flex: 0 0 auto;
@@ -608,6 +617,8 @@
 
         &.selected {
             background: rgba(255, 255, 255, 0.1);
+            opacity: 1;
+
             &.anemo   { border: 1px solid #73d7cf; }
             &.geo     { border: 1px solid #ffe473; }
             &.electro { border: 1px solid #b773d7; }
@@ -699,6 +710,8 @@
         display: flex;
         flex-direction: column;
         gap: 14px;
+        max-height: calc(100dvh - 120px);
+        overflow-y: auto;
 
         >.level-display {
             display: flex;
@@ -733,6 +746,11 @@
     font-size: 16px;
     cursor: pointer;
     opacity: 0.35;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+        opacity: 1;
+    }
 }
 
 .current-level {
@@ -761,9 +779,16 @@
         font-size: 12px;
         cursor: pointer;
         font-family: Manrope, sans-serif;
+        opacity: 0.5;
 
+        &:hover {
+            opacity: 0.8;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
         &.selected {
             color: rgb(10, 15, 24);
+            opacity: 1;
             &.anemo { 
                 background: #73d7cf;
                 border: 1px solid #73d7cf; 
@@ -802,48 +827,181 @@
 
 .stats-display {
     >div {
-        padding: 8px 0px;
+        padding: 8px 0;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         display: flex;
         flex-direction: column;
-        gap: 3px;
-        
-        .attribute {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.65);
-        }
+        gap: 4px;
+    }
 
-        .value {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 10px;
-            color: rgb(255, 255, 255);
-            font-family: Manrope, sans-serif;
-            font-weight: bolder;
+    .stat-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
 
-            >span {
-                margin-left: auto;
-                display: flex;
-                align-items: baseline;
-                gap: 8px;
-                text-align: right;
-                font-variant-numeric: tabular-nums;
-            }
-        }
+    .attribute {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.65);
+    }
+
+    .mult {
+        flex: none;
+        padding: 1px 7px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 11px;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .terms {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 1px;
+    }
+
+    .term {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+        text-align: right;
+    }
+
+    strong {
+        font-size: 14px;
+        font-weight: 800;
+        color: #fff;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .unit, .plus {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
     }
 }
 
 .costs-display {
     display: flex;
     flex-wrap: wrap;
-    
-    >span {
+    gap: 6px;
+
+    >div {
         display: flex;
-        gap: 6px;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 10px;
+        max-width: 100%;
         padding: 5px 10px;
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.07);
         font-size: 12px;
+        line-height: 1.35;
+
+        .attribute {
+            min-width: 0;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .value {
+            margin-left: auto;
+            white-space: nowrap;
+            color: rgb(255, 255, 255);
+            font-weight: bolder;
+            font-variant-numeric: tabular-nums;
+        }
     }
+}
+
+.passives-skill-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.passive-skill-card {
+    padding: 18px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.07);
+    display: flex;
+    gap: 14px;
+
+    >img {
+        flex: 0 0 auto;
+        width: 46px;
+        height: 46px;
+        padding: 5px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.12);
+    }
+}
+
+.passive-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: rgb(255, 255, 255);
+}
+
+.passive-unlock {
+    margin: 2px 0px 8px;
+    font-size: 12px;
+    font-weight: 600;
+
+    &.anemo   { color: #73d7cf; }
+    &.geo     { color: #ffe473; }
+    &.electro { color: #b773d7; }
+    &.dendro  { color: #73d778; }
+    &.hydro   { color: #73a6d7; }
+    &.pyro    { color: #d77373; }
+    &.cryo    { color: #73f6ff; }
+    &.unknown { color: rgba(255, 255, 255, 0.75); }
+}
+
+.passive-description {
+    margin: 0px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.value-mode {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, .25);
+
+    button {
+        padding: 3px 9px;
+        border: none;
+        border-radius: 10px;
+        background: none;
+        color: rgba(255, 255, 255, .6);
+        font: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+
+        &.selected { 
+            background: rgba(255, 255, 255, .14); 
+            color: #fff; 
+        }
+
+        &:disabled { 
+            opacity: .35; cursor: default; 
+        }
+    }
+}
+
+.stats-display strong.is-delta {
+    &.anemo   { color: #73d7cf; }
+    &.geo     { color: #ffe473; }
+    &.electro { color: #b773d7; }
+    &.dendro  { color: #73d778; }
+    &.hydro   { color: #73a6d7; }
+    &.pyro    { color: #d77373; }
+    &.cryo    { color: #73f6ff; }
 }

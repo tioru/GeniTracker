@@ -61,7 +61,11 @@
     "burst": "Elemental Burst",
     "alternateSprint": "Alternate Sprint",
     "description": "Description",
-    "stats": "Stats"
+    "stats": "Stats",
+    "unlockedAtAscension": "Unlocked at Ascension {{ asc }}",
+    "unlockedByDefault": "Unlocked by default",
+    "values": "Values",
+    "gap": "Gap"
   },
   "nations": {
     "mondstadt": "Mondstadt",
