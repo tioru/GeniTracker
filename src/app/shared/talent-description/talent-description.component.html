@@ -1,0 +1,18 @@
+@for (b of blocks(); track $index) {
+  @switch (b.type) {
+    @case ('heading') { <h4>{{ b.text }}</h4> }
+    @case ('subheading') { <h5>{{ b.text }}</h5> }
+    @default {
+      <p [class.bullet]="b.type === 'bullet'">
+        @for (t of b.tokens; track $index) {
+          @switch (t.kind) {
+            @case ('element') { <span class="el" [class]="t.el">{{ t.text }}</span> }
+            @case ('number') { <strong>{{ t.text }}</strong> }
+            @case ('quote') { <em>{{ t.text }}</em> }
+            @default { {{ t.text }} }
+          }
+        }
+      </p>
+    }
+  }
+}
