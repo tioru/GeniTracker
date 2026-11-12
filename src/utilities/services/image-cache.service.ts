@@ -1,12 +1,12 @@
 import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, OnDestroy } from "@angular/core";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { map } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ImageCacheService {
+export class ImageCacheService implements OnDestroy {
 
 private http = inject(HttpClient);
 
