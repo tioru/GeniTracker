@@ -34,6 +34,8 @@ export class CharacterComponent {
   public entry = computed(() => this.charactersService.characters().find(c => c.name.en === this.name()));
   public id = computed(() => this.entry()?.id);
 
+  public notFound = computed(() => !this.entry() && this.charactersService.characters().length > 0);
+
   public character = httpResource<Character>(() => {
     const id = this.id();
     return id ? `assets/data/characters/${this.lang()}/${id}.json` : undefined;
@@ -89,7 +91,7 @@ export class CharacterComponent {
   public readonly skillTabs: SkillTab[] = ['talents', 'passives', 'constellations'];
   public selectedSkill = signal<SkillTab>('talents');
   public selectedSubSkill = signal<ActiveSkillType>('normalAttack');
-  public selectedLevel = signal(1);
+  public selectedLevel = linkedSignal({ source: this.id, computation: () => 1 });
 
   public activeSkills = computed(() => {
     const talents = this.current()?.talents;
@@ -97,7 +99,7 @@ export class CharacterComponent {
     const lang = this.lang();
     return ACTIVE_SKILLS
       .map(type => ({ type, talent: talents?.[type] }))
-      .filter((s): s is { type: ActiveSkillType; talent: Talent } => !!s.talent)
+      .filter((s): s is { type: ActiveSkillType; talent: Talent } => !!s.talent?.name)
       .map(s => {
         const stats = talentStats(s.talent, level, lang);
         return {
@@ -140,5 +142,46 @@ export class CharacterComponent {
     return [1, 4][index] ?? null;
   }
 
-  public showDelta = signal(false);
+  public showDelta = linkedSignal({ source: this.id, computation: () => false });
+
+  // Owned constellation level (0-6); to plug into your storage later
+  public consLevel = linkedSignal({ source: this.id, computation: () => 0 });
+  public selectedCons = linkedSignal({ source: this.id, computation: () => 0 });
+  
+  public constellations = computed(() => {
+    const level = this.consLevel();
+    // Longest names first: a short name could be contained in a longer one
+    const talents = [...this.activeSkills()].sort((a, b) => b.talent.name.length - a.talent.name.length);
+    return (this.current()?.constellations ?? []).map((k, i) => {
+      const [first, ...rest] = k.description.split('\n');
+      const line = first.replace(/\*\*/g, '');
+      // Line ending with "+3" / "by 3" / "by 3 Levels", mentioning a level and one of the talents
+      const looksLikeBoost = /(\+3|\bby 3(?: Levels?)?)\.?$/.test(line) && /niveau|level/i.test(line);
+      const talent = looksLikeBoost ? talents.find(s => line.includes(s.talent.name))?.talent : undefined;
+      return {
+        ...k,
+        level: i + 1,
+        reached: level >= i + 1,
+        boost: talent?.name ?? null,
+        boostIcon: talent?.icon ?? null,
+        text: talent ? rest.filter(l => !/^Niveau max|^Maximum upgrade/.test(l)).join('\n').trim() : k.description,
+      };
+    });
+  });
+  
+  public selectedConstellation = computed(() => this.constellations()[this.selectedCons()] ?? null);
+  
+  // Line between the first and last node, filled up to the owned level
+  public consFill = computed(() => Math.max(0, this.consLevel() - 1) / 5 * 100 + '%');
+  
+  // Clicking the current level removes it, any other level sets it
+  public toggleCons(level: number): void {
+    this.consLevel.update(current => current === level ? level - 1 : level);
+  }
+
+  // Aloy: 6 placeholder constellations with the same text
+  public consLocked = computed(() => {
+    const list = this.current()?.constellations ?? [];
+    return list.length > 0 && list.every(k => k.description === list[0].description);
+  });
 }

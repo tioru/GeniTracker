@@ -21,7 +21,7 @@
                         <img width="40px" height="40px" [cachedSrc]="element.img" [alt]="element.key" />
                     }
                     <div>
-                        <div [class]="c.element?.toLowerCase() || 'unknown'" class="character-type">
+                        <div [class]="elementClass()" class="character-type">
                             @if (c.element) {
                                 <span>{{t('elements.' + c.element)}}</span>
                             } @else {
@@ -93,7 +93,7 @@
                             }
                         </div>
                         <div class="weapon-info">
-                            <div [class]="c.element?.toLowerCase() || 'unknown'" class="signature-weapon-title">
+                            <div [class]="elementClass()" class="signature-weapon-title">
                                 <span>{{t('character.signatureWeapon')}}</span>
                             </div>
                             <div class="signature-weapon-name">
@@ -110,7 +110,7 @@
                             <span>?</span>
                         </div>
                         <div class="weapon-info">
-                            <div [class]="c.element?.toLowerCase() || 'unknown'" class="signature-weapon-title">
+                            <div [class]="elementClass()" class="signature-weapon-title">
                                 <span>{{t('character.signatureWeapon')}}</span>
                             </div>
                             <div class="signature-weapon-name">
@@ -127,7 +127,7 @@
                             }
                         </div>
                         <div class="dish-info">
-                            <div [class]="c.element?.toLowerCase() || 'unknown'" class="signature-dish-title">
+                            <div [class]="elementClass()" class="signature-dish-title">
                                 <span>{{t('character.signatureDish')}}</span>
                             </div>
                             <div class="signature-dish-name">
@@ -146,7 +146,7 @@
                             <span>?</span>
                         </div>
                         <div class="dish-info">
-                            <div [class]="c.element?.toLowerCase() || 'unknown'" class="signature-dish-title">
+                            <div [class]="elementClass()" class="signature-dish-title">
                                 <span>{{t('character.signatureDish')}}</span>
                             </div>
                             <div class="signature-dish-name">
@@ -156,7 +156,7 @@
                     </div>
                 }
                 <div class="artefacts">
-                    <div class="artefact-title" [class]="c.element?.toLowerCase() || 'unknown'">
+                    <div class="artefact-title" [class]="elementClass()">
                         <span>{{t('character.artefacts')}}</span>
                     </div>
                     <div class="best-artefact">
@@ -182,17 +182,19 @@
                     }-->
                 </div>
                 <div class="character-buttons">
-                    <button class="owned-character" [class]="c.element?.toLowerCase() || 'unknown'"  [class.owned]="true">
+                    <button class="owned-character" [class]="elementClass()"  [class.owned]="true">
                         <span>{{true ? t('character.owned') : t('character.notowned')}}</span>
                     </button>
-                    <div class="current-character-constellation">
-                        <span class="constellation-title">
-                            {{t('character.constellation')}}
-                        </span>
-                        <span class="constellation-number" [class]="c.element?.toLowerCase() || 'unknown'">
-                            C0
-                        </span>
-                    </div>
+                    @if (!consLocked()) {
+                        <div class="current-character-constellation">
+                            <span class="constellation-title">
+                                {{t('character.constellation')}}
+                            </span>
+                            <span class="constellation-number" [class]="elementClass()">
+                                C{{consLevel()}}
+                            </span>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -324,6 +326,72 @@
                         </div>
                     }
                     @case ('constellations') {
+                        <div class="constellation-name">
+                            <div class="name">
+                                <span>{{ c.constellationName }}</span>
+                            </div>
+                            @if (!consLocked()) {
+                                <div class="number" [class]="elementClass()">
+                                    <span>C{{ consLevel() }} / 6</span>
+                                    </div>
+                            }
+                        </div>
+                        @if (consLocked()) {
+                            <app-talent-description [text]="c.constellations[0].description" />
+                        } @else {
+                            <div class="constellation-progression" [class]="elementClass()">
+                                <div class="track">
+                                    <div class="fill" [style.width]="consFill()"></div>
+                                </div>
+                                @for (k of constellations(); track k.level; let i = $index) {
+                                    <button type="button" class="node"
+                                            [class.reached]="k.reached" [class.selected]="selectedCons() === i"
+                                            (click)="selectedCons.set(i)">
+                                        <span class="circle">
+                                            @if (k.icon; as icon) { 
+                                                <img [cachedSrc]="icon" alt="" /> 
+                                            }
+                                            @if (k.boost) { <span class="boost">+3</span> }
+                                        </span>
+                                        <span class="label">C{{ k.level }}</span>
+                                        <span class="title">{{ k.name }}</span>
+                                    </button>
+                                }
+                            </div>
+                            @if (selectedConstellation(); as k) {
+                                <div class="constellation-description" [class]="elementClass()">
+                                    <header>
+                                        @if (k.icon; as icon) { 
+                                            <img [cachedSrc]="icon" [class.locked]="!k.reached" alt="" /> 
+                                        }
+                                        <div>
+                                            <span class="overline">{{ t('character.constellation') }} {{ k.level }}</span>
+                                            <span class="title">{{ k.name }}</span>
+                                        </div>
+                                        <span class="status" [class.reached]="k.reached">
+                                            {{ t(k.reached ? 'character.obtained' : 'character.notObtained') }}
+                                        </span>
+                                    </header>
+                                    @if (k.boost) {
+                                        <div class="boost-chip">
+                                            @if (k.boostIcon; as icon) { <img [cachedSrc]="icon" alt="" /> }
+                                            <span>
+                                                <strong>{{ k.boost }}</strong>
+                                                <span>{{ t('character.talentLevelBoost') }}</span>
+                                            </span>
+                                        </div>
+                                    }
+                                    @if (k.text) { 
+                                        <app-talent-description [text]="k.text" /> 
+                                    }
+                                    <button type="button" class="action" [class.reached]="k.reached" (click)="toggleCons(k.level)">
+                                        {{ consLevel() === k.level ? t('character.removeCons', { n: k.level })
+                                           : k.reached ? t('character.backToCons', { n: k.level })
+                                           : t('character.unlockCons', { n: k.level }) }}
+                                    </button>
+                                </div>
+                            }
+                        }
                     }
                 }
             </div>
@@ -338,6 +406,8 @@
 
         </div>
     </section>
+} @else if (notFound()) {
+     <p>Personnage introuvable</p>
 } @else if (character.isLoading()) {
     <p>Chargement…</p>
 } @else if (character.error()) {

@@ -65,7 +65,13 @@
     "unlockedAtAscension": "Débloqué à l'ascension {{ asc }}",
     "unlockedByDefault": "Débloqué automatiquement",
     "values": "Valeurs",
-    "gap": "Écart"
+    "gap": "Écart",
+    "obtained": "Obtenue",
+    "notObtained": "Non obtenue",
+    "talentLevelBoost": "Niveau du talent +3 (max 15)",
+    "unlockCons": "Débloquer jusqu'à C{{n}}",
+    "backToCons": "Revenir à C{{n}}",
+    "removeCons": "Retirer C{{n}}"
   },
   "nations": {
     "mondstadt": "Mondstadt",

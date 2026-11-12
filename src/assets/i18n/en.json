@@ -65,7 +65,13 @@
     "unlockedAtAscension": "Unlocked at Ascension {{ asc }}",
     "unlockedByDefault": "Unlocked by default",
     "values": "Values",
-    "gap": "Gap"
+    "gap": "Gap",
+    "obtained": "Obtained",
+    "notObtained": "Not obtained",
+    "talentLevelBoost": "Talent level +3 (max 15)",
+    "unlockCons": "Unlock up to C{{n}}",
+    "backToCons": "Back to C{{n}}",
+    "removeCons": "Remove C{{n}}"
   },
   "nations": {
     "mondstadt": "Mondstadt",
