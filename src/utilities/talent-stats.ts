@@ -55,19 +55,25 @@ const isConstant = (tpl: string, parameters: Record<string, number[]>) =>
 
 export interface StatTerm { sep: string; num: string; unit: string; }
 
-// "3 389", "1,213.1", "0,42" + optional "%"
-const NUM = /^((?:\d{1,3}(?:[\s\u202f\u00a0,]\d{3})+|\d+)(?:[.,]\d+)?\s?%?)\s*(.*)$/;
+// "3 389", "1,213.1", "0,42" + optional "%" at the start of a term; the rest is the unit
+const NUM = /^\d[\d\s\u202f\u00a0.,]*%?/;
 
 export function splitStatValue(value: string): { terms: StatTerm[]; mult: string | null } {
   let body = value.trim(), mult: string | null = null;
-  const m = body.match(/\s*×\s?(\d+)$/);
-  if (m) { mult = '×' + m[1]; body = body.slice(0, m.index).trim().replace(/^\((.*)\)$/, '$1'); }
+  // "(…) ×3" or "… × 3" at the end = hit count
+  const times = body.lastIndexOf('×');
+  const count = body.slice(times + 1).trim();
+  if (times >= 0 && /^\d+$/.test(count)) {
+    mult = '×' + count;
+    body = body.slice(0, times).trim();
+    if (body.startsWith('(') && body.endsWith(')')) body = body.slice(1, -1);
+  }
   // "+" or "/" followed by a number = new term
-  const parts = body.split(/\s*([+/])\s*(?=\d)/);
+  const parts = body.split(/(?<!\s)\s*([+/])\s*(?=\d)/);
   const terms: StatTerm[] = [];
   for (let i = 0; i < parts.length; i += 2) {
-    const n = parts[i].match(NUM);
-    terms.push({ sep: i ? parts[i - 1] : '', num: n ? n[1].trim() : parts[i], unit: n ? n[2] : '' });
+    const num = NUM.exec(parts[i])?.[0].trim();
+    terms.push({ sep: i ? parts[i - 1] : '', num: num ?? parts[i], unit: num ? parts[i].slice(num.length).trim() : '' });
   }
   return { terms, mult };
 }

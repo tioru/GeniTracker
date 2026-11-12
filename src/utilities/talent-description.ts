@@ -16,10 +16,10 @@ const ELEMENTS: Record<string, string> = {
 
 /** An element name, not part of a longer word */
 const ELEMENT = /(?<!\p{L})(?:Anémo|Anemo|Géo|Geo|Électro|Electro|Dendro|Hydro|Pyro|Cryo)(?!\p{L})/u;
-/** A number with its unit */
-const NUMBER = /\d+(?:[,.]\d+)?\s?(?:%|(?:pts?|s)\b)/;
+/** A number with its unit; the lookbehind makes it start at the first digit only, so it can't backtrack */
+const NUMBER = /(?<!\d)\d+(?:[,.]\d+)?\s?(?:%|(?:pts?|s)\b)/;
 /** « A quote » */
-const QUOTE = /«[^»]+»/;
+const QUOTE = /«[^«»]+»/;
 
 // One capturing group so split() keeps the matched parts
 const TOKEN = new RegExp(`(${ELEMENT.source}|${NUMBER.source}|${QUOTE.source})`, 'gu');
@@ -51,7 +51,7 @@ function tokenizeInline(text: string): Token[] {
 
 /** "**word**" = bold; odd parts after split are the bold ones */
 function tokenize(text: string): Token[] {
-  const parts = text.replace(/\s+([.,])/g, '$1').split('**');
+  const parts = text.replace(/(?<!\s)\s+(?=[.,])/g, '').split('**');
   // even number of parts = one "**" is not closed: keep the last one as plain text
   if (parts.length % 2 === 0) parts[parts.length - 2] += '**' + parts.pop();
   return parts.flatMap((chunk, i) => !chunk ? [] : i % 2 ? [{ text: chunk, kind: 'bold' as const }] : tokenizeInline(chunk));
