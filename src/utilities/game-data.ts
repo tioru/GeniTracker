@@ -26,9 +26,6 @@ export const Elements: Category[] = [
     { key: 'Cryo', color: 'rgb(0,238,255)', img: IMG + 'elements/cryo.webp'},
 ];
 
-
-
-
 export const Nations: Nation[] = [
     nation('mondstadt', 4),
     nation('liyue', 5),
@@ -47,4 +44,3 @@ export const Weapons: Category[] = [
     { key: 'Polearm', img: IMG + 'weapons/polearm.webp'},
     { key: 'Sword', img: IMG + 'weapons/sword.webp'}
 ]
-

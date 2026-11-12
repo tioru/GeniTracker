@@ -1,23 +1,41 @@
 export type Token = { text: string; kind?: 'element' | 'number' | 'quote' | 'bold'; el?: string };
-export type Block =
-  | { type: 'heading'; text: string }
-  | { type: 'subheading'; text: string }
-  | { type: 'text' | 'bullet'; tokens: Token[] };
+export type Block = { type: 'heading'; text: string } | { type: 'subheading'; text: string } | { type: 'text' | 'bullet'; tokens: Token[] };
 
 const ELEMENTS: Record<string, string> = {
-  anémo: 'anemo', anemo: 'anemo', géo: 'geo', geo: 'geo', électro: 'electro', electro: 'electro',
-  dendro: 'dendro', hydro: 'hydro', pyro: 'pyro', cryo: 'cryo',
+  anémo: 'anemo', 
+  anemo: 'anemo', 
+  géo: 'geo', 
+  geo: 'geo', 
+  électro: 'electro',
+  electro: 'electro',
+  dendro: 'dendro', 
+  hydro: 'hydro', 
+  pyro: 'pyro', 
+  cryo: 'cryo',
 };
 
-const TOKEN = /((?<!\p{L})(?:Anémo|Anemo|Géo|Geo|Électro|Electro|Dendro|Hydro|Pyro|Cryo)(?!\p{L})|\d+(?:[,.]\d+)?(?:\s?(?:%|pts?|s)\b|\s?%)|«[^»]+»)/gu;
+/** An element name, not part of a longer word */
+const ELEMENT = /(?<!\p{L})(?:Anémo|Anemo|Géo|Geo|Électro|Electro|Dendro|Hydro|Pyro|Cryo)(?!\p{L})/u;
+/** A number with its unit */
+const NUMBER = /\d+(?:[,.]\d+)?\s?(?:%|(?:pts?|s)\b)/;
+/** « A quote » */
+const QUOTE = /«[^»]+»/;
 
-/** "**Title**" -> "Title" */
+// One capturing group so split() keeps the matched parts
+const TOKEN = new RegExp(`(${ELEMENT.source}|${NUMBER.source}|${QUOTE.source})`, 'gu');
+
+/** Remove * from a line */
 const stripBold = (line: string) => line.replace(/^\*\*(.+)\*\*$/, '$1');
 
-/** A short line without final punctuation = title */
+
+/** Guess titles */
 const isTitle = (line: string) => {
-  const l = stripBold(line);
-  return l.length <= 45 && !/[.:!?,;]$/.test(l) && !l.startsWith('·');
+  const TITLE_MAX_LENGTH = 45;
+  const text = stripBold(line);
+  const isShort = text.length <= TITLE_MAX_LENGTH;
+  const endsLikeSentence = /[.:!?,;]$/.test(text);
+  const isBullet = text.startsWith('·');
+  return isShort && !endsLikeSentence && !isBullet;
 };
 
 /** Elements, numbers, « quotes » inside a plain chunk */
@@ -36,8 +54,7 @@ function tokenize(text: string): Token[] {
   const parts = text.replace(/\s+([.,])/g, '$1').split('**');
   // even number of parts = one "**" is not closed: keep the last one as plain text
   if (parts.length % 2 === 0) parts[parts.length - 2] += '**' + parts.pop();
-  return parts.flatMap((chunk, i) =>
-    !chunk ? [] : i % 2 ? [{ text: chunk, kind: 'bold' as const }] : tokenizeInline(chunk));
+  return parts.flatMap((chunk, i) => !chunk ? [] : i % 2 ? [{ text: chunk, kind: 'bold' as const }] : tokenizeInline(chunk));
 }
 
 export function parseDescription(raw: string | null | undefined): Block[] {
