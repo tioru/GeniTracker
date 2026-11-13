@@ -184,4 +184,6 @@ export class CharacterComponent {
     const list = this.current()?.constellations ?? [];
     return list.length > 0 && list.every(k => k.description === list[0].description);
   });
+
+  public keyLevel = [20, 40, 50, 60, 70, 80]
 }

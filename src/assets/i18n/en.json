@@ -71,7 +71,9 @@
     "talentLevelBoost": "Talent level +3 (max 15)",
     "unlockCons": "Unlock up to C{{n}}",
     "backToCons": "Back to C{{n}}",
-    "removeCons": "Remove C{{n}}"
+    "removeCons": "Remove C{{n}}",
+    "ascension": "Ascension",
+    "material": "Material"
   },
   "nations": {
     "mondstadt": "Mondstadt",

@@ -396,11 +396,20 @@
                 }
             </div>
         </div>
-        <span>
-
+        <span class="ascension">
+            {{t("character.ascension")}}
         </span>
         <div class="character-ascension">
-
+            <div class="character-ascension-header">
+                <span class="material">
+                    {{t("character.material")}}
+                </span>
+                @for (level of keyLevel; track $index) {
+                    <button>
+                        {{level}}
+                    </button>
+                }
+            </div>
         </div>
         <div>
 
