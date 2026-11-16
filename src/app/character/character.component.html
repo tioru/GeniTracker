@@ -415,7 +415,7 @@
 
         </div>
     </section>
-} @else if (!character) {
+} @else if (notFound()) {
      <p>Personnage introuvable</p>
 } @else if (character.isLoading()) {
     <p>Chargement…</p>

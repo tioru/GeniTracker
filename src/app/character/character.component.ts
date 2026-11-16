@@ -31,6 +31,9 @@ export class CharacterComponent {
   public entry = computed(() => this.charactersService.findByName(this.name()));
   public id = computed(() => this.entry()?.id);
 
+  // List loaded but no character with this name (an empty list means it is still loading)
+  public notFound = computed(() => !this.entry() && this.charactersService.characters().length > 0);
+
   public character = this.charactersService.characterResource(this.id, this.lang);
 
   public current = linkedSignal<Character | null | undefined, Character | undefined>({
