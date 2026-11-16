@@ -1,10 +1,7 @@
-import { Component, computed, DestroyRef, effect, inject, linkedSignal, untracked, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, linkedSignal, untracked, signal, input } from '@angular/core';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { CharactersService } from '../characters/characters.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
-import { map } from 'rxjs';
-import { httpResource } from '@angular/common/http';
 import { Character, Talent } from '../../utilities/models/character';
 import { CachedSrcDirective } from '../../utilities/directives/cachedSrc';
 import { IntlDatePipe } from '../../utilities/pipes/date.pipe';
@@ -28,18 +25,13 @@ export class CharacterComponent {
   private transloco = inject(TranslocoService);
   private charactersService = inject(CharactersService);
 
-  private name = toSignal(inject(ActivatedRoute).paramMap.pipe(map(params => params.get('name'))));
-  public lang = toSignal(this.transloco.langChanges$, { initialValue: this.transloco.getActiveLang() });
-
-  public entry = computed(() => this.charactersService.characters().find(c => c.name.en === this.name()));
+  protected readonly name = input<string>();
+  public lang = toSignal(this.transloco.langChanges$, { requireSync: true });
+  
+  public entry = computed(() => this.charactersService.findByName(this.name()));
   public id = computed(() => this.entry()?.id);
 
-  public notFound = computed(() => !this.entry() && this.charactersService.characters().length > 0);
-
-  public character = httpResource<Character>(() => {
-    const id = this.id();
-    return id ? `assets/data/characters/${this.lang()}/${id}.json` : undefined;
-  });
+  public character = this.charactersService.characterResource(this.id, this.lang);
 
   public current = linkedSignal<Character | null | undefined, Character | undefined>({
     source: () => this.character.hasValue() ? this.character.value() : this.character.error() ? null : undefined,

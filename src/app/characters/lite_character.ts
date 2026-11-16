@@ -1,4 +1,4 @@
-export interface Characters {
+export interface LiteCharacter {
   id: number;
   name: { en: string; fr: string };
   element: string | null;
