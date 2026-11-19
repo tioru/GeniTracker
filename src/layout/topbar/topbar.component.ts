@@ -2,10 +2,11 @@ import { Component, OnInit, ChangeDetectionStrategy, inject, DOCUMENT } from '@a
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { availableLangs, langStorageKey } from '../../utilities/core/i18n/transloco-loader';
+import { CachedSrcDirective } from '../../utilities/directives/cachedSrc';
 
 @Component({
   selector: 'app-topbar',
-  imports: [RouterLink, RouterLinkActive, TranslocoDirective],
+  imports: [RouterLink, RouterLinkActive, TranslocoDirective, CachedSrcDirective],
   templateUrl: './topbar.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './topbar.component.scss'
